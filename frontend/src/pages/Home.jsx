@@ -57,38 +57,22 @@ export default function Home() {
     {
       title: "Full-Stack Web Development",
       category: "Development",
-      rating: 4.9,
-      students: "2.5k",
-      price: "$89.99",
-      image:
-        "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      price: "₹8,999",
     },
     {
       title: "Data Science & AI Masterclass",
       category: "Data Science",
-      rating: 4.8,
-      students: "1.8k",
-      price: "$94.99",
-      image:
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      price: "₹9,499",
     },
     {
       title: "UI/UX Design Essentials",
       category: "Design",
-      rating: 4.7,
-      students: "3.2k",
-      price: "$79.99",
-      image:
-        "https://images.unsplash.com/photo-1586717791821-3f44a563eb4c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      price: "₹7,999",
     },
     {
       title: "Cloud Architecture (AWS/Azure)",
       category: "Cloud",
-      rating: 4.9,
-      students: "1.2k",
-      price: "$99.99",
-      image:
-        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      price: "₹9,999",
     },
   ];
   const containerVariants = {
@@ -316,7 +300,7 @@ export default function Home() {
               </h3>{" "}
             </div>{" "}
             <Link
-              to="/enroll"
+              to="/courses"
               className="text-primary-600 font-bold flex items-center gap-2 hover:text-primary-700 transition-all"
             >
               {" "}
@@ -335,43 +319,28 @@ export default function Home() {
                 className="group bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-lg hover:shadow-2xl transition-all duration-300"
               >
                 {" "}
-                <div className="relative h-48 overflow-hidden">
+                <div className="p-8">
                   {" "}
-                  <img
-                    src={course.image}
-                    alt={course.title}
-                    className="w-full h-full object-cover transition-transform duration-500"
-                  />{" "}
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-xs font-bold text-primary-600">
+                  <div className="px-3 py-1 bg-primary-50 rounded-full text-[10px] font-bold text-primary-600 inline-block mb-4 uppercase tracking-wider">
                     {" "}
                     {course.category}{" "}
                   </div>{" "}
-                </div>{" "}
-                <div className="p-6">
-                  {" "}
-                  <div className="flex items-center gap-1 text-amber-500 mb-2">
-                    {" "}
-                    <Star size={14} fill="currentColor" />{" "}
-                    <span className="text-xs font-bold text-slate-900">
-                      {course.rating}
-                    </span>{" "}
-                    <span className="text-xs text-slate-400">
-                      ({course.students})
-                    </span>{" "}
-                  </div>{" "}
-                  <h4 className="font-bold text-slate-900 mb-4 group-hover:text-primary-600 transition-colors line-clamp-2 h-12">
+                  <h4 className="text-xl font-bold text-slate-900 mb-6 group-hover:text-primary-600 transition-colors line-clamp-2 h-14">
                     {" "}
                     {course.title}{" "}
                   </h4>{" "}
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+                  <div className="flex items-center justify-between pt-6 border-t border-slate-50">
                     {" "}
-                    <span className="text-lg font-bold text-slate-900">
-                      {course.price}
-                    </span>{" "}
-                    <button className="p-2 bg-slate-50 text-primary-600 rounded-lg group-hover:bg-primary-600 group-hover:text-white transition-all">
+                    <div className="flex flex-col">
+                      <span className="text-xs text-slate-400 font-medium uppercase tracking-tight">Course Fee</span>
+                      <span className="text-2xl font-bold text-slate-900">
+                        {course.price}
+                      </span>{" "}
+                    </div>
+                    <Link to="/enroll" className="p-3 bg-slate-50 text-primary-600 rounded-xl group-hover:bg-primary-600 group-hover:text-white transition-all shadow-sm">
                       {" "}
-                      <ArrowRight size={18} />{" "}
-                    </button>{" "}
+                      <ArrowRight size={20} />{" "}
+                    </Link>{" "}
                   </div>{" "}
                 </div>{" "}
               </motion.div>

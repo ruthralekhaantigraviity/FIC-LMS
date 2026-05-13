@@ -104,74 +104,55 @@ export default function CourseCatalog() {
               className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
             >
               {" "}
-              <div className="relative h-48">
+          {filteredCourses.map((course, i) => (
+            <motion.div
+              key={course._id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ y: -8 }}
+              className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
+            >
+              {" "}
+              <div className="p-8">
                 {" "}
-                <img
-                  src={course.thumbnail}
-                  alt={course.title}
-                  className="w-full h-full object-cover"
-                />{" "}
-                <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-lg text-xs font-bold text-primary-600">
+                <div className="px-3 py-1 bg-primary-50 rounded-full text-[10px] font-bold text-primary-600 inline-block mb-4 uppercase tracking-wider">
                   {" "}
                   {course.category}{" "}
                 </div>{" "}
-              </div>{" "}
-              <div className="p-6">
-                {" "}
-                <div className="flex items-center gap-2 mb-3">
-                  {" "}
-                  <div className="flex text-yellow-400">
-                    {" "}
-                    <Star size={14} fill="currentColor" />{" "}
-                    <Star size={14} fill="currentColor" />{" "}
-                    <Star size={14} fill="currentColor" />{" "}
-                    <Star size={14} fill="currentColor" />{" "}
-                    <Star size={14} fill="currentColor" />{" "}
-                  </div>{" "}
-                  <span className="text-xs text-slate-400 font-medium">
-                    (4.8)
-                  </span>{" "}
-                </div>{" "}
-                <h3 className="text-lg font-bold text-slate-900 mb-2 line-clamp-1">
+                <h3 className="text-xl font-bold text-slate-900 mb-6 line-clamp-1">
                   {course.title}
                 </h3>{" "}
-                <div className="flex items-center gap-4 text-slate-500 text-sm mb-6">
+                <div className="flex items-center gap-4 text-slate-500 text-sm mb-8">
                   {" "}
                   <div className="flex items-center gap-1.5">
                     {" "}
-                    <BookOpen size={16} /> <span>12 Lessons</span>{" "}
+                    <BookOpen size={18} className="text-primary-600" /> <span>{course.subjects?.length || 0} Lessons</span>{" "}
                   </div>{" "}
                   <div className="flex items-center gap-1.5">
                     {" "}
-                    <Clock size={16} /> <span>10h 30m</span>{" "}
+                    <Clock size={18} className="text-primary-600" /> <span>{course.duration || "Self-paced"}</span>{" "}
                   </div>{" "}
                 </div>{" "}
-                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                <div className="flex items-center justify-between pt-6 border-t border-slate-100">
                   {" "}
-                  <div className="flex items-center gap-2">
-                    {" "}
-                    <div className="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
-                      {" "}
-                      <img
-                        src={`https://ui-avatars.com/api/?name=${course.instructor?.name}`}
-                        alt=""
-                      />{" "}
-                    </div>{" "}
-                    <span className="text-sm font-medium text-slate-700">
-                      {course.instructor?.name}
+                  <div className="flex flex-col">
+                    <span className="text-xs text-slate-400 font-medium uppercase tracking-tight">Course Fee</span>
+                    <span className="text-2xl font-bold text-slate-900">
+                      {course.price === 0 ? "Free" : `₹${course.price?.toLocaleString()}`}
                     </span>{" "}
-                  </div>{" "}
+                  </div>
                   <Link
                     to={`/courses/${course._id}`}
-                    className="px-4 py-2 bg-primary-50 text-primary-600 rounded-lg text-sm font-bold hover:bg-primary-600 hover:text-white transition"
+                    className="px-5 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 transition shadow-lg shadow-primary-600/20"
                   >
                     {" "}
-                    View Course{" "}
+                    Details{" "}
                   </Link>{" "}
                 </div>{" "}
               </div>{" "}
             </motion.div>
-          ))}{" "}
+          ))}
         </div>
       )}{" "}
       {!loading && filteredCourses.length === 0 && (

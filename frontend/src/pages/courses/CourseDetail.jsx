@@ -49,55 +49,55 @@ export default function CourseDetail() {
     <div className="max-w-7xl mx-auto space-y-8 pb-20">
       {" "}
       {/* Course Header */}{" "}
-      <div className="relative h-[400px] rounded-3xl overflow-hidden group">
-        {" "}
-        <img
-          src={course.thumbnail}
-          alt={course.title}
-          className="w-full h-full object-cover transition duration-700 group-hover:scale-110"
-        />{" "}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>{" "}
-        <div className="absolute bottom-10 left-10 right-10">
-          {" "}
-          <div className="flex flex-wrap gap-3 mb-4">
+      <div className="bg-gradient-to-r from-primary-700 to-primary-900 rounded-[40px] p-12 text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
+          <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] bg-white rounded-full blur-[100px]" />
+        </div>
+        
+        <div className="relative z-10">
+          <div className="flex flex-wrap gap-3 mb-6">
             {" "}
-            <span className="px-3 py-1 bg-primary-600 text-white rounded-lg text-xs font-bold uppercase tracking-wider">
+            <span className="px-4 py-1.5 bg-white/20 backdrop-blur-md text-white rounded-xl text-xs font-bold uppercase tracking-wider">
               {" "}
               {course.category}{" "}
             </span>{" "}
-            <span className="px-3 py-1 bg-white/20 backdrop-blur-md text-white rounded-lg text-xs font-bold uppercase tracking-wider">
+            <span className="px-4 py-1.5 bg-white/20 backdrop-blur-md text-white rounded-xl text-xs font-bold uppercase tracking-wider">
               {" "}
               {course.level}{" "}
             </span>{" "}
           </div>{" "}
-          <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-4">
+          <h1 className="text-4xl md:text-6xl font-display font-bold text-white mb-6 leading-tight max-w-3xl">
             {course.title}
           </h1>{" "}
-          <div className="flex items-center gap-6 text-slate-300">
+          <div className="flex flex-wrap items-center gap-8 text-primary-100">
             {" "}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               {" "}
-              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/20">
+              <div className="w-12 h-12 rounded-2xl overflow-hidden border-2 border-white/20">
                 {" "}
                 <img
                   src={`https://ui-avatars.com/api/?name=${course.instructor?.name}`}
                   alt=""
                 />{" "}
               </div>{" "}
-              <span className="font-medium">
-                {course.instructor?.name}
-              </span>{" "}
+              <div>
+                <p className="text-xs text-primary-200 font-bold uppercase tracking-wider">Instructor</p>
+                <p className="font-bold text-white">{course.instructor?.name}</p>
+              </div>
             </div>{" "}
-            <div className="flex items-center gap-2">
+            <div className="h-10 w-px bg-white/10 hidden md:block" />
+            <div className="flex items-center gap-3">
               {" "}
-              <Clock size={18} /> <span>12 hours of content</span>{" "}
+              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
+                <Clock size={20} /> 
+              </div>
+              <div>
+                <p className="text-xs text-primary-200 font-bold uppercase tracking-wider">Duration</p>
+                <p className="font-bold text-white">{course.duration || "12 Weeks"}</p>
+              </div>
             </div>{" "}
           </div>{" "}
         </div>{" "}
-        <button className="absolute top-6 right-6 p-3 bg-white/10 backdrop-blur-md rounded-2xl text-white hover:bg-white/20 transition">
-          {" "}
-          <Share2 size={20} />{" "}
-        </button>{" "}
       </div>{" "}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {" "}
@@ -173,7 +173,9 @@ export default function CourseDetail() {
             {" "}
             <div className="mb-6">
               {" "}
-              <span className="text-4xl font-display font-bold">Free</span>{" "}
+              <span className="text-4xl font-display font-bold">
+                {course.price === 0 ? "Free" : `₹${course.price?.toLocaleString()}`}
+              </span>{" "}
               <p className="text-sm text-slate-500 mt-2">
                 Lifetime access to all materials
               </p>{" "}

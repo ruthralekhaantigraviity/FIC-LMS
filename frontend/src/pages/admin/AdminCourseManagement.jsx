@@ -222,7 +222,7 @@ export default function AdminCourseManagement() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm font-medium">
-                      {course.price === 0 ? "Free" : `$${course.price}`}
+                      {course.price === 0 ? "Free" : `₹${course.price?.toLocaleString()}`}
                     </td>
                     <td className="px-6 py-4">
                       {course.isPublished ? (
@@ -373,7 +373,7 @@ export default function AdminCourseManagement() {
                     </div>
                      <div>
                       <label className="block text-sm font-bold text-slate-700 mb-2">
-                        Course Price ($)
+                        Course Price (₹)
                       </label>
                       <input
                         type="number"

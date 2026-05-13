@@ -113,11 +113,9 @@ export default function AdmissionForm() {
             {course ? (
               <div className="space-y-4">
                 {" "}
-                <img
-                  src={course.thumbnail}
-                  alt=""
-                  className="w-full h-32 object-cover rounded-xl shadow-inner"
-                />{" "}
+                <div className="w-full h-20 bg-primary-100 rounded-xl flex items-center justify-center text-primary-600 mb-4">
+                  <Book size={32} />
+                </div>
                 <div>
                   {" "}
                   <p className="font-bold text-sm">{course.title}</p>{" "}
