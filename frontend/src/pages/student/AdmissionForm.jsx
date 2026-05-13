@@ -11,7 +11,7 @@ import {
   Book,
   Info,
 } from "lucide-react";
-import axios from "axios";
+import api from "../../utils/api";
 export default function AdmissionForm() {
   const { courseId } = useParams();
   const navigate = useNavigate();
@@ -30,8 +30,8 @@ export default function AdmissionForm() {
   });
   useEffect(() => {
     if (courseId) {
-      axios
-        .get(`http://localhost:5000/api/courses/${courseId}`)
+      api
+        .get(`/courses/${courseId}`)
         .then((res) => {
           setCourse(res.data.data);
           setSelectedCourseId(courseId);
@@ -39,8 +39,8 @@ export default function AdmissionForm() {
         .catch((err) => console.error(err));
     } else {
       // Fetch all courses for the dropdown
-      axios
-        .get("http://localhost:5000/api/courses")
+      api
+        .get("/courses")
         .then((res) => setAllCourses(res.data.data))
         .catch((err) => console.error(err));
     }
@@ -57,10 +57,9 @@ export default function AdmissionForm() {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      await axios.post(
-        "http://localhost:5000/api/admissions/apply",
-        { ...formData, course: selectedCourseId },
-        { headers: { Authorization: `Bearer ${token}` } },
+      await api.post(
+        "/admissions/apply",
+        { ...formData, course: selectedCourseId }
       );
       alert("Application submitted successfully!");
       navigate("/dashboard/student/applications");

@@ -6,7 +6,7 @@ import {
   GraduationCap, Briefcase, CheckCircle, ArrowRight,
   ShieldCheck, Zap, Award, Loader2
 } from "lucide-react";
-import axios from "axios";
+import api from "../../utils/api";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../../store/slices/authSlice";
 import toast from "react-hot-toast";
@@ -31,7 +31,7 @@ export default function PublicEnrollment() {
   });
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/courses")
+    api.get("/courses")
       .then(res => setCourses(res.data.data))
       .catch(err => console.error(err))
       .finally(() => setFetchingCourses(false));
@@ -42,7 +42,7 @@ export default function PublicEnrollment() {
     setLoading(true);
     try {
       // 1. Register User & Submit Admission in one go
-      const response = await axios.post("http://localhost:5000/api/admissions/public-enroll", formData);
+      const response = await api.post("/admissions/public-enroll", formData);
       
       // Enrollment & account creation successful, redirect to login
       toast.success("Application submitted! Please log in to track your status.");

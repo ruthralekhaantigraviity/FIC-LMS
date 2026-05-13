@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api";
 import {
   ChevronRight,
   Play,
@@ -61,7 +61,7 @@ export default function Home() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/api/courses");
+        const { data } = await api.get("/courses");
         // Show only published courses and limit to 4
         const activeCourses = data.data.filter(c => c.isPublished).slice(0, 4);
         setCourses(activeCourses);

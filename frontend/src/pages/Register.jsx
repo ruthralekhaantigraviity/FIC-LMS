@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
-import axios from "axios";
+import api from "../utils/api";
 import toast from "react-hot-toast";
 import {
   loginStart,
@@ -28,8 +28,8 @@ export default function Register() {
     e.preventDefault();
     dispatch(loginStart());
     try {
-      const { data } = await axios.post(
-        "http://localhost:5000/api/auth/register",
+      const { data } = await api.post(
+        "/auth/register",
         form,
       );
       // Registration successful, redirect to login

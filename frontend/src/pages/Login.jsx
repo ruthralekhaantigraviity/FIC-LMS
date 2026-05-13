@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
-import axios from "axios";
+import api from "../utils/api";
 import toast from "react-hot-toast";
 import {
   loginStart,
@@ -24,8 +24,8 @@ export default function Login() {
     e.preventDefault();
     dispatch(loginStart());
     try {
-      const { data } = await axios.post(
-        "http://localhost:5000/api/auth/login",
+      const { data } = await api.post(
+        "/auth/login",
         form,
       );
       dispatch(loginSuccess({ user: data.user, token: data.token }));

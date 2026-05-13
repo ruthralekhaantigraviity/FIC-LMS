@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Search, Filter, BookOpen, Clock, User, Star } from "lucide-react";
-import axios from "axios";
+import api from "../../utils/api";
 import { Link } from "react-router-dom";
 export default function CourseCatalog() {
   const [courses, setCourses] = useState([]);
@@ -12,7 +12,7 @@ export default function CourseCatalog() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/api/courses");
+        const { data } = await api.get("/courses");
         setCourses(data.data);
       } catch (err) {
         console.error("Error fetching courses:", err);

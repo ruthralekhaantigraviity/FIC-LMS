@@ -12,7 +12,7 @@ import {
   Share2,
   Smartphone
 } from "lucide-react";
-import axios from "axios";
+import api from "../../utils/api";
 export default function CourseDetail() {
   const { id } = useParams();
   const [course, setCourse] = useState(null);
@@ -21,8 +21,8 @@ export default function CourseDetail() {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const { data } = await axios.get(
-          `http://localhost:5000/api/courses/${id}`,
+        const { data } = await api.get(
+          `/courses/${id}`,
         );
         setCourse(data.data);
         if (data.data.subjects?.length > 0) {
