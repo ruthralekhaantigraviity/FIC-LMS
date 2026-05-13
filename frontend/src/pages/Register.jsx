@@ -43,10 +43,11 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-primary-950 to-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      {/* Background blobs (subtle) */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-accent-purple/20 rounded-full blur-3xl" />
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary-100 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-accent-purple/10 rounded-full blur-3xl" />
       </div>
 
       <motion.div
@@ -56,25 +57,25 @@ export default function Register() {
       >
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-accent-purple rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary-600 to-accent-purple rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
               <span className="text-white font-bold text-lg">F</span>
             </div>
-            <span className="text-white font-display font-bold text-2xl">
-              FIC
+            <span className="text-slate-900 font-display font-bold text-2xl tracking-tight">
+              FIC Learning
             </span>
           </div>
-          <h1 className="text-3xl font-display font-bold text-white">
+          <h1 className="text-3xl font-display font-bold text-slate-900">
             Create Account
           </h1>
-          <p className="text-slate-400 mt-1">
+          <p className="text-slate-500 mt-1">
             Start your learning journey today
           </p>
         </div>
 
-        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-8 shadow-glass">
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="bg-white border border-slate-200 rounded-[32px] p-8 lg:p-10 shadow-2xl shadow-slate-200/50">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">
+              <label className="block text-sm font-bold text-slate-700 mb-2">
                 Full Name
               </label>
               <input
@@ -84,12 +85,12 @@ export default function Register() {
                 onChange={handleChange}
                 required
                 placeholder="John Doe"
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
+                className="w-full px-5 py-3.5 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-primary-500 focus:bg-white outline-none transition text-slate-900 placeholder-slate-400 font-medium"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">
+              <label className="block text-sm font-bold text-slate-700 mb-2">
                 Email Address
               </label>
               <input
@@ -99,12 +100,12 @@ export default function Register() {
                 onChange={handleChange}
                 required
                 placeholder="you@example.com"
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
+                className="w-full px-5 py-3.5 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-primary-500 focus:bg-white outline-none transition text-slate-900 placeholder-slate-400 font-medium"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">
+              <label className="block text-sm font-bold text-slate-700 mb-2">
                 Password
               </label>
               <input
@@ -114,46 +115,40 @@ export default function Register() {
                 onChange={handleChange}
                 required
                 placeholder="••••••••"
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
+                className="w-full px-5 py-3.5 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-primary-500 focus:bg-white outline-none transition text-slate-900 placeholder-slate-400 font-medium"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">
+              <label className="block text-sm font-bold text-slate-700 mb-2">
                 I am a
               </label>
               <select
                 name="role"
                 value={form.role}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
+                className="w-full px-5 py-3.5 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-primary-500 focus:bg-white outline-none transition text-slate-900 font-medium"
               >
-                <option value="student" className="bg-slate-900">
-                  Student
-                </option>
-                <option value="trainer" className="bg-slate-900">
-                  Trainer
-                </option>
-                <option value="hr" className="bg-slate-900">
-                  HR Representative
-                </option>
+                <option value="student">Student</option>
+                <option value="trainer">Trainer</option>
+                <option value="hr">HR Representative</option>
               </select>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-purple text-white font-semibold rounded-xl hover:opacity-90 transition-all duration-300 hover:shadow-lg hover:shadow-primary-500/30 active:scale-95 disabled:opacity-50 mt-4"
+              className="w-full py-4 bg-gradient-to-r from-primary-600 to-accent-purple text-white font-bold rounded-2xl hover:opacity-95 transition-all duration-300 shadow-xl shadow-primary-500/20 active:scale-[0.98] disabled:opacity-50 mt-2"
             >
               {loading ? "Creating account..." : "Create Account"}
             </button>
           </form>
 
-          <p className="text-center text-slate-400 text-sm mt-6">
+          <p className="text-center text-slate-500 text-sm mt-8">
             Already have an account?{" "}
             <Link
               to="/login"
-              className="text-primary-400 hover:text-primary-300 font-medium"
+              className="text-primary-600 hover:text-primary-700 font-bold"
             >
               Sign in
             </Link>

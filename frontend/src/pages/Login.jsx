@@ -43,11 +43,11 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-primary-950 to-slate-900 flex items-center justify-center p-4">
-      {/* Background blobs */}
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      {/* Background blobs (subtle) */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-accent-purple/20 rounded-full blur-3xl" />
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-primary-100 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-accent-purple/10 rounded-full blur-3xl" />
       </div>
 
       <motion.div
@@ -59,26 +59,26 @@ export default function Login() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-accent-purple rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary-600 to-accent-purple rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
               <span className="text-white font-bold text-lg">F</span>
             </div>
-            <span className="text-white font-display font-bold text-2xl">
-              FIC
+            <span className="text-slate-900 font-display font-bold text-2xl tracking-tight">
+              FIC Learning
             </span>
           </div>
-          <h1 className="text-3xl font-display font-bold text-white">
+          <h1 className="text-3xl font-display font-bold text-slate-900">
             Welcome back
           </h1>
-          <p className="text-slate-400 mt-1">
-            Sign in to continue learning
+          <p className="text-slate-500 mt-1">
+            Sign in to continue your learning journey
           </p>
         </div>
 
         {/* Card */}
-        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-8 shadow-glass">
-          <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="bg-white border border-slate-200 rounded-[32px] p-8 lg:p-10 shadow-2xl shadow-slate-200/50">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">
+              <label className="block text-sm font-bold text-slate-700 mb-2">
                 Email Address
               </label>
               <input
@@ -88,12 +88,12 @@ export default function Login() {
                 onChange={handleChange}
                 required
                 placeholder="you@example.com"
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
+                className="w-full px-5 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-primary-500 focus:bg-white outline-none transition text-slate-900 placeholder-slate-400 font-medium"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">
+              <label className="block text-sm font-bold text-slate-700 mb-2">
                 Password
               </label>
               <div className="relative">
@@ -104,20 +104,20 @@ export default function Login() {
                   onChange={handleChange}
                   required
                   placeholder="••••••••"
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition pr-12"
+                  className="w-full px-5 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-primary-500 focus:bg-white outline-none transition text-slate-900 placeholder-slate-400 font-medium pr-14"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPass(!showPass)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition"
+                  className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary-600 transition p-2"
                 >
                   {showPass ? "🙈" : "👁️"}
                 </button>
               </div>
-              <div className="text-right mt-1">
+              <div className="text-right mt-2">
                 <Link
                   to="/forgot-password"
-                  className="text-sm text-primary-400 hover:text-primary-300"
+                  className="text-sm font-semibold text-primary-600 hover:text-primary-700"
                 >
                   Forgot password?
                 </Link>
@@ -127,17 +127,17 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-primary-600 to-accent-purple text-white font-semibold rounded-xl hover:opacity-90 transition-all duration-300 hover:shadow-lg hover:shadow-primary-500/30 active:scale-95 disabled:opacity-50"
+              className="w-full py-4 bg-gradient-to-r from-primary-600 to-accent-purple text-white font-bold rounded-2xl hover:opacity-95 transition-all duration-300 shadow-xl shadow-primary-500/20 active:scale-[0.98] disabled:opacity-50"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
-          <p className="text-center text-slate-400 text-sm mt-6">
+          <p className="text-center text-slate-500 text-sm mt-8">
             Don't have an account?{" "}
             <Link
               to="/register"
-              className="text-primary-400 hover:text-primary-300 font-medium"
+              className="text-primary-600 hover:text-primary-700 font-bold"
             >
               Register here
             </Link>
@@ -145,12 +145,14 @@ export default function Login() {
         </div>
 
         {/* Demo credentials */}
-        <div className="mt-4 p-4 bg-white/5 border border-white/10 rounded-xl text-center text-xs text-slate-400">
-          <p className="mb-1 font-medium text-slate-300">
+        <div className="mt-8 p-6 bg-slate-100/50 border border-slate-200 rounded-2xl text-center">
+          <p className="mb-2 font-bold text-slate-700 text-sm uppercase tracking-wider">
             Demo Credentials
           </p>
-          <p>Admin: admin@fic.com / admin123</p>
-          <p>Student: student@fic.com / student123</p>
+          <div className="space-y-1 text-sm text-slate-600 font-medium">
+            <p>Admin: <span className="text-slate-900">admin@fic.com</span> / admin123</p>
+            <p>Student: <span className="text-slate-900">student@fic.com</span> / student123</p>
+          </div>
         </div>
       </motion.div>
     </div>
