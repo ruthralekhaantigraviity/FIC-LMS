@@ -53,9 +53,29 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 // Database Connection
+const User = require('./models/User');
+
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fic_lms')
-  .then(() => {
+  .then(async () => {
     console.log('MongoDB Connected successfully');
+    
+    // Auto-create Admin if it doesn't exist
+    try {
+      const adminExists = await User.findOne({ role: 'admin' });
+      if (!adminExists) {
+        console.log('No admin found. Creating default admin...');
+        await User.create({
+          name: 'FIC Admin',
+          email: 'admin@fic.com',
+          password: 'admin123',
+          role: 'admin'
+        });
+        console.log('Default admin created: admin@fic.com / admin123');
+      }
+    } catch (err) {
+      console.error('Error creating default admin:', err);
+    }
+
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
