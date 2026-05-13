@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: #f0f9ff;
+  --color-primary-100: #e0f2fe;
+  --color-primary-200: #bae6fd;
+  --color-primary-300: #7dd3fc;
+  --color-primary-400: #38bdf8;
+  --color-primary-500: #0ea5e9;
+  --color-primary-600: #0284c7;
+  --color-primary-700: #0369a1;
+  --color-primary-800: #075985;
+  --color-primary-900: #0c4a6e;
+  --color-primary-950: #082f49;
+
+  --color-accent-purple: #8b5cf6;
+  --color-accent-pink: #ec4899;
+  --color-accent-cyan: #22d3ee;
+
+  --font-sans: "Inter", "system-ui", "sans-serif";
+  --font-display: "Outfit", "sans-serif";
+
+  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+  }
+
+  .dark body {
+    @apply bg-slate-950 text-slate-50;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-glass rounded-2xl;
+  }
+
+  .dark .glass-card {
+    @apply bg-slate-900/70 border-white/10;
+  }
+
+  .btn-primary {
+    @apply px-6 py-2.5 bg-primary-600 text-white rounded-xl font-medium transition-all duration-300 hover:bg-primary-700 hover:shadow-lg active:scale-95;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-slate-600 hover:bg-slate-100 hover:text-primary-600 font-medium;
+  }
+
+  .dark .sidebar-link {
+    @apply text-slate-400 hover:bg-slate-800 hover:text-primary-400;
+  }
+
+  .sidebar-link-active {
+    @apply bg-primary-50 text-primary-600 font-bold shadow-sm;
+  }
+
+  .dark .sidebar-link-active {
+    @apply bg-primary-950/30 text-primary-400 shadow-none;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
