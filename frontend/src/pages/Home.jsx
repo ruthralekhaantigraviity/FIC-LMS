@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import {
   ChevronRight,
   Play,
@@ -53,28 +55,24 @@ export default function Home() {
       color: "bg-green-100 text-green-600",
     },
   ];
-  const courses = [
-    {
-      title: "Full-Stack Web Development",
-      category: "Development",
-      price: "₹8,999",
-    },
-    {
-      title: "Data Science & AI Masterclass",
-      category: "Data Science",
-      price: "₹9,499",
-    },
-    {
-      title: "UI/UX Design Essentials",
-      category: "Design",
-      price: "₹7,999",
-    },
-    {
-      title: "Cloud Architecture (AWS/Azure)",
-      category: "Cloud",
-      price: "₹9,999",
-    },
-  ];
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const { data } = await axios.get("http://localhost:5000/api/courses");
+        // Show only published courses and limit to 4
+        const activeCourses = data.data.filter(c => c.isPublished).slice(0, 4);
+        setCourses(activeCourses);
+      } catch (err) {
+        console.error("Error fetching courses:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCourses();
+  }, []);
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
@@ -308,8 +306,11 @@ export default function Home() {
             </Link>{" "}
           </div>{" "}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {" "}
-            {courses.map((course, i) => (
+          {loading ? (
+            [1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-64 bg-slate-100 animate-pulse rounded-3xl border border-slate-200"></div>
+            ))
+          ) : courses.map((course, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
@@ -334,10 +335,10 @@ export default function Home() {
                     <div className="flex flex-col">
                       <span className="text-xs text-slate-400 font-medium uppercase tracking-tight">Course Fee</span>
                       <span className="text-2xl font-bold text-slate-900">
-                        {course.price}
+                        {course.price === 0 ? "Free" : `₹${course.price?.toLocaleString()}`}
                       </span>{" "}
                     </div>
-                    <Link to="/enroll" className="p-3 bg-slate-50 text-primary-600 rounded-xl group-hover:bg-primary-600 group-hover:text-white transition-all shadow-sm">
+                    <Link to={`/courses/${course._id}`} className="p-3 bg-slate-50 text-primary-600 rounded-xl group-hover:bg-primary-600 group-hover:text-white transition-all shadow-sm">
                       {" "}
                       <ArrowRight size={20} />{" "}
                     </Link>{" "}
