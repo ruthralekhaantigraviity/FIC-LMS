@@ -32,9 +32,9 @@ export default function Register() {
         "http://localhost:5000/api/auth/register",
         form,
       );
-      dispatch(loginSuccess({ user: data.user, token: data.token }));
-      toast.success(`Account created! Welcome, ${data.user.name}`);
-      navigate("/dashboard/overview");
+      // Registration successful, redirect to login
+      toast.success(`Account created! Please log in to continue.`);
+      navigate("/login");
     } catch (err) {
       const message = err.response?.data?.message || "Registration failed";
       dispatch(loginFailure(message));

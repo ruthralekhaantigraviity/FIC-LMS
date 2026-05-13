@@ -144,16 +144,7 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Demo credentials */}
-        <div className="mt-8 p-6 bg-slate-100/50 border border-slate-200 rounded-2xl text-center">
-          <p className="mb-2 font-bold text-slate-700 text-sm uppercase tracking-wider">
-            Demo Credentials
-          </p>
-          <div className="space-y-1 text-sm text-slate-600 font-medium">
-            <p>Admin: <span className="text-slate-900">admin@fic.com</span> / admin123</p>
-            <p>Student: <span className="text-slate-900">student@fic.com</span> / student123</p>
-          </div>
-        </div>
+        {/* Demo credentials removed */}
       </motion.div>
     </div>
   );

@@ -44,11 +44,9 @@ export default function PublicEnrollment() {
       // 1. Register User & Submit Admission in one go
       const response = await axios.post("http://localhost:5000/api/admissions/public-enroll", formData);
       
-      const { user, token } = response.data;
-      dispatch(loginSuccess({ user, token }));
-      
-      toast.success("Application submitted! Awaiting admin approval.");
-      navigate("/dashboard/overview");
+      // Enrollment & account creation successful, redirect to login
+      toast.success("Application submitted! Please log in to track your status.");
+      navigate("/login");
     } catch (err) {
       toast.error(err.response?.data?.message || "Enrollment failed. Please try again.");
     } finally {
