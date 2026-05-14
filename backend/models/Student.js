@@ -44,7 +44,7 @@ const studentSchema = new mongoose.Schema({
   }],
   admissionStatus: {
     type: String,
-    enum: ['pending', 'approved', 'rejected'],
+    enum: ['pending', 'completed', 'rejected'],
     default: 'pending'
   }
 }, { timestamps: true });

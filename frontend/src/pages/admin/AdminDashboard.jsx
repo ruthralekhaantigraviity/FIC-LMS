@@ -184,7 +184,7 @@ export default function AdminDashboard() {
               recentAdmissions.map((app) => (
                 <div key={app._id} className="flex gap-4">
                   <div className={`w-2 h-10 rounded-full ${
-                    app.status === 'approved' ? 'bg-green-400' : 
+                    app.status === 'completed' ? 'bg-green-400' : 
                     app.status === 'rejected' ? 'bg-red-400' : 
                     'bg-orange-400'
                   }`}></div>

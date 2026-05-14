@@ -41,7 +41,7 @@ exports.updateAdmissionStatus = async (req, res) => {
       { new: true }
     );
 
-    if (status === 'approved') {
+    if (status === 'completed') {
       // Create student profile if it doesn't exist
       let student = await Student.findOne({ user: admission.student });
       
@@ -82,7 +82,7 @@ exports.getMyEnrolledCourses = async (req, res) => {
   try {
     const admissions = await Admission.find({ 
       student: req.user.id, 
-      status: 'approved' 
+      status: 'completed' 
     }).populate({
       path: 'course',
       populate: { path: 'instructor', select: 'name' }
@@ -124,7 +124,7 @@ exports.publicEnroll = async (req, res) => {
     const user = await User.create({
       name: fullName,
       email,
-      password,
+      password: password || '123456', // Default password since it's removed from UI
       role: 'student'
     });
 

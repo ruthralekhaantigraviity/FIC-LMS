@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
-  User, Mail, Lock, Phone, Calendar, MapPin, 
+  User, Mail, Phone, Calendar, MapPin, 
   GraduationCap, Briefcase, CheckCircle, ArrowRight,
   ShieldCheck, Zap, Award, Loader2
 } from "lucide-react";
@@ -21,7 +21,6 @@ export default function PublicEnrollment() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    password: "",
     phoneNumber: "",
     dateOfBirth: "",
     address: "",
@@ -37,16 +36,17 @@ export default function PublicEnrollment() {
       .finally(() => setFetchingCourses(false));
   }, []);
 
+  const [isSuccess, setIsSuccess] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       // 1. Register User & Submit Admission in one go
-      const response = await api.post("/admissions/public-enroll", formData);
+      await api.post("/admissions/public-enroll", formData);
       
-      // Enrollment & account creation successful, redirect to login
-      toast.success("Application submitted! Please log in to track your status.");
-      navigate("/login");
+      // Enrollment & account creation successful
+      setIsSuccess(true);
+      toast.success("Application submitted successfully!");
     } catch (err) {
       toast.error(err.response?.data?.message || "Enrollment failed. Please try again.");
     } finally {
@@ -123,162 +123,184 @@ export default function PublicEnrollment() {
             <p className="text-slate-500">Fill out the form below to secure your spot in our upcoming batch.</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 lg:p-10 rounded-[32px] border border-slate-200 shadow-xl shadow-slate-200/50">
-            
-            {/* Step 1: Course Selection */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-primary-600 mb-2">
-                <div className="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center text-[10px] font-bold">1</div>
-                <h3 className="text-sm font-bold uppercase tracking-wider">Choose Your Domain</h3>
+          {isSuccess ? (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white p-12 rounded-[40px] border border-slate-200 shadow-xl shadow-slate-200/50 text-center space-y-8"
+            >
+              <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto text-green-600 mb-6">
+                <CheckCircle size={48} />
               </div>
+              <div className="space-y-4">
+                <h2 className="text-3xl font-bold text-slate-900">Application Submitted!</h2>
+                <p className="text-slate-500 text-lg leading-relaxed max-w-md mx-auto">
+                  Thank you for your interest in FIC Learning. Your application has been received and is currently under review by our admissions team.
+                </p>
+              </div>
+              <div className="pt-6 flex flex-col gap-4">
+                <button 
+                  onClick={() => navigate('/')}
+                  className="w-full py-4 bg-primary-600 text-white font-bold rounded-2xl hover:bg-primary-700 transition shadow-lg shadow-primary-600/20"
+                >
+                  Return to Home
+                </button>
+                <button 
+                  onClick={() => setIsSuccess(false)}
+                  className="w-full py-4 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition"
+                >
+                  Submit Another Application
+                </button>
+              </div>
+            </motion.div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 lg:p-10 rounded-[32px] border border-slate-200 shadow-xl shadow-slate-200/50">
               
-              {fetchingCourses ? (
-                <div className="h-14 bg-slate-50 animate-pulse rounded-2xl" />
-              ) : (
+              {/* Step 1: Course Selection */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-primary-600 mb-2">
+                  <div className="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center text-[10px] font-bold">1</div>
+                  <h3 className="text-sm font-bold uppercase tracking-wider">Choose Your Domain</h3>
+                </div>
+                
+                {fetchingCourses ? (
+                  <div className="h-14 bg-slate-50 animate-pulse rounded-2xl" />
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="col-span-full">
+                      <select
+                        required
+                        value={formData.courseId}
+                        onChange={(e) => setFormData({ ...formData, courseId: e.target.value })}
+                        className="w-full px-5 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-primary-500 focus:bg-white outline-none transition font-medium text-slate-700"
+                      >
+                        <option value="">Select a course to enroll...</option>
+                        {courses.map(c => (
+                          <option key={c._id} value={c._id}>{c.title} ({c.category})</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Step 2: Personal Details */}
+              <div className="space-y-4 pt-4 border-t border-slate-100">
+                <div className="flex items-center gap-2 text-primary-600 mb-2">
+                  <div className="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center text-[10px] font-bold">2</div>
+                  <h3 className="text-sm font-bold uppercase tracking-wider">Personal Information</h3>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="col-span-full">
-                    <select
+                  <div className="relative">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <input
+                      type="text"
                       required
-                      value={formData.courseId}
-                      onChange={(e) => setFormData({ ...formData, courseId: e.target.value })}
-                      className="w-full px-5 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-primary-500 focus:bg-white outline-none transition font-medium text-slate-700"
-                    >
-                      <option value="">Select a course to enroll...</option>
-                      {courses.map(c => (
-                        <option key={c._id} value={c._id}>{c.title} ({c.category})</option>
-                      ))}
-                    </select>
+                      placeholder="Full Name"
+                      value={formData.fullName}
+                      onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                      className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none"
+                    />
+                  </div>
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <input
+                      type="email"
+                      required
+                      placeholder="Email Address"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none"
+                    />
+                  </div>
+                  
+                  <div className="relative">
+                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <input
+                      type="tel"
+                      required
+                      placeholder="Phone Number"
+                      value={formData.phoneNumber}
+                      onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                      className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none"
+                    />
+                  </div>
+                  <div className="relative">
+                    <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <input
+                      type="date"
+                      required
+                      value={formData.dateOfBirth}
+                      onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                      className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none"
+                    />
+                  </div>
+                  <div className="relative">
+                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <input
+                      type="text"
+                      required
+                      placeholder="Residential Address"
+                      value={formData.address}
+                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none"
+                    />
                   </div>
                 </div>
-              )}
-            </div>
-
-            {/* Step 2: Personal Details */}
-            <div className="space-y-4 pt-4 border-t border-slate-100">
-              <div className="flex items-center gap-2 text-primary-600 mb-2">
-                <div className="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center text-[10px] font-bold">2</div>
-                <h3 className="text-sm font-bold uppercase tracking-wider">Personal Information</h3>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="relative">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                  <input
-                    type="text"
-                    required
-                    placeholder="Full Name"
-                    value={formData.fullName}
-                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                    className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none"
-                  />
+              {/* Step 3: Academic Details */}
+              <div className="space-y-4 pt-4 border-t border-slate-100">
+                <div className="flex items-center gap-2 text-primary-600 mb-2">
+                  <div className="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center text-[10px] font-bold">3</div>
+                  <h3 className="text-sm font-bold uppercase tracking-wider">Academic & Professional</h3>
                 </div>
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                  <input
-                    type="email"
-                    required
-                    placeholder="Email Address"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none"
-                  />
-                </div>
-                <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                  <input
-                    type="password"
-                    required
-                    placeholder="Create Password"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none"
-                  />
-                </div>
-                <div className="relative">
-                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                  <input
-                    type="tel"
-                    required
-                    placeholder="Phone Number"
-                    value={formData.phoneNumber}
-                    onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                    className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none"
-                  />
-                </div>
-                <div className="relative">
-                  <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                  <input
-                    type="date"
-                    required
-                    value={formData.dateOfBirth}
-                    onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                    className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none"
-                  />
-                </div>
-                <div className="relative">
-                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                  <input
-                    type="text"
-                    required
-                    placeholder="Residential Address"
-                    value={formData.address}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none"
-                  />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="relative">
+                    <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <input
+                      type="text"
+                      required
+                      placeholder="Previous Education"
+                      value={formData.previousEducation}
+                      onChange={(e) => setFormData({ ...formData, previousEducation: e.target.value })}
+                      className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none"
+                    />
+                  </div>
+                  <div className="relative">
+                    <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <input
+                      type="text"
+                      required
+                      placeholder="Target Specialization (e.g. AI, Web)"
+                      value={formData.targetDomain}
+                      onChange={(e) => setFormData({ ...formData, targetDomain: e.target.value })}
+                      className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Step 3: Academic Details */}
-            <div className="space-y-4 pt-4 border-t border-slate-100">
-              <div className="flex items-center gap-2 text-primary-600 mb-2">
-                <div className="w-6 h-6 rounded-full bg-primary-100 flex items-center justify-center text-[10px] font-bold">3</div>
-                <h3 className="text-sm font-bold uppercase tracking-wider">Academic & Professional</h3>
+              <div className="pt-6">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-5 bg-primary-600 text-white font-bold rounded-[20px] hover:bg-primary-700 transition flex items-center justify-center gap-3 shadow-xl shadow-primary-600/20 active:scale-95 disabled:opacity-50 text-lg"
+                >
+                  {loading ? (
+                    <Loader2 className="animate-spin" />
+                  ) : (
+                    <>Submit Enrollment Application <ArrowRight size={22} /></>
+                  )}
+                </button>
+                <p className="text-center text-slate-400 text-sm mt-6">
+                  By submitting, you agree to our Terms of Service and Privacy Policy.
+                </p>
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="relative">
-                  <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                  <input
-                    type="text"
-                    required
-                    placeholder="Previous Education"
-                    value={formData.previousEducation}
-                    onChange={(e) => setFormData({ ...formData, previousEducation: e.target.value })}
-                    className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none"
-                  />
-                </div>
-                <div className="relative">
-                  <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                  <input
-                    type="text"
-                    required
-                    placeholder="Target Specialization (e.g. AI, Web)"
-                    value={formData.targetDomain}
-                    onChange={(e) => setFormData({ ...formData, targetDomain: e.target.value })}
-                    className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-6">
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-5 bg-primary-600 text-white font-bold rounded-[20px] hover:bg-primary-700 transition flex items-center justify-center gap-3 shadow-xl shadow-primary-600/20 active:scale-95 disabled:opacity-50 text-lg"
-              >
-                {loading ? (
-                  <Loader2 className="animate-spin" />
-                ) : (
-                  <>Submit Enrollment Application <ArrowRight size={22} /></>
-                )}
-              </button>
-              <p className="text-center text-slate-400 text-sm mt-6">
-                By submitting, you agree to our Terms of Service and Privacy Policy.
-              </p>
-            </div>
-          </form>
+            </form>
+          )}
         </motion.div>
       </div>
     </div>

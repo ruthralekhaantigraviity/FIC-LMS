@@ -12,7 +12,9 @@ import {
   Filter,
   XCircle,
   Key,
-  Lock
+  Lock,
+  Edit2,
+  Trash2
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../utils/api';
@@ -23,6 +25,7 @@ export default function UserManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState('All');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -51,16 +54,49 @@ export default function UserManagement() {
     }
   };
 
-  const handleCreateUser = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/auth/register', formData);
+      if (editingUser) {
+        await api.patch(`/auth/users/${editingUser._id}`, {
+          name: formData.name,
+          email: formData.email,
+          role: formData.role
+        });
+        toast.success('User updated successfully!');
+      } else {
+        await api.post('/auth/register', formData);
+        toast.success('User created successfully!');
+      }
       setIsModalOpen(false);
+      setEditingUser(null);
       setFormData({ name: '', email: '', password: '', role: 'trainer' });
       fetchUsers();
-      toast.success('User created successfully!');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Error creating user');
+      toast.error(err.response?.data?.message || 'Error saving user');
+    }
+  };
+
+  const handleEdit = (user) => {
+    setEditingUser(user);
+    setFormData({
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      password: '' // Don't show password on edit
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+      try {
+        await api.delete(`/auth/users/${userId}`);
+        fetchUsers();
+        toast.success('User deleted successfully');
+      } catch (err) {
+        toast.error('Error deleting user');
+      }
     }
   };
 
@@ -94,7 +130,11 @@ export default function UserManagement() {
           <p className="text-slate-500">Create credentials and manage platform access for HR and Trainers.</p>
         </div>
         <button 
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setEditingUser(null);
+            setFormData({ name: '', email: '', password: '', role: 'trainer' });
+            setIsModalOpen(true);
+          }}
           className="flex items-center gap-2 px-6 py-3 bg-primary-600 text-white font-bold rounded-2xl hover:bg-primary-700 transition shadow-lg shadow-primary-600/20"
         >
           <UserPlus size={20} />
@@ -104,7 +144,7 @@ export default function UserManagement() {
 
       <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
         <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="relative flex-1 max-w-md">
+          <div className="relative flex-1 max-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input 
               type="text" 
@@ -201,9 +241,22 @@ export default function UserManagement() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button className="p-2 text-slate-400 hover:text-primary-600 transition">
-                        <MoreVertical size={18} />
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        <button 
+                          onClick={() => handleEdit(user)}
+                          className="p-2 text-slate-400 hover:text-primary-600 transition"
+                          title="Edit User"
+                        >
+                          <Edit2 size={18} />
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteUser(user._id)}
+                          className="p-2 text-slate-400 hover:text-red-500 transition"
+                          title="Delete User"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -230,13 +283,15 @@ export default function UserManagement() {
               className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden"
             >
               <div className="p-8 border-b border-slate-100 flex items-center justify-between">
-                <h3 className="text-xl font-bold">Create Staff Account</h3>
+                <h3 className="text-xl font-bold">
+                  {editingUser ? 'Edit Staff Account' : 'Create Staff Account'}
+                </h3>
                 <button onClick={() => setIsModalOpen(false)} className="p-2 text-slate-400 hover:text-slate-600 transition">
                   <XCircle size={24} />
                 </button>
               </div>
 
-              <form onSubmit={handleCreateUser} className="p-8 space-y-5">
+              <form onSubmit={handleSubmit} className="p-8 space-y-5">
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Full Name</label>
                   <div className="relative">
@@ -267,20 +322,22 @@ export default function UserManagement() {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Assign Password</label>
-                  <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    <input 
-                      type="password" 
-                      required
-                      value={formData.password}
-                      onChange={(e) => setFormData({...formData, password: e.target.value})}
-                      placeholder="••••••••"
-                      className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
-                    />
+                {!editingUser && (
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">Assign Password</label>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                      <input 
+                        type="password" 
+                        required
+                        value={formData.password}
+                        onChange={(e) => setFormData({...formData, password: e.target.value})}
+                        placeholder="••••••••"
+                        className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Role</label>
@@ -294,6 +351,7 @@ export default function UserManagement() {
                       <option value="trainer">Trainer</option>
                       <option value="hr">HR Manager</option>
                       <option value="admin">Administrator</option>
+                      <option value="student">Student</option>
                     </select>
                   </div>
                 </div>
@@ -303,7 +361,7 @@ export default function UserManagement() {
                     type="submit"
                     className="flex-1 py-4 bg-primary-600 text-white font-bold rounded-2xl hover:bg-primary-700 transition shadow-lg shadow-primary-600/20"
                   >
-                    Generate Credentials
+                    {editingUser ? 'Save Changes' : 'Generate Credentials'}
                   </button>
                   <button 
                     type="button"

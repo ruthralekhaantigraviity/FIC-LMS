@@ -51,7 +51,7 @@ export default function AdminCourseManagement() {
 
   const fetchCourses = async () => {
     try {
-      const { data } = await api.get("/courses");
+      const { data } = await api.get("/courses?all=true");
       setCourses(data.data);
     } catch (err) {
       console.error("Error fetching courses:", err);

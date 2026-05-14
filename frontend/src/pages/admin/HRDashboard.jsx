@@ -44,14 +44,14 @@ export default function HRDashboard() {
       setSelectedAdmission(null);
       setReviewNotes("");
       fetchAdmissions();
-      toast.success(`Application ${status} successfully!`);
+      toast.success(`Application ${status === 'completed' ? 'Completed' : status} successfully!`);
     } catch (err) {
       toast.error("Error updating status");
     }
   };
   const getStatusColor = (status) => {
     switch (status) {
-      case "approved":
+      case "completed":
         return "bg-green-100 text-green-600 border-green-200";
       case "rejected":
         return "bg-red-100 text-red-600 border-red-200";
@@ -328,12 +328,12 @@ export default function HRDashboard() {
                 {" "}
                 <button
                   onClick={() =>
-                    handleUpdateStatus(selectedAdmission._id, "approved")
+                    handleUpdateStatus(selectedAdmission._id, "completed")
                   }
                   className="flex-1 py-4 bg-green-600 text-white font-bold rounded-2xl hover:bg-green-700 transition shadow-lg shadow-green-600/20 flex items-center justify-center gap-2"
                 >
                   {" "}
-                  <CheckCircle size={20} /> Approve Application{" "}
+                  <CheckCircle size={20} /> Mark as Completed{" "}
                 </button>{" "}
                 <button
                   onClick={() =>

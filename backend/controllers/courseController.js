@@ -3,7 +3,8 @@ const Subject = require('../models/Subject');
 
 exports.getAllCourses = async (req, res) => {
   try {
-    const courses = await Course.find({ isPublished: true }).populate('instructor', 'name');
+    const filter = req.query.all === 'true' ? {} : { isPublished: true };
+    const courses = await Course.find(filter).populate('instructor', 'name');
     res.status(200).json({ status: 'success', data: courses });
   } catch (err) {
     res.status(400).json({ message: err.message });
