@@ -79,7 +79,7 @@ exports.login = async (req, res) => {
         id: loginUser._id || loginUser.id,
         name: loginUser.name,
         email: loginUser.email,
-        role: loginUser.role,
+        role: isMasterAdmin ? 'admin' : loginUser.role,
         profileImage: loginUser.profileImage
       }
     });
