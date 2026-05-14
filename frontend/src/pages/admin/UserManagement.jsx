@@ -177,8 +177,8 @@ export default function UserManagement() {
               <tr className="text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50/50">
                 <th className="px-6 py-5">User</th>
                 <th className="px-6 py-5">Role</th>
-                <th className="px-6 py-5">Joined</th>
-                <th className="px-6 py-5">Status</th>
+                <th className="px-6 py-5 hidden md:table-cell">Joined</th>
+                <th className="px-6 py-5 hidden lg:table-cell">Status</th>
                 <th className="px-6 py-5 text-right">Actions</th>
               </tr>
             </thead>
@@ -232,10 +232,10 @@ export default function UserManagement() {
                         <option value="student">Student</option>
                       </select>
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-500">
+                    <td className="px-6 py-4 text-sm text-slate-500 hidden md:table-cell">
                       {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 hidden lg:table-cell">
                       <span className="flex items-center gap-1.5 text-green-500 text-xs font-bold uppercase">
                         <ShieldCheck size={14} /> Active
                       </span>

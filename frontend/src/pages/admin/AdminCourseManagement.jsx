@@ -174,10 +174,10 @@ export default function AdminCourseManagement() {
             <thead>
               <tr className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                 <th className="px-6 py-4">Course</th>
-                <th className="px-6 py-4">Category</th>
+                <th className="px-6 py-4 hidden md:table-cell">Category</th>
                 <th className="px-6 py-4">Price</th>
                 <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Created</th>
+                <th className="px-6 py-4 hidden lg:table-cell">Created</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
@@ -216,7 +216,7 @@ export default function AdminCourseManagement() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 hidden md:table-cell">
                       <span className="px-2 py-1 bg-slate-100 text-slate-600 rounded-md text-[10px] font-bold uppercase">
                         {course.category}
                       </span>
@@ -228,20 +228,20 @@ export default function AdminCourseManagement() {
                       {course.isPublished ? (
                         <div className="flex items-center gap-1.5 text-green-500">
                           <CheckCircle size={14} />
-                          <span className="text-xs font-bold uppercase">
+                          <span className="text-xs font-bold uppercase hidden sm:inline">
                             Published
                           </span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-1.5 text-orange-500">
                           <XCircle size={14} />
-                          <span className="text-xs font-bold uppercase">
+                          <span className="text-xs font-bold uppercase hidden sm:inline">
                             Draft
                           </span>
                         </div>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-500">
+                    <td className="px-6 py-4 text-sm text-slate-500 hidden lg:table-cell">
                       {new Date(course.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-right">

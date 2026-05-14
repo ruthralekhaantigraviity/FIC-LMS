@@ -83,6 +83,11 @@ export default function DashboardLayout() {
               <Link
                 key={item.path}
                 to={item.path}
+                onClick={() => {
+                  if (window.innerWidth < 1024) {
+                    setSidebarOpen(false);
+                  }
+                }}
                 className={`sidebar-link ${location.pathname === item.path ? "sidebar-link-active" : ""}`}
               >
                 <item.icon size={20} />

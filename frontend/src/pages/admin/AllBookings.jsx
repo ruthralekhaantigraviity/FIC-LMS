@@ -110,9 +110,9 @@ export default function AllBookings() {
             <thead>
               <tr className="text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50/50">
                 <th className="px-6 py-5">Student</th>
-                <th className="px-6 py-5">Course</th>
-                <th className="px-6 py-5">Domain</th>
-                <th className="px-6 py-5">Date</th>
+                <th className="px-6 py-5 hidden sm:table-cell">Course</th>
+                <th className="px-6 py-5 hidden md:table-cell">Domain</th>
+                <th className="px-6 py-5 hidden lg:table-cell">Date</th>
                 <th className="px-6 py-5">Status</th>
                 <th className="px-6 py-5 text-right">Actions</th>
               </tr>
@@ -140,22 +140,22 @@ export default function AllBookings() {
                         </div>
                         <div>
                           <p className="text-sm font-bold text-slate-900">{app.fullName || app.student?.name}</p>
-                          <p className="text-xs text-slate-500">{app.email || app.student?.email}</p>
+                          <p className="text-xs text-slate-500 hidden sm:block">{app.email || app.student?.email}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 hidden sm:table-cell">
                       <div className="flex items-center gap-2">
                         <BookOpen size={14} className="text-slate-400" />
                         <span className="text-sm font-medium">{app.course?.title}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 hidden md:table-cell">
                       <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded uppercase">
                         {app.targetDomain || 'General'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-500">
+                    <td className="px-6 py-4 text-sm text-slate-500 hidden lg:table-cell">
                       {new Date(app.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4">
