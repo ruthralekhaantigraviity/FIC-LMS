@@ -76,11 +76,11 @@ exports.login = async (req, res) => {
       status: 'success',
       token,
       user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        profileImage: user.profileImage
+        id: loginUser._id || loginUser.id,
+        name: loginUser.name,
+        email: loginUser.email,
+        role: loginUser.role,
+        profileImage: loginUser.profileImage
       }
     });
   } catch (err) {
