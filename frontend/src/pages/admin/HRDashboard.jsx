@@ -78,7 +78,12 @@ export default function HRDashboard() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-orange-50 border border-orange-200 rounded-2xl p-5 flex items-center justify-between"
+          className="bg-orange-50 border border-orange-200 rounded-2xl p-5 flex items-center justify-between cursor-pointer hover:bg-orange-100 transition group"
+          onClick={() => {
+            // Scroll to the table or filter for pending
+            const table = document.querySelector('table');
+            if (table) table.scrollIntoView({ behavior: 'smooth' });
+          }}
         >
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center text-white relative">
@@ -92,6 +97,7 @@ export default function HRDashboard() {
               <p className="text-sm text-slate-500">Review and approve student applications below.</p>
             </div>
           </div>
+          <ArrowRight className="text-slate-500 group-hover:text-orange-600 transition" size={20} />
         </motion.div>
       )}
       <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm dark:shadow-none">
