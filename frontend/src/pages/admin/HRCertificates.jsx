@@ -158,70 +158,70 @@ const HRCertificates = () => {
 
       <AnimatePresence>
         {previewCert && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/90 backdrop-blur-md p-4 md:p-10">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/95 backdrop-blur-xl p-4 md:p-8">
              <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="relative w-full h-full bg-white rounded-[40px] overflow-hidden shadow-2xl flex flex-col items-center justify-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="relative w-full max-w-6xl max-h-full bg-white rounded-[32px] shadow-2xl overflow-y-auto"
             >
-              <button 
-                onClick={() => setPreviewCert(null)} 
-                className="absolute top-8 right-8 p-3 bg-slate-100 hover:bg-red-500 hover:text-white rounded-2xl transition-all z-10"
-              >
-                <X size={24} />
-              </button>
-              
-              <div className="w-full max-w-5xl aspect-[1.414/1] bg-white border-[24px] border-slate-50 relative p-16 shadow-inner flex flex-col justify-between">
-                 {/* Design Elements */}
-                 <div className="absolute top-0 left-0 w-full h-6 bg-sky-600" />
-                 <div className="absolute bottom-0 left-0 w-full h-6 bg-sky-600" />
-                 <div className="absolute top-0 left-0 w-6 h-full bg-sky-600/10" />
-                 <div className="absolute top-0 right-0 w-6 h-full bg-sky-600/10" />
+              <div className="p-1 md:p-10 flex flex-col items-center">
+                <button 
+                  onClick={() => setPreviewCert(null)} 
+                  className="absolute top-6 right-6 p-2 bg-slate-100 hover:bg-red-500 hover:text-white rounded-xl transition-all z-20"
+                >
+                  <X size={20} />
+                </button>
+                
+                <div className="w-full bg-white border-[12px] md:border-[24px] border-slate-50 relative p-8 md:p-16 shadow-inner flex flex-col justify-between min-h-[600px]">
+                   {/* Design Elements */}
+                   <div className="absolute top-0 left-0 w-full h-4 bg-sky-600" />
+                   <div className="absolute bottom-0 left-0 w-full h-4 bg-sky-600" />
+                   
+                   <div className="text-center py-10">
+                      <img src="/logo.jpg" alt="FIC Logo" className="h-16 md:h-20 mx-auto mb-6" />
+                      <h4 className="text-[10px] md:text-xs font-bold tracking-[0.4em] text-slate-400 uppercase mb-6 md:mb-10">Certificate of Excellence</h4>
+                      
+                      <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 md:mb-8 font-display">CERTIFICATE</h2>
+                      <p className="text-lg md:text-xl text-slate-500 mb-6 md:mb-8 italic">This is to proudly certify that</p>
+                      
+                      <h1 className="text-5xl md:text-7xl font-black text-sky-600 mb-8 md:mb-12 tracking-tight">{previewCert.studentName.toUpperCase()}</h1>
+                      
+                      <p className="text-sm md:text-lg text-slate-600 mb-2">has successfully completed the professional training program in</p>
+                      <h3 className="text-2xl md:text-4xl font-bold text-slate-900 mb-10 md:mb-16">{previewCert.course}</h3>
+                   </div>
+                   
+                   <div className="flex flex-col md:flex-row justify-between items-center md:items-end px-4 md:px-12 gap-8 md:gap-0 mt-auto">
+                      <div className="text-center">
+                         <div className="w-40 md:w-56 h-px bg-slate-300 mb-4" />
+                         <p className="text-[10px] md:text-xs font-bold text-slate-900 uppercase">Program Coordinator</p>
+                      </div>
+                      <div className="relative">
+                         <div className="w-20 h-20 md:w-28 md:h-28 bg-amber-400/10 rounded-full flex items-center justify-center border-4 border-amber-400/20">
+                            <Award size={40} className="text-amber-500" />
+                         </div>
+                      </div>
+                      <div className="text-center">
+                         <div className="w-40 md:w-56 h-px bg-slate-300 mb-4" />
+                         <p className="text-[10px] md:text-xs font-bold text-slate-900 uppercase">Director, Forge India</p>
+                      </div>
+                   </div>
+                </div>
 
-                 <div className="text-center">
-                    <img src="/logo.jpg" alt="FIC Logo" className="h-20 mx-auto mb-6" />
-                    <h4 className="text-sm font-bold tracking-[0.4em] text-slate-400 uppercase mb-10">Certificate of Excellence</h4>
-                    
-                    <h2 className="text-6xl font-black text-slate-900 mb-8 font-display">CERTIFICATE</h2>
-                    <p className="text-2xl text-slate-500 mb-10 italic">This is to proudly certify that</p>
-                    
-                    <h1 className="text-7xl font-black text-sky-600 mb-12 tracking-tight">{previewCert.studentName.toUpperCase()}</h1>
-                    
-                    <p className="text-xl text-slate-600 mb-4">has successfully completed the professional training program in</p>
-                    <h3 className="text-4xl font-bold text-slate-900 mb-12">{previewCert.course}</h3>
-                 </div>
-                 
-                 <div className="flex justify-between items-end px-12">
-                    <div className="text-center">
-                       <div className="w-56 h-px bg-slate-300 mb-4" />
-                       <p className="text-sm font-bold text-slate-900 uppercase">Program Coordinator</p>
-                    </div>
-                    <div className="relative">
-                       <div className="w-32 h-32 bg-amber-400/10 rounded-full flex items-center justify-center border-4 border-amber-400/20 rotate-12">
-                          <Award size={64} className="text-amber-500" />
-                       </div>
-                    </div>
-                    <div className="text-center">
-                       <div className="w-56 h-px bg-slate-300 mb-4" />
-                       <p className="text-sm font-bold text-slate-900 uppercase">Director, Forge India</p>
-                    </div>
-                 </div>
-              </div>
-
-              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-4">
-                 <button 
-                   onClick={() => handleDownload(previewCert)}
-                   className="flex items-center gap-2 px-8 py-4 bg-sky-600 text-white rounded-2xl font-bold hover:bg-sky-700 transition shadow-xl shadow-sky-600/20"
-                 >
-                   <Download size={20} /> Download PDF
-                 </button>
-                 <button 
-                   onClick={() => setPreviewCert(null)}
-                   className="px-8 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition"
-                 >
-                   Close Preview
-                 </button>
+                <div className="w-full flex justify-center gap-4 py-8 bg-slate-50 border-t border-slate-100 mt-6 rounded-b-[32px]">
+                   <button 
+                     onClick={() => handleDownload(previewCert)}
+                     className="flex items-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-xl font-bold hover:bg-sky-700 transition shadow-lg shadow-sky-600/20 text-sm"
+                   >
+                     <Download size={18} /> Download PDF
+                   </button>
+                   <button 
+                     onClick={() => setPreviewCert(null)}
+                     className="px-6 py-3 bg-white text-slate-600 rounded-xl font-bold hover:bg-slate-100 transition border border-slate-200 text-sm"
+                   >
+                     Close Preview
+                   </button>
+                </div>
               </div>
             </motion.div>
           </div>
