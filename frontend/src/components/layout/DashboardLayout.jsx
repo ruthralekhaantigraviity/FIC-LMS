@@ -79,6 +79,7 @@ export default function DashboardLayout() {
 
   const isActive = (path) => location.pathname === path;
 
+  const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([
     { id: 1, title: "New Enrollment", message: "Rahul Sharma just enrolled in React Fullstack", time: "2 mins ago", unread: true },
     { id: 2, title: "Payment Received", message: "Sneha Patil paid ₹12,000 for UI/UX course", time: "15 mins ago", unread: true },
