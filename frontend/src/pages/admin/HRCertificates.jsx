@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Search, Award, Eye, Download, CheckCircle, Clock, FileText, Filter } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Search, Award, Eye, Download, CheckCircle, Clock, FileText, Filter, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import jsPDF from 'jspdf';
 
 const HRCertificates = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [previewCert, setPreviewCert] = useState(null);
   
   const [certificates, setCertificates] = useState([
     { id: 1, studentName: "Rahul Sharma", course: "MERN Stack", completionDate: "2024-05-10", status: "Issued" },
@@ -15,6 +17,55 @@ const HRCertificates = () => {
   const handleIssue = (id) => {
     setCertificates(certificates.map(c => c.id === id ? { ...c, status: 'Issued' } : c));
     toast.success('Certificate issued successfully!');
+  };
+
+  const handleDownload = (cert) => {
+    const doc = new jsPDF({
+      orientation: 'landscape',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    // Branded Background
+    doc.setFillColor(26, 159, 212); // Brand Blue
+    doc.rect(0, 0, 297, 20, 'F');
+    
+    // Certificate Title
+    doc.setFontSize(40);
+    doc.setTextColor(26, 159, 212);
+    doc.text("CERTIFICATE OF COMPLETION", 148, 60, { align: "center" });
+
+    doc.setFontSize(20);
+    doc.setTextColor(100);
+    doc.text("This is to certify that", 148, 80, { align: "center" });
+
+    doc.setFontSize(32);
+    doc.setTextColor(0);
+    doc.text(cert.studentName.toUpperCase(), 148, 100, { align: "center" });
+
+    doc.setFontSize(20);
+    doc.setTextColor(100);
+    doc.text("has successfully completed the course", 148, 120, { align: "center" });
+
+    doc.setFontSize(28);
+    doc.setTextColor(26, 159, 212);
+    doc.text(cert.course, 148, 140, { align: "center" });
+
+    doc.setFontSize(16);
+    doc.setTextColor(100);
+    doc.text(`Issued on: ${cert.completionDate}`, 148, 160, { align: "center" });
+
+    // Footer
+    doc.setDrawColor(200);
+    doc.line(40, 180, 100, 180);
+    doc.line(197, 180, 257, 180);
+    
+    doc.setFontSize(12);
+    doc.text("Course Instructor", 70, 190, { align: "center" });
+    doc.text("Director, Forge India", 227, 190, { align: "center" });
+
+    doc.save(`Certificate_${cert.studentName.replace(' ', '_')}.pdf`);
+    toast.success('Downloading certificate...');
   };
 
   const filteredCerts = certificates.filter(c => 
@@ -94,8 +145,8 @@ const HRCertificates = () => {
                            🎓 Issue Certificate
                          </button>
                        )}
-                       <button className="p-2 text-slate-400 hover:text-sky-600 transition" title="Preview"><Eye size={18} /></button>
-                       <button className="p-2 text-slate-400 hover:text-sky-600 transition" title="Download PDF"><Download size={18} /></button>
+                       <button onClick={() => setPreviewCert(cert)} className="p-2 text-slate-400 hover:text-sky-600 transition" title="Preview"><Eye size={18} /></button>
+                       <button onClick={() => handleDownload(cert)} className="p-2 text-slate-400 hover:text-sky-600 transition" title="Download PDF"><Download size={18} /></button>
                     </div>
                   </td>
                 </tr>
@@ -104,6 +155,61 @@ const HRCertificates = () => {
           </table>
         </div>
       </div>
+
+      <AnimatePresence>
+        {previewCert && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+             <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setPreviewCert(null)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-4xl bg-white rounded-[32px] overflow-hidden shadow-2xl"
+            >
+              <button onClick={() => setPreviewCert(null)} className="absolute top-6 right-6 p-2 bg-slate-100 hover:bg-slate-200 rounded-full transition-colors z-10"><X size={20} /></button>
+              
+              <div className="p-12 text-center relative border-[16px] border-slate-50">
+                 <div className="absolute top-0 left-0 w-full h-4 bg-sky-600" />
+                 
+                 <div className="mb-10">
+                    <img src="/logo.jpg" alt="FIC Logo" className="h-16 mx-auto mb-4" />
+                    <h4 className="text-sm font-bold tracking-[0.2em] text-slate-400 uppercase">Certificate of Excellence</h4>
+                 </div>
+
+                 <h2 className="text-5xl font-black text-slate-900 mb-6 font-display">CERTIFICATE</h2>
+                 <p className="text-xl text-slate-500 mb-10 italic">This is to proudly certify that</p>
+                 
+                 <h1 className="text-6xl font-black text-sky-600 mb-10 tracking-tight">{previewCert.studentName.toUpperCase()}</h1>
+                 
+                 <p className="text-lg text-slate-600 mb-6">has successfully completed the professional training program in</p>
+                 <h3 className="text-3xl font-bold text-slate-900 mb-12">{previewCert.course}</h3>
+                 
+                 <div className="flex justify-between items-end mt-20 px-20">
+                    <div className="text-center">
+                       <div className="w-48 h-px bg-slate-200 mb-4" />
+                       <p className="text-sm font-bold text-slate-900">Program Coordinator</p>
+                    </div>
+                    <div className="relative">
+                       <div className="w-24 h-24 bg-amber-400/10 rounded-full flex items-center justify-center border-4 border-amber-400/20">
+                          <Award size={48} className="text-amber-500" />
+                       </div>
+                    </div>
+                    <div className="text-center">
+                       <div className="w-48 h-px bg-slate-200 mb-4" />
+                       <p className="text-sm font-bold text-slate-900">Director, Forge India</p>
+                    </div>
+                 </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
