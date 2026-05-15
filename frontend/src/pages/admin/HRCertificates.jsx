@@ -26,43 +26,85 @@ const HRCertificates = () => {
       format: 'a4'
     });
 
-    // Branded Background
-    doc.setFillColor(26, 159, 212); // Brand Blue
-    doc.rect(0, 0, 297, 20, 'F');
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+
+    // 1. Brand Blue Top & Bottom Bars
+    doc.setFillColor(26, 159, 212); // Brand Blue (#1A9FD4)
+    doc.rect(0, 0, pageWidth, 6, 'F');
+    doc.rect(0, pageHeight - 6, pageWidth, 6, 'F');
     
-    // Certificate Title
-    doc.setFontSize(40);
+    // 2. Light Blue Side Borders (Subtle)
+    doc.setFillColor(240, 249, 255); // sky-50
+    doc.rect(0, 6, 6, pageHeight - 12, 'F');
+    doc.rect(pageWidth - 6, 6, 6, pageHeight - 12, 'F');
+
+    // 3. Logo Placeholder (or text if no image)
+    doc.setFontSize(24);
     doc.setTextColor(26, 159, 212);
-    doc.text("CERTIFICATE OF COMPLETION", 148, 60, { align: "center" });
+    doc.setFont("helvetica", "bold");
+    doc.text("FORGE INDIA", pageWidth / 2, 30, { align: "center" });
 
-    doc.setFontSize(20);
+    // 4. Subtitle
+    doc.setFontSize(10);
+    doc.setTextColor(150);
+    doc.setFont("helvetica", "normal");
+    doc.text("CERTIFICATE OF EXCELLENCE", pageWidth / 2, 45, { align: "center", charSpace: 1 });
+
+    // 5. Main Title
+    doc.setFontSize(48);
+    doc.setTextColor(30, 41, 59); // slate-800
+    doc.setFont("helvetica", "bold");
+    doc.text("CERTIFICATE", pageWidth / 2, 65, { align: "center" });
+
+    // 6. Certification Text
+    doc.setFontSize(18);
     doc.setTextColor(100);
-    doc.text("This is to certify that", 148, 80, { align: "center" });
+    doc.setFont("helvetica", "italic");
+    doc.text("This is to proudly certify that", pageWidth / 2, 80, { align: "center" });
 
-    doc.setFontSize(32);
-    doc.setTextColor(0);
-    doc.text(cert.studentName.toUpperCase(), 148, 100, { align: "center" });
+    // 7. Student Name
+    doc.setFontSize(54);
+    doc.setTextColor(26, 159, 212); // Brand Blue
+    doc.setFont("helvetica", "bold");
+    doc.text(cert.studentName.toUpperCase(), pageWidth / 2, 105, { align: "center" });
 
-    doc.setFontSize(20);
-    doc.setTextColor(100);
-    doc.text("has successfully completed the course", 148, 120, { align: "center" });
-
-    doc.setFontSize(28);
-    doc.setTextColor(26, 159, 212);
-    doc.text(cert.course, 148, 140, { align: "center" });
-
+    // 8. Completion Text
     doc.setFontSize(16);
     doc.setTextColor(100);
-    doc.text(`Issued on: ${cert.completionDate}`, 148, 160, { align: "center" });
+    doc.setFont("helvetica", "normal");
+    doc.text("has successfully completed the professional training program in", pageWidth / 2, 125, { align: "center" });
 
-    // Footer
+    // 9. Course Name
+    doc.setFontSize(32);
+    doc.setTextColor(30, 41, 59);
+    doc.setFont("helvetica", "bold");
+    doc.text(cert.course, pageWidth / 2, 145, { align: "center" });
+
+    // 10. Signatures and Seal
+    // Left Signature
     doc.setDrawColor(200);
-    doc.line(40, 180, 100, 180);
-    doc.line(197, 180, 257, 180);
-    
-    doc.setFontSize(12);
-    doc.text("Course Instructor", 70, 190, { align: "center" });
-    doc.text("Director, Forge India", 227, 190, { align: "center" });
+    doc.line(40, 175, 100, 175);
+    doc.setFontSize(10);
+    doc.setTextColor(30, 41, 59);
+    doc.setFont("helvetica", "bold");
+    doc.text("PROGRAM COORDINATOR", 70, 182, { align: "center" });
+
+    // Middle Seal (Mock Circle)
+    doc.setDrawColor(251, 191, 36); // amber-400
+    doc.setLineWidth(1);
+    doc.circle(pageWidth / 2, 175, 12, 'S');
+    doc.setFontSize(14);
+    doc.setTextColor(251, 191, 36);
+    doc.text("★", pageWidth / 2, 177, { align: "center" });
+
+    // Right Signature
+    doc.setDrawColor(200);
+    doc.line(pageWidth - 100, 175, pageWidth - 40, 175);
+    doc.setFontSize(10);
+    doc.setTextColor(30, 41, 59);
+    doc.setFont("helvetica", "bold");
+    doc.text("DIRECTOR, FORGE INDIA", pageWidth - 70, 182, { align: "center" });
 
     doc.save(`Certificate_${cert.studentName.replace(' ', '_')}.pdf`);
     toast.success('Downloading certificate...');
