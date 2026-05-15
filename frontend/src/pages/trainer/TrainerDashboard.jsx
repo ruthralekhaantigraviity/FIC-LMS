@@ -13,7 +13,8 @@ import {
   ChevronRight,
   Play,
   MoreHorizontal,
-  Circle
+  Circle,
+  Star
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
