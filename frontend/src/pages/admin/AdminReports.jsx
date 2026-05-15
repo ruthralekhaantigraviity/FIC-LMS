@@ -13,6 +13,8 @@ const coursePerformanceData = [
   { name: 'Data Science', students: 85, completionRate: 70, revenue: 2125000 },
   { name: 'UI/UX Design', students: 95, completionRate: 92, revenue: 1140000 },
   { name: 'Digital Marketing', students: 60, completionRate: 78, revenue: 600000 },
+  { name: 'Cyber Security', students: 45, completionRate: 65, revenue: 900000 },
+  { name: 'Cloud Computing', students: 75, completionRate: 80, revenue: 1500000 },
 ];
 
 const revenueTrendData = [
@@ -22,6 +24,8 @@ const revenueTrendData = [
   { month: 'Apr', revenue: 610000 },
   { month: 'May', revenue: 550000 },
   { month: 'Jun', revenue: 670000 },
+  { month: 'Jul', revenue: 720000 },
+  { month: 'Aug', revenue: 690000 },
 ];
 
 const studentDemographics = [

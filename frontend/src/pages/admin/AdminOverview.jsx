@@ -35,6 +35,8 @@ const enrollmentData = [
   { name: 'UI/UX Design', students: 95 },
   { name: 'Digital Marketing', students: 60 },
   { name: 'Cyber Security', students: 45 },
+  { name: 'Cloud Computing', students: 75 },
+  { name: 'Mobile App Dev', students: 55 },
 ];
 
 const feeData = [
@@ -54,6 +56,8 @@ const recentActivities = [
   { id: 2, type: 'payment', user: 'Sneha Patil', course: 'UI/UX Design', time: '15 mins ago', amount: '₹12,000' },
   { id: 3, type: 'enrollment', user: 'Amit Verma', course: 'Data Science', time: '1 hour ago', amount: '₹25,000' },
   { id: 4, type: 'registration', user: 'Priya Das', course: 'Digital Marketing', time: '3 hours ago', amount: '₹10,000' },
+  { id: 5, type: 'payment', user: 'Kunal Singh', course: 'Cyber Security', time: '5 hours ago', amount: '₹20,000' },
+  { id: 6, type: 'enrollment', user: 'Anjali Gupta', course: 'React Fullstack', time: '1 day ago', amount: '₹15,000' },
 ];
 
 const AdminOverview = () => {
