@@ -17,6 +17,10 @@ import {
   ClipboardList,
   Sun,
   Moon,
+  MessageSquare,
+  Users,
+  Star,
+  Award
 } from "lucide-react";
 import { logout } from "../../store/slices/authSlice";
 import { setTheme } from "../../store/slices/uiSlice";
@@ -32,7 +36,7 @@ export default function DashboardLayout() {
   const { theme } = useSelector((state) => state.ui);
 
   const menuItems = [
-    { name: "Overview", path: "/dashboard/overview", icon: LayoutDashboard },
+    { name: "Dashboard", path: "/dashboard/overview", icon: LayoutDashboard },
     { 
       name: "All Bookings", 
       path: "/dashboard/admin/bookings", 
@@ -40,7 +44,13 @@ export default function DashboardLayout() {
       role: ["admin", "hr"] 
     },
     {
-      name: user?.role === "admin" ? "Manage Courses" : "My Courses",
+      name: "Discussions",
+      path: "/dashboard/discussions",
+      icon: MessageSquare,
+      role: ["trainer"]
+    },
+    {
+      name: user?.role === "admin" ? "Manage Courses" : "Courses",
       path:
         user?.role === "admin"
           ? "/dashboard/admin/courses"
@@ -49,6 +59,24 @@ export default function DashboardLayout() {
           : "/dashboard/student/courses",
       icon: BookOpen,
       role: ["admin", "trainer", "student"],
+    },
+    {
+      name: "Students",
+      path: "/dashboard/admin/students",
+      icon: Users,
+      role: ["trainer"]
+    },
+    {
+      name: "Reviews",
+      path: "/dashboard/reviews",
+      icon: Star,
+      role: ["trainer"]
+    },
+    {
+      name: "Achievements",
+      path: "/dashboard/achievements",
+      icon: Award,
+      role: ["trainer"]
     },
     { name: "Attendance",   path: "/dashboard/attendance",   icon: Calendar,      role: ["trainer", "hr"] },
     { name: "Assignments",  path: "/dashboard/assignments",  icon: FileText,      role: ["trainer", "hr"] },
