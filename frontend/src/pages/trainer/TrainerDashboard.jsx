@@ -218,46 +218,20 @@ export default function TrainerDashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Recent Discussions */}
-          <div className="bg-white dark:bg-[#1e293b] p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Recent Discussions</h2>
-              <button className="text-xs font-bold text-sky-500 hover:underline">View All</button>
-            </div>
-            <div className="space-y-6">
-              {[
-                { name: "Rahul S.", topic: "React Hooks doubt", time: "10m ago", color: "bg-amber-100 text-amber-600" },
-                { name: "Priya M.", topic: "Backend Auth issue", time: "2h ago", color: "bg-sky-100 text-sky-600" },
-                { name: "Arjun K.", topic: "Deployment error", time: "5h ago", color: "bg-emerald-100 text-emerald-600" },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-4 group cursor-pointer p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-2xl transition">
-                  <div className={`w-10 h-10 rounded-full ${item.color} flex items-center justify-center font-bold text-xs`}>
-                    {item.name.charAt(0)}
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-bold text-slate-900 dark:text-white">{item.topic}</p>
-                    <p className="text-xs text-slate-500">Started by {item.name}</p>
-                  </div>
-                  <span className="text-[10px] font-medium text-slate-400">{item.time}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
+        <div className="grid grid-cols-1 gap-8">
           {/* Recent Reviews */}
           <div className="bg-white dark:bg-[#1e293b] p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Recent Reviews</h2>
               <button className="text-xs font-bold text-sky-500 hover:underline">View All</button>
             </div>
-            <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 { name: "Emma Wilson", stars: 5, comment: "Amazing teaching style!", time: "Today" },
                 { name: "James Miller", stars: 4, comment: "Very helpful content.", time: "Yesterday" },
                 { name: "Sophia Chen", stars: 5, comment: "Best course on the platform.", time: "2 days ago" },
               ].map((item, i) => (
-                <div key={i} className="space-y-2">
+                <div key={i} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/30 space-y-2 border border-slate-100 dark:border-slate-800">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div className="flex text-amber-400">
@@ -267,7 +241,7 @@ export default function TrainerDashboard() {
                     </div>
                     <span className="text-[10px] font-medium text-slate-400">{item.time}</span>
                   </div>
-                  <p className="text-xs text-slate-500 line-clamp-1 italic">"{item.comment}"</p>
+                  <p className="text-xs text-slate-500 italic">"{item.comment}"</p>
                 </div>
               ))}
             </div>
