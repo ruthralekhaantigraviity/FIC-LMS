@@ -66,8 +66,8 @@ export default function Settings() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900 font-display">Account Settings</h1>
-        <p className="text-slate-500">Manage your profile, security, and preferences.</p>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-display">Account Settings</h1>
+        <p className="text-slate-500 dark:text-slate-400">Manage your profile, security, and preferences.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -80,7 +80,7 @@ export default function Settings() {
               className={`w-full flex items-center gap-3 px-6 py-4 font-bold rounded-2xl transition-all duration-200 ${
                 activeTab === item.id 
                   ? "bg-primary-600 text-white shadow-lg shadow-primary-600/20" 
-                  : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
+                  : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700"
               }`}
             >
               <item.icon size={20} />
@@ -98,46 +98,46 @@ export default function Settings() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm"
+                className="bg-white dark:bg-[#1e293b] rounded-[32px] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm"
               >
-                <div className="p-8 border-b border-slate-100">
-                  <h3 className="text-xl font-bold">Profile Information</h3>
-                  <p className="text-sm text-slate-500">Update your account personal details.</p>
+                <div className="p-8 border-b border-slate-100 dark:border-slate-800">
+                  <h3 className="text-xl font-bold dark:text-white">Profile Information</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Update your account personal details.</p>
                 </div>
 
                 <form onSubmit={handleUpdateProfile} className="p-8 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-2">Full Name</label>
+                      <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Full Name</label>
                       <input 
                         type="text" 
                         value={formData.name}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none" 
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none" 
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-2">Email Address</label>
+                      <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Email Address</label>
                       <input 
                         type="email" 
                         disabled
                         value={formData.email}
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-slate-400 outline-none cursor-not-allowed" 
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-xl text-slate-400 dark:text-slate-500 outline-none cursor-not-allowed" 
                       />
                     </div>
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-bold text-slate-700 mb-2">Phone Number</label>
+                      <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Phone Number</label>
                       <input 
                         type="tel" 
                         value={formData.phoneNumber}
                         onChange={(e) => setFormData({...formData, phoneNumber: e.target.value})}
                         placeholder="+1 (555) 000-0000"
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none" 
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none" 
                       />
                     </div>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-100 flex justify-end">
+                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
                     <button 
                       type="submit" 
                       disabled={loading}
@@ -159,37 +159,37 @@ export default function Settings() {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-6"
               >
-                <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
-                  <div className="p-8 border-b border-slate-100">
-                    <h3 className="text-xl font-bold">Change Password</h3>
-                    <p className="text-sm text-slate-500">Ensure your account is using a long, random password to stay secure.</p>
+                <div className="bg-white dark:bg-[#1e293b] rounded-[32px] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+                  <div className="p-8 border-b border-slate-100 dark:border-slate-800">
+                    <h3 className="text-xl font-bold dark:text-white">Change Password</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Ensure your account is using a long, random password to stay secure.</p>
                   </div>
 
                   <form className="p-8 space-y-6">
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-bold text-slate-700 mb-2">Current Password</label>
+                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Current Password</label>
                         <input 
                           type="password"
-                          className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none" 
+                          className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none" 
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-bold text-slate-700 mb-2">New Password</label>
+                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">New Password</label>
                         <input 
                           type="password"
-                          className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none" 
+                          className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none" 
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-bold text-slate-700 mb-2">Confirm New Password</label>
+                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Confirm New Password</label>
                         <input 
                           type="password"
-                          className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none" 
+                          className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none" 
                         />
                       </div>
                     </div>
-                    <div className="pt-4 border-t border-slate-100 flex justify-end">
+                    <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
                       <button type="button" className="flex items-center gap-2 px-8 py-3 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition">
                         Update Password
                       </button>
@@ -197,7 +197,7 @@ export default function Settings() {
                   </form>
                 </div>
 
-                <div className="bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl">
+                <div className="bg-slate-900 dark:bg-[#0f172a] rounded-[32px] p-8 text-white relative overflow-hidden shadow-xl border border-white/5">
                   <div className="relative z-10 flex items-center justify-between">
                     <div>
                       <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
@@ -221,11 +221,11 @@ export default function Settings() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm"
+                className="bg-white dark:bg-[#1e293b] rounded-[32px] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm"
               >
-                <div className="p-8 border-b border-slate-100">
-                  <h3 className="text-xl font-bold">Notification Preferences</h3>
-                  <p className="text-sm text-slate-500">Manage how you receive updates and alerts.</p>
+                <div className="p-8 border-b border-slate-100 dark:border-slate-800">
+                  <h3 className="text-xl font-bold dark:text-white">Notification Preferences</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Manage how you receive updates and alerts.</p>
                 </div>
                 <div className="p-8 space-y-6">
                   {[
@@ -236,8 +236,8 @@ export default function Settings() {
                   ].map((item, i) => (
                     <div key={i} className="flex items-center justify-between py-2">
                       <div>
-                        <h4 className="font-bold text-slate-800">{item.title}</h4>
-                        <p className="text-sm text-slate-500">{item.desc}</p>
+                        <h4 className="font-bold text-slate-800 dark:text-slate-200">{item.title}</h4>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{item.desc}</p>
                       </div>
                       <div className="w-12 h-6 bg-primary-600 rounded-full relative cursor-pointer">
                         <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm"></div>
@@ -254,11 +254,11 @@ export default function Settings() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm"
+                className="bg-white dark:bg-[#1e293b] rounded-[32px] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm"
               >
-                <div className="p-8 border-b border-slate-100">
-                  <h3 className="text-xl font-bold">Display Preferences</h3>
-                  <p className="text-sm text-slate-500">Customize the appearance of your dashboard.</p>
+                <div className="p-8 border-b border-slate-100 dark:border-slate-800">
+                  <h3 className="text-xl font-bold dark:text-white">Display Preferences</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Customize the appearance of your dashboard.</p>
                 </div>
                 <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
                   {[
@@ -271,8 +271,8 @@ export default function Settings() {
                       onClick={() => dispatch(setTheme(t.id))}
                       className={`p-6 rounded-2xl border-2 flex flex-col items-center gap-4 transition-all ${
                         theme === t.id 
-                          ? 'border-primary-600 bg-primary-50 text-primary-600 shadow-sm' 
-                          : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200'
+                          ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/20 text-primary-600 shadow-sm' 
+                          : 'border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 hover:border-slate-200 dark:hover:border-slate-700'
                       }`}
                     >
                       <t.icon size={32} />
