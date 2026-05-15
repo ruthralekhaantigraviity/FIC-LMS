@@ -9,9 +9,9 @@ router.post('/register', authController.register);
 router.post('/login', authController.login);
 
 router.use(protect);
-router.get('/users', restrictTo('admin'), authController.getAllUsers);
+router.get('/users', restrictTo('admin', 'hr'), authController.getAllUsers);
 router.patch('/users/:id/role', restrictTo('admin'), authController.updateUserRole);
-router.patch('/users/:id', restrictTo('admin'), authController.updateUser);
-router.delete('/users/:id', restrictTo('admin'), authController.deleteUser);
+router.patch('/users/:id', restrictTo('admin', 'hr'), authController.updateUser);
+router.delete('/users/:id', restrictTo('admin', 'hr'), authController.deleteUser);
 
 module.exports = router;
