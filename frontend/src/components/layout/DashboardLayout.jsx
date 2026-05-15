@@ -86,6 +86,8 @@ export default function DashboardLayout() {
     { id: 3, title: "Course Updated", message: "New lesson added to Data Science course", time: "1 hour ago", unread: false },
   ]);
 
+  const [selectedNotification, setSelectedNotification] = useState(null);
+
   const clearNotifications = () => {
     setNotifications([]);
   };
@@ -97,6 +99,45 @@ export default function DashboardLayout() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex">
+      {/* Detail Notification Modal */}
+      <AnimatePresence>
+        {selectedNotification && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedNotification(null)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-md bg-white dark:bg-[#1e293b] rounded-[32px] p-8 shadow-2xl border border-slate-200 dark:border-slate-800"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 mb-6 mx-auto">
+                <Bell size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white text-center mb-2">
+                {selectedNotification.title}
+              </h3>
+              <p className="text-xs text-slate-400 text-center mb-6">{selectedNotification.time}</p>
+              <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 mb-6">
+                <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed text-center">
+                  {selectedNotification.message}
+                </p>
+              </div>
+              <button
+                onClick={() => setSelectedNotification(null)}
+                className="w-full py-4 bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-bold rounded-2xl hover:opacity-90 transition"
+              >
+                Close
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Mobile overlay */}
       {isSidebarOpen && (
@@ -240,7 +281,14 @@ export default function DashboardLayout() {
                     <div className="max-h-[400px] overflow-y-auto">
                       {notifications.length > 0 ? (
                         notifications.map((notif) => (
-                          <div key={notif.id} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer border-b border-slate-50 dark:border-slate-800/50 last:border-0">
+                          <div 
+                            key={notif.id} 
+                            onClick={() => {
+                              setSelectedNotification(notif);
+                              setShowNotifications(false);
+                            }}
+                            className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer border-b border-slate-50 dark:border-slate-800/50 last:border-0"
+                          >
                             <div className="flex items-center justify-between mb-1">
                               <span className="text-xs font-bold text-slate-900 dark:text-white">{notif.title}</span>
                               <span className="text-[10px] text-slate-400">{notif.time}</span>
