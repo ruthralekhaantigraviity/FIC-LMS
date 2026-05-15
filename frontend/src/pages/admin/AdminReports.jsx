@@ -4,8 +4,8 @@ import {
   PieChart, Pie, Cell, LineChart, Line, Legend
 } from 'recharts';
 import { Download, Filter, Calendar } from 'lucide-react';
-import { jsPDF } from "jspdf";
-import "jspdf-autotable";
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 // Mock Data for Reports
 const coursePerformanceData = [
@@ -60,7 +60,7 @@ const AdminReports = () => {
       `₹${c.revenue.toLocaleString()}`
     ]);
 
-    doc.autoTable({
+    autoTable(doc, {
       startY: 55,
       head: [["Course Name", "Enrolled Students", "Completion Rate", "Total Revenue"]],
       body: courseTableData,
@@ -69,31 +69,31 @@ const AdminReports = () => {
     });
 
     // Section 2: Revenue Trend
-    doc.text("Monthly Revenue Trend", 14, doc.lastAutoTable.finalY + 15);
+    doc.text("Monthly Revenue Trend", 14, doc.previousAutoTable.finalY + 15);
     
     const revenueTableData = revenueTrendData.map(r => [
       r.month,
       `₹${r.revenue.toLocaleString()}`
     ]);
 
-    doc.autoTable({
-      startY: doc.lastAutoTable.finalY + 20,
+    autoTable(doc, {
+      startY: doc.previousAutoTable.finalY + 20,
       head: [["Month", "Revenue Collected"]],
       body: revenueTableData,
       theme: 'striped',
-      headStyles: { fillColor: [139, 92, 246] } // Purple for variety
+      headStyles: { fillColor: [139, 92, 246] }
     });
 
     // Section 3: Demographics
-    doc.text("Student Demographics", 14, doc.lastAutoTable.finalY + 15);
+    doc.text("Student Demographics", 14, doc.previousAutoTable.finalY + 15);
     
     const demoTableData = studentDemographics.map(d => [
       d.name,
       `${d.value}%`
     ]);
 
-    doc.autoTable({
-      startY: doc.lastAutoTable.finalY + 20,
+    autoTable(doc, {
+      startY: doc.previousAutoTable.finalY + 20,
       head: [["Category", "Percentage share"]],
       body: demoTableData,
       theme: 'grid'

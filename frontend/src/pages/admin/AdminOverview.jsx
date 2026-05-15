@@ -16,8 +16,8 @@ import {
 } from 'recharts';
 import StatsCard from '../../components/admin/StatsCard';
 import axios from 'axios';
-import { jsPDF } from "jspdf";
-import "jspdf-autotable";
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 // Mock Data for demonstration
 const revenueData = [
@@ -100,7 +100,7 @@ const AdminOverview = () => {
       ["Pending Fees", stats?.stats?.pendingFees ? `₹${stats.stats.pendingFees.toLocaleString()}` : "₹152K", "-2.4%"]
     ];
 
-    doc.autoTable({
+    autoTable(doc, {
       startY: 50,
       head: [statsTableData[0]],
       body: statsTableData.slice(1),
@@ -109,7 +109,7 @@ const AdminOverview = () => {
     });
 
     // Recent Activities Section
-    doc.text("Recent Activities", 14, doc.lastAutoTable.finalY + 15);
+    doc.text("Recent Activities", 14, doc.previousAutoTable.finalY + 15);
     
     const activityData = recentActivities.map(a => [
       a.user,
@@ -119,8 +119,8 @@ const AdminOverview = () => {
       a.amount
     ]);
 
-    doc.autoTable({
-      startY: doc.lastAutoTable.finalY + 20,
+    autoTable(doc, {
+      startY: doc.previousAutoTable.finalY + 20,
       head: [["User", "Type", "Course", "Time", "Amount"]],
       body: activityData,
       theme: 'striped'
