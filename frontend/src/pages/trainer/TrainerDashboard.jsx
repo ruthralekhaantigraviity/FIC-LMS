@@ -111,42 +111,7 @@ export default function TrainerDashboard() {
           </div>
         </div>
 
-        {/* Featured Courses Horizontal Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {featuredCourses.map((course, i) => (
-            <motion.div
-              key={course.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="group relative bg-white dark:bg-[#1e293b] rounded-[32px] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-500"
-            >
-              <div className="aspect-[16/10] overflow-hidden relative">
-                <img src={course.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-                  <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white scale-0 group-hover:scale-100 transition-all duration-300">
-                    <Play size={24} fill="currentColor" />
-                  </div>
-                </div>
-              </div>
-              <div className="p-6">
-                <h3 className="font-bold text-slate-900 dark:text-white group-hover:text-sky-500 transition line-clamp-1">
-                  {course.title}
-                </h3>
-                <div className="flex items-center justify-between mt-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                  <span className="flex items-center gap-1.5">
-                    <div className="w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-[10px]">Y</div>
-                    {course.instructor}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Clock size={14} />
-                    {course.duration}
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+
 
         {/* My Courses Section */}
         <div className="bg-white dark:bg-[#1e293b] rounded-[32px] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
