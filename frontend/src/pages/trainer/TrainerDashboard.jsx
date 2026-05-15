@@ -254,6 +254,86 @@ export default function TrainerDashboard() {
             </ResponsiveContainer>
           </div>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Recent Discussions */}
+          <div className="bg-white dark:bg-[#1e293b] p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Recent Discussions</h2>
+              <button className="text-xs font-bold text-sky-500 hover:underline">View All</button>
+            </div>
+            <div className="space-y-6">
+              {[
+                { name: "Rahul S.", topic: "React Hooks doubt", time: "10m ago", color: "bg-amber-100 text-amber-600" },
+                { name: "Priya M.", topic: "Backend Auth issue", time: "2h ago", color: "bg-sky-100 text-sky-600" },
+                { name: "Arjun K.", topic: "Deployment error", time: "5h ago", color: "bg-emerald-100 text-emerald-600" },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-4 group cursor-pointer p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-2xl transition">
+                  <div className={`w-10 h-10 rounded-full ${item.color} flex items-center justify-center font-bold text-xs`}>
+                    {item.name.charAt(0)}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-slate-900 dark:text-white">{item.topic}</p>
+                    <p className="text-xs text-slate-500">Started by {item.name}</p>
+                  </div>
+                  <span className="text-[10px] font-medium text-slate-400">{item.time}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Recent Reviews */}
+          <div className="bg-white dark:bg-[#1e293b] p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Recent Reviews</h2>
+              <button className="text-xs font-bold text-sky-500 hover:underline">View All</button>
+            </div>
+            <div className="space-y-6">
+              {[
+                { name: "Emma Wilson", stars: 5, comment: "Amazing teaching style!", time: "Today" },
+                { name: "James Miller", stars: 4, comment: "Very helpful content.", time: "Yesterday" },
+                { name: "Sophia Chen", stars: 5, comment: "Best course on the platform.", time: "2 days ago" },
+              ].map((item, i) => (
+                <div key={i} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="flex text-amber-400">
+                        {[...Array(item.stars)].map((_, i) => <Star key={i} size={12} fill="currentColor" />)}
+                      </div>
+                      <span className="text-xs font-bold text-slate-900 dark:text-white">{item.name}</span>
+                    </div>
+                    <span className="text-[10px] font-medium text-slate-400">{item.time}</span>
+                  </div>
+                  <p className="text-xs text-slate-500 line-clamp-1 italic">"{item.comment}"</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Latest Achievements */}
+        <div className="bg-white dark:bg-[#1e293b] p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Latest Achievements</h2>
+            <button className="text-xs font-bold text-sky-500 hover:underline">View Badge Gallery</button>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { label: "Top Instructor", date: "May 2024", icon: Award, color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-500/10" },
+              { label: "1000+ Students", date: "April 2024", icon: Users, color: "text-sky-500", bg: "bg-sky-50 dark:bg-sky-500/10" },
+              { label: "High Rating", date: "March 2024", icon: Star, color: "text-emerald-500", bg: "bg-emerald-50 dark:bg-emerald-500/10" },
+              { label: "Course Master", date: "Feb 2024", icon: BookOpen, color: "text-purple-500", bg: "bg-purple-50 dark:bg-purple-500/10" },
+            ].map((badge, i) => (
+              <div key={i} className="flex flex-col items-center text-center p-4 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-700">
+                <div className={`${badge.bg} ${badge.color} w-12 h-12 rounded-2xl flex items-center justify-center mb-3`}>
+                  <badge.icon size={24} />
+                </div>
+                <p className="text-sm font-bold text-slate-900 dark:text-white">{badge.label}</p>
+                <p className="text-[10px] text-slate-500 font-medium mt-1">{badge.date}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Right Sidebar */}
