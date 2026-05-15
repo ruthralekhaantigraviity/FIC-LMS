@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   BookOpen,
@@ -78,6 +78,13 @@ export default function DashboardLayout() {
   );
 
   const isActive = (path) => location.pathname === path;
+
+  const [showNotifications, setShowNotifications] = useState(false);
+  const notifications = [
+    { id: 1, title: "New Enrollment", message: "Rahul Sharma just enrolled in React Fullstack", time: "2 mins ago", unread: true },
+    { id: 2, title: "Payment Received", message: "Sneha Patil paid ₹12,000 for UI/UX course", time: "15 mins ago", unread: true },
+    { id: 3, title: "Course Updated", message: "New lesson added to Data Science course", time: "1 hour ago", unread: false },
+  ];
 
   const handleLogout = () => {
     dispatch(logout());
@@ -190,13 +197,48 @@ export default function DashboardLayout() {
             </button>
 
             {/* Notifications */}
-            <button className="relative p-2.5 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
-              <Bell size={18} />
-              <span
-                className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full border-2 border-white dark:border-[#0f172a]"
-                style={{ background: BRAND }}
-              />
-            </button>
+            <div className="relative">
+              <button 
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="relative p-2.5 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
+              >
+                <Bell size={18} />
+                <span
+                  className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full border-2 border-white dark:border-[#0f172a]"
+                  style={{ background: BRAND }}
+                />
+              </button>
+
+              <AnimatePresence>
+                {showNotifications && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    className="absolute right-0 mt-2 w-80 bg-white dark:bg-[#1e293b] rounded-[24px] border border-slate-200 dark:border-slate-800 shadow-2xl z-50 overflow-hidden"
+                  >
+                    <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                      <h3 className="font-bold text-slate-900 dark:text-white">Notifications</h3>
+                      <span className="text-[10px] font-bold bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded-full uppercase tracking-wider">3 New</span>
+                    </div>
+                    <div className="max-h-[400px] overflow-y-auto">
+                      {notifications.map((notif) => (
+                        <div key={notif.id} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer border-b border-slate-50 dark:border-slate-800/50 last:border-0">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-bold text-slate-900 dark:text-white">{notif.title}</span>
+                            <span className="text-[10px] text-slate-400">{notif.time}</span>
+                          </div>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">{notif.message}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <button className="w-full py-3 text-xs font-bold text-blue-500 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                      View All Notifications
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1" />
 
