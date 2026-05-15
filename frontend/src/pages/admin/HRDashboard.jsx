@@ -62,17 +62,49 @@ export default function HRDashboard() {
     }
   };
   return (
-    <div className="space-y-8">
-      {" "}
-      <div>
-        {" "}
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-display">
-          Admissions Management
-        </h1>
-        <p className="text-slate-500 dark:text-slate-400">
-          Review and approve new student applications.
-        </p>
-      </div>{" "}
+    <div className="space-y-8 pb-10">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-display">
+            HR Dashboard
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400">
+            Monitor admissions and platform performance.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+           <button className="px-5 py-2.5 bg-sky-600 text-white rounded-2xl font-bold text-sm shadow-lg shadow-sky-600/20 hover:bg-sky-700 transition">
+             Generate Report
+           </button>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[
+          { label: "Total Students", value: admissions.filter(a => a.status === 'completed').length, icon: User, color: "blue" },
+          { label: "Active Courses", value: 12, icon: BookOpen, color: "green" },
+          { label: "Completion %", value: "84%", icon: CheckCircle, color: "amber" },
+        ].map((stat, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+            className="bg-white dark:bg-[#1e293b] p-6 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm"
+          >
+            <div className="flex items-center gap-4">
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center`} style={{ backgroundColor: stat.color === 'blue' ? 'rgba(59,130,246,0.1)' : stat.color === 'green' ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)', color: stat.color === 'blue' ? '#3b82f6' : stat.color === 'green' ? '#10b981' : '#f59e0b' }}>
+                <stat.icon size={24} />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{stat.label}</p>
+                <h3 className="text-2xl font-black text-slate-900 dark:text-white">{stat.value}</h3>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
       {/* Pending Notification Banner */}
       {pendingCount > 0 && (
         <motion.div

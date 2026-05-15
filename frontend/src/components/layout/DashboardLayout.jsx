@@ -43,13 +43,55 @@ export default function DashboardLayout() {
   const menuItems = [
     { name: "Dashboard", path: "/dashboard/overview", icon: LayoutDashboard },
     { 
-      name: "All Bookings", 
+      name: "Students", 
+      path: "/dashboard/hr/students", 
+      icon: Users, 
+      role: ["hr"] 
+    },
+    { 
+      name: "Admissions", 
       path: "/dashboard/bookings", 
       icon: ClipboardList, 
       role: ["admin", "hr"] 
     },
+    { 
+      name: "Course Enrollment", 
+      path: "/dashboard/hr/enrollments", 
+      icon: BookOpen, 
+      role: ["hr"] 
+    },
+    { 
+      name: "Attendance",   
+      path: "/dashboard/attendance",   
+      icon: Calendar,      
+      role: ["hr", "admin", "trainer"] 
+    },
+    { 
+      name: "Certificates", 
+      path: "/dashboard/hr/certificates", 
+      icon: Award, 
+      role: ["hr"] 
+    },
+    { 
+      name: "Support / Queries", 
+      path: "/dashboard/hr/support", 
+      icon: MessageSquare, 
+      role: ["hr"] 
+    },
+    { 
+      name: "Reports", 
+      path: "/dashboard/hr/reports", 
+      icon: FileText, 
+      role: ["hr"] 
+    },
+    { 
+      name: "Notifications", 
+      path: "/dashboard/hr/notifications", 
+      icon: Bell, 
+      role: ["hr"] 
+    },
     {
-      name: user?.role === "admin" ? "Manage Courses" : "Courses",
+      name: user?.role === "admin" ? "Manage Courses" : "My Courses",
       path:
         user?.role === "admin"
           ? "/dashboard/admin/courses"
@@ -59,23 +101,13 @@ export default function DashboardLayout() {
       icon: BookOpen,
       role: ["admin", "trainer", "student"],
     },
-
     {
-      name: "Reviews",
-      path: "/dashboard/reviews",
-      icon: Star,
-      role: ["trainer"]
+      name: "Manage Staff",
+      path: "/dashboard/admin/users",
+      icon: UserCheck,
+      role: ["admin"]
     },
-    {
-      name: "Achievements",
-      path: "/dashboard/achievements",
-      icon: Award,
-      role: ["trainer"]
-    },
-    { name: "Attendance",   path: "/dashboard/attendance",   icon: Calendar,      role: ["hr"] },
-    { name: "Assignments",  path: "/dashboard/assignments",  icon: FileText,      role: ["hr"] },
-    { name: "Manage Staff", path: "/dashboard/admin/users",  icon: UserCheck,     role: ["admin"] },
-    { name: "Settings",     path: "/dashboard/settings",     icon: Settings },
+    { name: "Settings", path: "/dashboard/settings", icon: Settings },
   ];
 
   const filteredMenuItems = menuItems.filter(

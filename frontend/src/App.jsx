@@ -260,6 +260,22 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="profile" element={<div>User Profile</div>} />
+
+          {/* HR Specific Routes */}
+          <Route path="hr/students" element={
+            <ProtectedRoute allowedRoles={["hr"]}>
+              <AdminStudents />
+            </ProtectedRoute>
+          } />
+          <Route path="hr/reports" element={
+            <ProtectedRoute allowedRoles={["hr"]}>
+              <AdminReports />
+            </ProtectedRoute>
+          } />
+          <Route path="hr/enrollments" element={<PlaceholderPage title="Course Enrollment" />} />
+          <Route path="hr/certificates" element={<PlaceholderPage title="Certificates Management" />} />
+          <Route path="hr/support" element={<PlaceholderPage title="Support & Queries" />} />
+          <Route path="hr/notifications" element={<PlaceholderPage title="System Notifications" />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />
