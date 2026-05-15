@@ -4,6 +4,8 @@ import {
   PieChart, Pie, Cell, LineChart, Line, Legend
 } from 'recharts';
 import { Download, Filter, Calendar } from 'lucide-react';
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 
 // Mock Data for Reports
 const coursePerformanceData = [
@@ -29,6 +31,84 @@ const studentDemographics = [
 ];
 
 const AdminReports = () => {
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    
+    // Header
+    doc.setFontSize(22);
+    doc.setTextColor(26, 159, 212);
+    doc.text("FIC LMS - Comprehensive Analytics Report", 14, 22);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Report Period: Last 6 Months`, 14, 30);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 35);
+    doc.text("---------------------------------------------------------------------------------------------------", 14, 40);
+
+    // Section 1: Course Performance
+    doc.setFontSize(16);
+    doc.setTextColor(33);
+    doc.text("Course Performance Metrics", 14, 50);
+
+    const courseTableData = coursePerformanceData.map(c => [
+      c.name,
+      c.students.toString(),
+      `${c.completionRate}%`,
+      `₹${c.revenue.toLocaleString()}`
+    ]);
+
+    doc.autoTable({
+      startY: 55,
+      head: [["Course Name", "Enrolled Students", "Completion Rate", "Total Revenue"]],
+      body: courseTableData,
+      theme: 'grid',
+      headStyles: { fillColor: [26, 159, 212] }
+    });
+
+    // Section 2: Revenue Trend
+    doc.text("Monthly Revenue Trend", 14, doc.lastAutoTable.finalY + 15);
+    
+    const revenueTableData = revenueTrendData.map(r => [
+      r.month,
+      `₹${r.revenue.toLocaleString()}`
+    ]);
+
+    doc.autoTable({
+      startY: doc.lastAutoTable.finalY + 20,
+      head: [["Month", "Revenue Collected"]],
+      body: revenueTableData,
+      theme: 'striped',
+      headStyles: { fillColor: [139, 92, 246] } // Purple for variety
+    });
+
+    // Section 3: Demographics
+    doc.text("Student Demographics", 14, doc.lastAutoTable.finalY + 15);
+    
+    const demoTableData = studentDemographics.map(d => [
+      d.name,
+      `${d.value}%`
+    ]);
+
+    doc.autoTable({
+      startY: doc.lastAutoTable.finalY + 20,
+      head: [["Category", "Percentage share"]],
+      body: demoTableData,
+      theme: 'grid'
+    });
+
+    // Footer
+    const pageCount = doc.internal.getNumberOfPages();
+    for(let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(9);
+      doc.setTextColor(150);
+      doc.text("Confidential Business Intelligence Report - FIC LMS", 14, doc.internal.pageSize.height - 10);
+      doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width - 30, doc.internal.pageSize.height - 10);
+    }
+
+    doc.save(`FIC_Detailed_Analytics_${new Date().toISOString().split('T')[0]}.pdf`);
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500 pb-12">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -40,7 +120,10 @@ const AdminReports = () => {
           <button className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
             <Calendar size={16} /> Last 6 Months
           </button>
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-slate-900 dark:text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20">
+          <button 
+            onClick={handleExportPDF}
+            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20"
+          >
             <Download size={16} /> Export PDF
           </button>
         </div>
