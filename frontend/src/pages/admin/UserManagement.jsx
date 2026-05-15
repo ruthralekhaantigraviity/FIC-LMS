@@ -126,8 +126,8 @@ export default function UserManagement() {
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 font-display">Staff Management</h1>
-          <p className="text-slate-500">Create credentials and manage platform access for HR and Trainers.</p>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-display">Staff Management</h1>
+          <p className="text-slate-500 dark:text-slate-400">Create credentials and manage platform access for HR and Trainers.</p>
         </div>
         <button 
           onClick={() => {
@@ -135,15 +135,16 @@ export default function UserManagement() {
             setFormData({ name: '', email: '', password: '', role: 'trainer' });
             setIsModalOpen(true);
           }}
-          className="flex items-center gap-2 px-6 py-3 bg-primary-600 text-white font-bold rounded-2xl hover:bg-primary-700 transition shadow-lg shadow-primary-600/20"
+          style={{ background: '#1A9FD4' }}
+          className="flex items-center gap-2 px-6 py-3 text-white font-bold rounded-2xl hover:brightness-110 transition shadow-lg shadow-sky-600/20"
         >
           <UserPlus size={20} />
           Create Staff Account
         </button>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
-        <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm dark:shadow-none">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="relative flex-1 max-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input 
@@ -151,7 +152,7 @@ export default function UserManagement() {
               placeholder="Search users by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm w-full focus:ring-2 focus:ring-primary-500 outline-none"
+              className="pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-sm w-full text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-400/50 outline-none"
             />
           </div>
           
@@ -160,7 +161,7 @@ export default function UserManagement() {
             <select 
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
-              className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary-500"
+              className="bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-sky-400/50"
             >
               <option>All Roles</option>
               <option>Admin</option>
@@ -174,7 +175,7 @@ export default function UserManagement() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50/50">
+              <tr className="text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50/50 dark:bg-slate-800/30">
                 <th className="px-6 py-5">User</th>
                 <th className="px-6 py-5">Role</th>
                 <th className="px-6 py-5 hidden md:table-cell">Joined</th>
@@ -182,7 +183,7 @@ export default function UserManagement() {
                 <th className="px-6 py-5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {loading ? (
                 <tr>
                   <td colSpan="5" className="text-center py-20 animate-pulse text-slate-400">
@@ -197,7 +198,7 @@ export default function UserManagement() {
                 </tr>
               ) : (
                 filteredUsers.map((user) => (
-                  <tr key={user?._id || Math.random()} className="hover:bg-slate-50 transition">
+                  <tr key={user?._id || Math.random()} className="hover:bg-slate-50 dark:hover:bg-slate-800/20 transition">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center text-primary-600 font-bold overflow-hidden">
@@ -208,7 +209,7 @@ export default function UserManagement() {
                           )}
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-slate-900">{user?.name || 'Unknown'}</p>
+                          <p className="text-sm font-bold text-slate-900 dark:text-white">{user?.name || 'Unknown'}</p>
                           <p className="text-xs text-slate-500 flex items-center gap-1">
                             <Mail size={12} /> {user?.email || 'N/A'}
                           </p>
@@ -219,11 +220,11 @@ export default function UserManagement() {
                       <select 
                         value={user?.role || 'student'}
                         onChange={(e) => handleRoleChange(user?._id, e.target.value)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase border-none focus:ring-2 focus:ring-primary-500 outline-none transition cursor-pointer ${
-                          user?.role === 'admin' ? 'bg-red-50 text-red-600' :
-                          user?.role === 'hr' ? 'bg-orange-50 text-orange-600' :
-                          user?.role === 'trainer' ? 'bg-blue-50 text-blue-600' :
-                          'bg-slate-100 text-slate-600'
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase border-none focus:ring-2 focus:ring-sky-400/50 outline-none transition cursor-pointer ${
+                          user?.role === 'admin' ? 'bg-red-50 dark:bg-red-500/10 text-red-600' :
+                          user?.role === 'hr' ? 'bg-orange-50 dark:bg-orange-500/10 text-orange-600' :
+                          user?.role === 'trainer' ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600' :
+                          'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                         }`}
                       >
                         <option value="admin">Admin</option>
@@ -280,10 +281,10 @@ export default function UserManagement() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden"
+              className="relative w-full max-w-md bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden"
             >
-              <div className="p-8 border-b border-slate-100 flex items-center justify-between">
-                <h3 className="text-xl font-bold">
+              <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                   {editingUser ? 'Edit Staff Account' : 'Create Staff Account'}
                 </h3>
                 <button onClick={() => setIsModalOpen(false)} className="p-2 text-slate-400 hover:text-slate-600 transition">
@@ -302,7 +303,7 @@ export default function UserManagement() {
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
                       placeholder="e.g. Rahul Sharma"
-                      className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                      className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-400/50 outline-none"
                     />
                   </div>
                 </div>
@@ -317,7 +318,7 @@ export default function UserManagement() {
                       value={formData.email}
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
                       placeholder="name@fic.com"
-                      className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                      className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-400/50 outline-none"
                     />
                   </div>
                 </div>
@@ -333,7 +334,7 @@ export default function UserManagement() {
                         value={formData.password}
                         onChange={(e) => setFormData({...formData, password: e.target.value})}
                         placeholder="••••••••"
-                        className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                        className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-400/50 outline-none"
                       />
                     </div>
                   </div>
@@ -346,7 +347,7 @@ export default function UserManagement() {
                     <select 
                       value={formData.role}
                       onChange={(e) => setFormData({...formData, role: e.target.value})}
-                      className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none appearance-none"
+                      className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-400/50 outline-none appearance-none"
                     >
                       <option value="trainer">Trainer</option>
                       <option value="hr">HR Manager</option>
@@ -359,14 +360,15 @@ export default function UserManagement() {
                 <div className="pt-4 flex gap-4">
                   <button 
                     type="submit"
-                    className="flex-1 py-4 bg-primary-600 text-white font-bold rounded-2xl hover:bg-primary-700 transition shadow-lg shadow-primary-600/20"
+                    style={{ background: '#1A9FD4' }}
+                    className="flex-1 py-4 text-white font-bold rounded-2xl hover:brightness-110 transition shadow-lg shadow-sky-600/20"
                   >
                     {editingUser ? 'Save Changes' : 'Generate Credentials'}
                   </button>
                   <button 
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="flex-1 py-4 bg-slate-100 text-slate-900 font-bold rounded-2xl hover:bg-slate-200 transition"
+                    className="flex-1 py-4 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold rounded-2xl hover:bg-slate-200 dark:hover:bg-slate-700 transition"
                   >
                     Cancel
                   </button>
