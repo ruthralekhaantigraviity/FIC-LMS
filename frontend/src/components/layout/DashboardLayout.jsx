@@ -79,12 +79,15 @@ export default function DashboardLayout() {
 
   const isActive = (path) => location.pathname === path;
 
-  const [showNotifications, setShowNotifications] = useState(false);
-  const notifications = [
+  const [notifications, setNotifications] = useState([
     { id: 1, title: "New Enrollment", message: "Rahul Sharma just enrolled in React Fullstack", time: "2 mins ago", unread: true },
     { id: 2, title: "Payment Received", message: "Sneha Patil paid ₹12,000 for UI/UX course", time: "15 mins ago", unread: true },
     { id: 3, title: "Course Updated", message: "New lesson added to Data Science course", time: "1 hour ago", unread: false },
-  ];
+  ]);
+
+  const clearNotifications = () => {
+    setNotifications([]);
+  };
 
   const handleLogout = () => {
     dispatch(logout());
@@ -203,10 +206,12 @@ export default function DashboardLayout() {
                 className="relative p-2.5 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
               >
                 <Bell size={18} />
-                <span
-                  className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full border-2 border-white dark:border-[#0f172a]"
-                  style={{ background: BRAND }}
-                />
+                {notifications.length > 0 && (
+                  <span
+                    className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full border-2 border-white dark:border-[#0f172a]"
+                    style={{ background: BRAND }}
+                  />
+                )}
               </button>
 
               <AnimatePresence>
@@ -219,22 +224,41 @@ export default function DashboardLayout() {
                   >
                     <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                       <h3 className="font-bold text-slate-900 dark:text-white">Notifications</h3>
-                      <span className="text-[10px] font-bold bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded-full uppercase tracking-wider">3 New</span>
+                      {notifications.length > 0 && (
+                        <button 
+                          onClick={clearNotifications}
+                          className="text-[10px] font-bold text-slate-400 hover:text-red-500 uppercase tracking-wider transition"
+                        >
+                          Clear All
+                        </button>
+                      )}
                     </div>
                     <div className="max-h-[400px] overflow-y-auto">
-                      {notifications.map((notif) => (
-                        <div key={notif.id} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer border-b border-slate-50 dark:border-slate-800/50 last:border-0">
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs font-bold text-slate-900 dark:text-white">{notif.title}</span>
-                            <span className="text-[10px] text-slate-400">{notif.time}</span>
+                      {notifications.length > 0 ? (
+                        notifications.map((notif) => (
+                          <div key={notif.id} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer border-b border-slate-50 dark:border-slate-800/50 last:border-0">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-xs font-bold text-slate-900 dark:text-white">{notif.title}</span>
+                              <span className="text-[10px] text-slate-400">{notif.time}</span>
+                            </div>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">{notif.message}</p>
                           </div>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">{notif.message}</p>
+                        ))
+                      ) : (
+                        <div className="p-12 text-center">
+                          <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Bell size={20} className="text-slate-300" />
+                          </div>
+                          <p className="text-sm font-bold text-slate-900 dark:text-white">All caught up!</p>
+                          <p className="text-xs text-slate-500 mt-1">No new notifications at the moment.</p>
                         </div>
-                      ))}
+                      )}
                     </div>
-                    <button className="w-full py-3 text-xs font-bold text-blue-500 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-                      View All Notifications
-                    </button>
+                    {notifications.length > 0 && (
+                      <button className="w-full py-3 text-xs font-bold text-blue-500 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        View All Notifications
+                      </button>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
