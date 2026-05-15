@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Bell, User, Sun, Moon, CheckCircle2, AlertCircle, TrendingUp } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setTheme } from '../../store/slices/uiSlice';
+import api from '../../utils/api';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const BRAND = '#1A9FD4';
