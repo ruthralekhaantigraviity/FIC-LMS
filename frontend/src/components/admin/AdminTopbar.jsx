@@ -13,13 +13,58 @@ const AdminTopbar = () => {
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
-  const [notifications, setNotifications] = useState([
-    { id: 1, type: 'enrollment', title: "New Enrollment Request", message: "A new student Rahul Sharma applied for React Course", time: "5 mins ago", icon: TrendingUp, color: 'blue' },
-    { id: 2, type: 'payment', title: "Payment Verified", message: "Successfully verified payment of ₹25,000", time: "1 hour ago", icon: CheckCircle2, color: 'green' },
-    { id: 3, type: 'system', title: "System Alert", message: "Server maintenance scheduled for tonight at 2 AM", time: "3 hours ago", icon: AlertCircle, color: 'orange' },
-  ]);
+  const [notifications, setNotifications] = useState([]);
 
-  const clearNotifications = () => setNotifications([]);
+  useEffect(() => {
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 60000); // Poll every minute
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchNotifications = async () => {
+    try {
+      const { data } = await api.get('/notifications');
+      setNotifications(data.data);
+    } catch (err) {
+      console.error('Error fetching notifications:', err);
+    }
+  };
+
+  const clearNotifications = async () => {
+    try {
+      await api.post('/notifications/clear-all');
+      setNotifications([]);
+    } catch (err) {
+      console.error('Error clearing notifications:', err);
+    }
+  };
+
+  const markAsRead = async (id) => {
+    try {
+      await api.patch(`/notifications/${id}/read`);
+      setNotifications(notifications.filter(n => n._id !== id));
+    } catch (err) {
+      console.error('Error marking as read:', err);
+    }
+  };
+
+  const getIcon = (type) => {
+    switch (type) {
+      case 'enrollment': return TrendingUp;
+      case 'payment': return CheckCircle2;
+      case 'enquiry': return User;
+      default: return AlertCircle;
+    }
+  };
+
+  const getColor = (type) => {
+    switch (type) {
+      case 'enrollment': return 'blue';
+      case 'payment': return 'green';
+      case 'enquiry': return 'purple';
+      default: return 'orange';
+    }
+  };
 
   return (
     <header className="h-16 bg-white/90 dark:bg-[#0f172a]/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40 flex items-center justify-between px-6 text-slate-600 dark:text-slate-300">
@@ -40,13 +85,16 @@ const AdminTopbar = () => {
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               className="relative w-full max-w-md bg-white dark:bg-[#1e293b] rounded-[32px] p-8 shadow-2xl border border-slate-200 dark:border-slate-800"
             >
-              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 mx-auto bg-${selectedNotification.color}-500/10 text-${selectedNotification.color}-500`} style={{ backgroundColor: selectedNotification.color === 'blue' ? 'rgba(59, 130, 246, 0.1)' : selectedNotification.color === 'green' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)', color: selectedNotification.color === 'blue' ? '#3b82f6' : selectedNotification.color === 'green' ? '#10b981' : '#f59e0b' }}>
-                <selectedNotification.icon size={32} />
+              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 mx-auto bg-${getColor(selectedNotification.type)}-500/10 text-${getColor(selectedNotification.type)}-500`} style={{ 
+                backgroundColor: getColor(selectedNotification.type) === 'blue' ? 'rgba(59, 130, 246, 0.1)' : getColor(selectedNotification.type) === 'green' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)', 
+                color: getColor(selectedNotification.type) === 'blue' ? '#3b82f6' : getColor(selectedNotification.type) === 'green' ? '#10b981' : '#f59e0b' 
+              }}>
+                {React.createElement(getIcon(selectedNotification.type), { size: 32 })}
               </div>
               <h3 className="text-xl font-bold text-slate-900 dark:text-white text-center mb-2">
                 {selectedNotification.title}
               </h3>
-              <p className="text-xs text-slate-400 text-center mb-6">{selectedNotification.time}</p>
+              <p className="text-xs text-slate-400 text-center mb-6">{new Date(selectedNotification.createdAt).toLocaleString()}</p>
               <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 mb-6">
                 <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed text-center">
                   {selectedNotification.message}
@@ -122,21 +170,25 @@ const AdminTopbar = () => {
                   {notifications.length > 0 ? (
                     notifications.map((notif) => (
                       <div 
-                        key={notif.id} 
+                        key={notif._id} 
                         onClick={() => {
                           setSelectedNotification(notif);
                           setShowNotifications(false);
+                          markAsRead(notif._id);
                         }}
                         className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer border-b border-slate-50 dark:border-slate-800/50 last:border-0 group"
                       >
                         <div className="flex gap-4">
-                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 bg-${notif.color}-500/10 text-${notif.color}-500`} style={{ backgroundColor: notif.color === 'blue' ? 'rgba(59, 130, 246, 0.1)' : notif.color === 'green' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)', color: notif.color === 'blue' ? '#3b82f6' : notif.color === 'green' ? '#10b981' : '#f59e0b' }}>
-                            <notif.icon size={18} />
+                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 bg-${getColor(notif.type)}-500/10 text-${getColor(notif.type)}-500`} style={{ 
+                            backgroundColor: getColor(notif.type) === 'blue' ? 'rgba(59, 130, 246, 0.1)' : getColor(notif.type) === 'green' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)', 
+                            color: getColor(notif.type) === 'blue' ? '#3b82f6' : getColor(notif.type) === 'green' ? '#10b981' : '#f59e0b' 
+                          }}>
+                            {React.createElement(getIcon(notif.type), { size: 18 })}
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center justify-between mb-1">
                               <span className="text-[13px] font-bold text-slate-900 dark:text-white group-hover:text-blue-500 transition-colors">{notif.title}</span>
-                              <span className="text-[10px] text-slate-400">{notif.time}</span>
+                              <span className="text-[10px] text-slate-400">{new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                             </div>
                             <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">{notif.message}</p>
                           </div>

@@ -1,6 +1,8 @@
 const Admission = require('../models/Admission');
 const Student = require('../models/Student');
 const User = require('../models/User');
+const Notification = require('../models/Notification');
+const Course = require('../models/Course');
 const jwt = require('jsonwebtoken');
 
 const signToken = (id) => {
@@ -15,6 +17,18 @@ exports.submitAdmission = async (req, res) => {
       ...req.body,
       student: req.user.id
     });
+
+    // Notify Admin and HR
+    const course = await Course.findById(req.body.course);
+    await Notification.create({
+      title: 'New Enrollment Request',
+      message: `${req.user.name} applied for ${course?.title || 'a course'}`,
+      type: 'enrollment',
+      roles: ['admin', 'hr'],
+      targetId: admission._id,
+      onModel: 'Admission'
+    });
+
     res.status(201).json({ status: 'success', data: admission });
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -61,6 +75,18 @@ exports.updateAdmissionStatus = async (req, res) => {
         await student.save();
       }
     }
+
+    // Notify Student
+    const course = await Course.findById(admission.course);
+    await Notification.create({
+      title: 'Application Status Updated',
+      message: `Your application for ${course?.title} has been ${status}`,
+      type: 'enrollment',
+      roles: ['student'],
+      targetId: admission._id,
+      onModel: 'Admission',
+      readBy: [] // Ensure it's not marked as read by the admin who updated it
+    });
 
     res.status(200).json({ status: 'success', data: admission });
   } catch (err) {

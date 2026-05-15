@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,10 +20,15 @@ import {
   MessageSquare,
   Users,
   Star,
-  Award
+  Award,
+  TrendingUp,
+  CheckCircle2,
+  AlertCircle,
+  User
 } from "lucide-react";
 import { logout } from "../../store/slices/authSlice";
 import { setTheme } from "../../store/slices/uiSlice";
+import api from "../../utils/api";
 
 const BRAND = "#1A9FD4";
 
@@ -79,17 +84,42 @@ export default function DashboardLayout() {
 
   const isActive = (path) => location.pathname === path;
 
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState([
-    { id: 1, title: "New Enrollment", message: "Rahul Sharma just enrolled in React Fullstack", time: "2 mins ago", unread: true },
-    { id: 2, title: "Payment Received", message: "Sneha Patil paid ₹12,000 for UI/UX course", time: "15 mins ago", unread: true },
-    { id: 3, title: "Course Updated", message: "New lesson added to Data Science course", time: "1 hour ago", unread: false },
-  ]);
+  const [notifications, setNotifications] = useState([]);
 
+  const [showNotifications, setShowNotifications] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
 
-  const clearNotifications = () => {
-    setNotifications([]);
+  useEffect(() => {
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 60000); // Poll every minute
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchNotifications = async () => {
+    try {
+      const { data } = await api.get('/notifications');
+      setNotifications(data.data);
+    } catch (err) {
+      console.error('Error fetching notifications:', err);
+    }
+  };
+
+  const clearNotifications = async () => {
+    try {
+      await api.post('/notifications/clear-all');
+      setNotifications([]);
+    } catch (err) {
+      console.error('Error clearing notifications:', err);
+    }
+  };
+
+  const markAsRead = async (id) => {
+    try {
+      await api.patch(`/notifications/${id}/read`);
+      setNotifications(notifications.filter(n => n._id !== id));
+    } catch (err) {
+      console.error('Error marking as read:', err);
+    }
   };
 
   const handleLogout = () => {
@@ -97,47 +127,68 @@ export default function DashboardLayout() {
     navigate("/login");
   };
 
+  const getIcon = (type) => {
+    switch (type) {
+      case 'enrollment': return TrendingUp;
+      case 'payment': return CheckCircle2;
+      case 'enquiry': return User;
+      default: return AlertCircle;
+    }
+  };
+
+  const getColor = (type) => {
+    switch (type) {
+      case 'enrollment': return 'blue';
+      case 'payment': return 'green';
+      case 'enquiry': return 'purple';
+      default: return 'orange';
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex">
-      {/* Detail Notification Modal */}
-      <AnimatePresence>
-        {selectedNotification && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedNotification(null)}
-              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-md bg-white dark:bg-[#1e293b] rounded-[32px] p-8 shadow-2xl border border-slate-200 dark:border-slate-800"
-            >
-              <div className="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 mb-6 mx-auto">
-                <Bell size={32} />
+          {/* Detail Notification Modal */}
+          <AnimatePresence>
+            {selectedNotification && (
+              <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setSelectedNotification(null)}
+                  className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+                />
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                  className="relative w-full max-w-md bg-white dark:bg-[#1e293b] rounded-[32px] p-8 shadow-2xl border border-slate-200 dark:border-slate-800"
+                >
+                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 mx-auto bg-${getColor(selectedNotification.type)}-500/10 text-${getColor(selectedNotification.type)}-500`} style={{ 
+                    backgroundColor: getColor(selectedNotification.type) === 'blue' ? 'rgba(59, 130, 246, 0.1)' : getColor(selectedNotification.type) === 'green' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)', 
+                    color: getColor(selectedNotification.type) === 'blue' ? '#3b82f6' : getColor(selectedNotification.type) === 'green' ? '#10b981' : '#f59e0b' 
+                  }}>
+                    {React.createElement(getIcon(selectedNotification.type), { size: 32 })}
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white text-center mb-2">
+                    {selectedNotification.title}
+                  </h3>
+                  <p className="text-xs text-slate-400 text-center mb-6">{new Date(selectedNotification.createdAt).toLocaleString()}</p>
+                  <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 mb-6">
+                    <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed text-center">
+                      {selectedNotification.message}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setSelectedNotification(null)}
+                    className="w-full py-4 bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-bold rounded-2xl hover:opacity-90 transition"
+                  >
+                    Close
+                  </button>
+                </motion.div>
               </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white text-center mb-2">
-                {selectedNotification.title}
-              </h3>
-              <p className="text-xs text-slate-400 text-center mb-6">{selectedNotification.time}</p>
-              <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 mb-6">
-                <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed text-center">
-                  {selectedNotification.message}
-                </p>
-              </div>
-              <button
-                onClick={() => setSelectedNotification(null)}
-                className="w-full py-4 bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-bold rounded-2xl hover:opacity-90 transition"
-              >
-                Close
-              </button>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+            )}
+          </AnimatePresence>
 
       {/* Mobile overlay */}
       {isSidebarOpen && (
@@ -282,18 +333,29 @@ export default function DashboardLayout() {
                       {notifications.length > 0 ? (
                         notifications.map((notif) => (
                           <div 
-                            key={notif.id} 
+                            key={notif._id} 
                             onClick={() => {
                               setSelectedNotification(notif);
                               setShowNotifications(false);
+                              markAsRead(notif._id);
                             }}
                             className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer border-b border-slate-50 dark:border-slate-800/50 last:border-0"
                           >
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="text-xs font-bold text-slate-900 dark:text-white">{notif.title}</span>
-                              <span className="text-[10px] text-slate-400">{notif.time}</span>
+                            <div className="flex gap-3">
+                              <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-${getColor(notif.type)}-500/10 text-${getColor(notif.type)}-500`} style={{ 
+                                backgroundColor: getColor(notif.type) === 'blue' ? 'rgba(59, 130, 246, 0.1)' : getColor(notif.type) === 'green' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)', 
+                                color: getColor(notif.type) === 'blue' ? '#3b82f6' : getColor(notif.type) === 'green' ? '#10b981' : '#f59e0b' 
+                              }}>
+                                {React.createElement(getIcon(notif.type), { size: 14 })}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between mb-0.5">
+                                  <span className="text-xs font-bold text-slate-900 dark:text-white truncate pr-2">{notif.title}</span>
+                                  <span className="text-[10px] text-slate-400 whitespace-nowrap">{new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                </div>
+                                <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1">{notif.message}</p>
+                              </div>
                             </div>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">{notif.message}</p>
                           </div>
                         ))
                       ) : (
