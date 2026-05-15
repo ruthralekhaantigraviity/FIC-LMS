@@ -254,6 +254,11 @@ function App() {
           <Route path="assignments" element={<Assignments />} />
           <Route path="settings" element={<Settings />} />
           <Route path="overview" element={<DashboardOverview />} />
+          <Route path="bookings" element={
+            <ProtectedRoute allowedRoles={["admin", "hr"]}>
+              <AllBookings />
+            </ProtectedRoute>
+          } />
           <Route path="profile" element={<div>User Profile</div>} />
         </Route>
 

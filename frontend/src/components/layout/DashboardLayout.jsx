@@ -39,7 +39,7 @@ export default function DashboardLayout() {
     { name: "Dashboard", path: "/dashboard/overview", icon: LayoutDashboard },
     { 
       name: "All Bookings", 
-      path: "/dashboard/admin/bookings", 
+      path: "/dashboard/bookings", 
       icon: ClipboardList, 
       role: ["admin", "hr"] 
     },
