@@ -44,12 +44,6 @@ export default function DashboardLayout() {
       role: ["admin", "hr"] 
     },
     {
-      name: "Discussions",
-      path: "/dashboard/discussions",
-      icon: MessageSquare,
-      role: ["trainer"]
-    },
-    {
       name: user?.role === "admin" ? "Manage Courses" : "Courses",
       path:
         user?.role === "admin"
