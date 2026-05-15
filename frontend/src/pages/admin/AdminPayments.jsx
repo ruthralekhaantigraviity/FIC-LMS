@@ -125,7 +125,7 @@ const AdminPayments = () => {
                 </tr>
               ) : (
                 filteredPayments.map((payment) => (
-                  <tr key={payment._id} className="hover:bg-slate-50 dark:bg-slate-800/20 transition-colors group">
+                  <tr key={payment._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
                     <td className="px-6 py-4">
                       <div>
                         <p className="text-sm font-bold text-slate-600 dark:text-slate-300">{payment.course?.title}</p>

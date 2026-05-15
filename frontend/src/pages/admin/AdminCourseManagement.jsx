@@ -199,7 +199,7 @@ export default function AdminCourseManagement() {
                 </tr>
               ) : (
                 filteredCourses.map((course) => (
-                  <tr key={course._id} className="hover:bg-slate-50 dark:bg-slate-800/20 transition-colors group">
+                  <tr key={course._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-slate-300 dark:border-slate-700">

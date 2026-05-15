@@ -127,7 +127,7 @@ const AdminEnrollments = () => {
                 </tr>
               ) : (
                 filteredEnrollments.map((enrollment) => (
-                  <tr key={enrollment._id} className="hover:bg-slate-50 dark:bg-slate-800/20 transition-colors group">
+                  <tr key={enrollment._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
                     <td className="px-6 py-4">
                       <div>
                         <p className="text-sm font-bold text-slate-900 dark:text-white">{enrollment.fullName}</p>
