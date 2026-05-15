@@ -31,6 +31,9 @@ const studentDemographics = [
 ];
 
 const AdminReports = () => {
+  const [timeframe, setTimeframe] = React.useState('Last 6 Months');
+  const [showTimeframeDropdown, setShowTimeframeDropdown] = React.useState(false);
+
   const handleExportPDF = () => {
     const doc = new jsPDF();
     
@@ -41,7 +44,7 @@ const AdminReports = () => {
     
     doc.setFontSize(10);
     doc.setTextColor(100);
-    doc.text(`Report Period: Last 6 Months`, 14, 30);
+    doc.text(`Report Period: ${timeframe}`, 14, 30);
     doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 35);
     doc.text("---------------------------------------------------------------------------------------------------", 14, 40);
 
@@ -109,6 +112,8 @@ const AdminReports = () => {
     doc.save(`FIC_Detailed_Analytics_${new Date().toISOString().split('T')[0]}.pdf`);
   };
 
+  const timeframes = ["Last 30 Days", "Last 3 Months", "Last 6 Months", "Last Year"];
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500 pb-12">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -117,9 +122,30 @@ const AdminReports = () => {
           <p className="text-slate-500 mt-1">Deep dive into performance metrics and business intelligence.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
-            <Calendar size={16} /> Last 6 Months
-          </button>
+          <div className="relative">
+            <button 
+              onClick={() => setShowTimeframeDropdown(!showTimeframeDropdown)}
+              className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+            >
+              <Calendar size={16} /> {timeframe}
+            </button>
+            {showTimeframeDropdown && (
+              <div className="absolute top-full mt-2 left-0 w-48 bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl z-50 overflow-hidden">
+                {timeframes.map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => {
+                      setTimeframe(t);
+                      setShowTimeframeDropdown(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ${timeframe === t ? 'text-blue-500 font-bold bg-blue-50/50 dark:bg-blue-500/10' : 'text-slate-600 dark:text-slate-400'}`}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           <button 
             onClick={handleExportPDF}
             className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20"
