@@ -41,7 +41,6 @@ export default function AdminCourseManagement() {
   const fetchTrainers = async () => {
     try {
       const { data } = await api.get("/auth/users");
-      // Filter for trainers
       const trainersList = data.data.filter(u => u.role === 'trainer');
       setTrainers(trainersList);
     } catch (err) {
@@ -121,13 +120,13 @@ export default function AdminCourseManagement() {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 font-display">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
             Manage Courses
           </h1>
-          <p className="text-slate-500">
+          <p className="text-slate-500 mt-1">
             Create, edit, and monitor your course catalog.
           </p>
         </div>
@@ -146,18 +145,19 @@ export default function AdminCourseManagement() {
             });
             setIsModalOpen(true);
           }}
-          className="flex items-center gap-2 px-6 py-3 bg-primary-600 text-white font-bold rounded-2xl hover:bg-primary-700 transition shadow-lg shadow-primary-600/20"
+          style={{ background: '#1A9FD4' }}
+          className="flex items-center gap-2 px-6 py-3 text-white font-bold rounded-xl hover:brightness-110 transition shadow-lg"
         >
           <Plus size={20} /> Create New Course
         </button>
       </div>
 
       {/* Courses Table */}
-      <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+      <div className="bg-white dark:bg-[#0f172a] rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm dark:shadow-none">
+        <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <div className="relative">
             <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
               size={18}
             />
             <input
@@ -165,14 +165,14 @@ export default function AdminCourseManagement() {
               placeholder="Search courses..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl text-sm w-64 focus:ring-2 focus:ring-primary-500 outline-none"
+              className="pl-10 pr-4 py-2.5 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-sm w-72 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
             />
           </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              <tr className="bg-slate-50 dark:bg-slate-800/30 text-xs font-bold text-slate-500 uppercase tracking-wider">
                 <th className="px-6 py-4">Course</th>
                 <th className="px-6 py-4 hidden md:table-cell">Category</th>
                 <th className="px-6 py-4">Price</th>
@@ -181,61 +181,64 @@ export default function AdminCourseManagement() {
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
               {loading ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-10">
-                    Loading...
+                  <td colSpan="6" className="text-center py-20">
+                    <div className="flex flex-col items-center gap-3">
+                       <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                       <span className="text-slate-500 font-medium">Loading courses...</span>
+                    </div>
                   </td>
                 </tr>
               ) : filteredCourses.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-10 text-slate-500">
+                  <td colSpan="6" className="text-center py-20 text-slate-500">
                     No courses found matching your search.
                   </td>
                 </tr>
               ) : (
                 filteredCourses.map((course) => (
-                  <tr key={course._id} className="hover:bg-slate-50 transition">
+                  <tr key={course._id} className="hover:bg-slate-50 dark:bg-slate-800/20 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+                        <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-slate-300 dark:border-slate-700">
                           <img
                             src={course.thumbnail}
                             alt=""
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-bold text-slate-900 truncate">
+                          <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
                             {course.title}
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 font-medium">
                             {course.level}
                           </p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 hidden md:table-cell">
-                      <span className="px-2 py-1 bg-slate-100 text-slate-600 rounded-md text-[10px] font-bold uppercase">
+                      <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-lg text-[10px] font-bold uppercase border border-slate-300 dark:border-slate-700">
                         {course.category}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm font-medium">
+                    <td className="px-6 py-4 text-sm font-bold text-blue-400">
                       {course.price === 0 ? "Free" : `₹${course.price?.toLocaleString()}`}
                     </td>
                     <td className="px-6 py-4">
                       {course.isPublished ? (
-                        <div className="flex items-center gap-1.5 text-green-500">
-                          <CheckCircle size={14} />
-                          <span className="text-xs font-bold uppercase hidden sm:inline">
+                        <div className="flex items-center gap-1.5 text-emerald-500">
+                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                          <span className="text-[11px] font-bold uppercase">
                             Published
                           </span>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-1.5 text-orange-500">
-                          <XCircle size={14} />
-                          <span className="text-xs font-bold uppercase hidden sm:inline">
+                        <div className="flex items-center gap-1.5 text-slate-500">
+                          <div className="w-1.5 h-1.5 rounded-full bg-slate-500"></div>
+                          <span className="text-[11px] font-bold uppercase">
                             Draft
                           </span>
                         </div>
@@ -246,23 +249,15 @@ export default function AdminCourseManagement() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <a
-                          href={`/courses/${course._id}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="p-2 text-slate-400 hover:text-primary-600 transition"
-                        >
-                          <Eye size={18} />
-                        </a>
                         <button
                           onClick={() => handleEdit(course)}
-                          className="p-2 text-slate-400 hover:text-primary-600 transition"
+                          className="p-2 text-slate-500 hover:text-blue-500 hover:bg-blue-500/10 rounded-lg transition-all"
                         >
                           <Edit2 size={18} />
                         </button>
                         <button
                           onClick={() => handleDeleteCourse(course._id)}
-                          className="p-2 text-slate-400 hover:text-red-500 transition"
+                          className="p-2 text-slate-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
                         >
                           <Trash2 size={18} />
                         </button>
@@ -285,21 +280,21 @@ export default function AdminCourseManagement() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsModalOpen(false)}
-              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-slate-950/80 backdrop-blur-md"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden"
+              className="relative w-full max-w-2xl bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden"
             >
-              <div className="p-8 border-b border-slate-100 flex items-center justify-between">
-                <h3 className="text-xl font-bold">
+              <div className="p-8 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                   {editingCourse ? "Edit Course" : "Create New Course"}
                 </h3>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="p-2 text-slate-400 hover:text-slate-600 transition"
+                  className="p-2 text-slate-500 hover:text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all"
                 >
                   <XCircle size={24} />
                 </button>
@@ -309,7 +304,7 @@ export default function AdminCourseManagement() {
                 <div className="p-8 space-y-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="col-span-2">
-                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
                         Course Title
                       </label>
                       <input
@@ -319,12 +314,12 @@ export default function AdminCourseManagement() {
                         onChange={(e) =>
                           setFormData({ ...formData, title: e.target.value })
                         }
-                        className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                        className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all placeholder:text-slate-600"
                         placeholder="e.g. Master React in 30 Days"
                       />
                     </div>
                     <div className="col-span-2">
-                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
                         Description
                       </label>
                       <textarea
@@ -337,12 +332,12 @@ export default function AdminCourseManagement() {
                           })
                         }
                         rows="3"
-                        className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-primary-500 outline-none resize-none"
+                        className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all resize-none placeholder:text-slate-600"
                         placeholder="What will students learn in this course?"
                       ></textarea>
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
                         Category
                       </label>
                       <select
@@ -350,14 +345,16 @@ export default function AdminCourseManagement() {
                         onChange={(e) =>
                           setFormData({ ...formData, category: e.target.value })
                         }
-                        className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                        className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
                       >
-                        <option>Development</option> <option>Design</option>
-                        <option>Business</option> <option>Marketing</option>
+                        <option value="Development">Development</option>
+                        <option value="Design">Design</option>
+                        <option value="Business">Business</option>
+                        <option value="Marketing">Marketing</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
                         Level
                       </label>
                       <select
@@ -365,14 +362,15 @@ export default function AdminCourseManagement() {
                         onChange={(e) =>
                           setFormData({ ...formData, level: e.target.value })
                         }
-                        className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                        className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
                       >
-                        <option>Beginner</option> <option>Intermediate</option>
-                        <option>Advanced</option>
+                        <option value="Beginner">Beginner</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Advanced">Advanced</option>
                       </select>
                     </div>
                      <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
                         Course Price (₹)
                       </label>
                       <input
@@ -383,12 +381,11 @@ export default function AdminCourseManagement() {
                         onChange={(e) =>
                           setFormData({ ...formData, price: Number(e.target.value) })
                         }
-                        className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
-                        placeholder="e.g. 99"
+                        className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
                         Duration
                       </label>
                       <input
@@ -398,12 +395,11 @@ export default function AdminCourseManagement() {
                         onChange={(e) =>
                           setFormData({ ...formData, duration: e.target.value })
                         }
-                        className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
-                        placeholder="e.g. 8 Weeks"
+                        className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
                       />
                     </div>
                     <div className="col-span-2">
-                      <label className="block text-sm font-bold text-slate-700 mb-2">
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
                         Assign Trainer
                       </label>
                       <select
@@ -412,7 +408,7 @@ export default function AdminCourseManagement() {
                         onChange={(e) =>
                           setFormData({ ...formData, instructor: e.target.value })
                         }
-                        className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                        className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
                       >
                         <option value="">Select a Trainer</option>
                         {trainers.map(trainer => (
@@ -423,7 +419,7 @@ export default function AdminCourseManagement() {
                       </select>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3 p-4 bg-blue-600/5 border border-blue-600/10 rounded-2xl">
                     <input
                       type="checkbox"
                       id="isPublished"
@@ -434,20 +430,21 @@ export default function AdminCourseManagement() {
                           isPublished: e.target.checked,
                         })
                       }
-                      className="w-5 h-5 rounded-md text-primary-600 focus:ring-primary-500"
+                      className="w-5 h-5 rounded border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-blue-600 focus:ring-blue-500/50"
                     />
                     <label
                       htmlFor="isPublished"
-                      className="text-sm font-bold text-slate-700"
+                      className="text-sm font-semibold text-slate-600 dark:text-slate-300 cursor-pointer"
                     >
-                      Publish immediately
+                      Publish this course immediately for student enrollment
                     </label>
                   </div>
                 </div>
-                <div className="p-8 bg-slate-50 border-t border-slate-100 flex gap-4">
+                <div className="p-8 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-200 dark:border-slate-800 flex gap-4">
                   <button
                     type="submit"
-                    className="flex-1 py-4 bg-primary-600 text-white font-bold rounded-2xl hover:bg-primary-700 transition shadow-lg shadow-primary-600/20"
+                    style={{ background: '#1A9FD4' }}
+                    className="flex-1 py-4 text-white font-bold rounded-2xl hover:brightness-110 transition shadow-lg"
                   >
                     {editingCourse ? "Save Changes" : "Create Course"}
                   </button>
@@ -457,7 +454,7 @@ export default function AdminCourseManagement() {
                       setIsModalOpen(false);
                       setEditingCourse(null);
                     }}
-                    className="flex-1 py-4 bg-white text-slate-900 border border-slate-200 font-bold rounded-2xl hover:bg-slate-50 transition"
+                    className="flex-1 py-4 bg-transparent text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-700 font-bold rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:text-white transition"
                   >
                     Cancel
                   </button>
@@ -470,3 +467,4 @@ export default function AdminCourseManagement() {
     </div>
   );
 }
+

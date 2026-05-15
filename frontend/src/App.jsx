@@ -27,6 +27,16 @@ import AllBookings from "./pages/admin/AllBookings";
 import Settings from "./pages/common/Settings";
 import { Toaster } from 'react-hot-toast';
 import NotFound from "./pages/NotFound";
+import AdminLayout from "./components/admin/AdminLayout";
+import AdminOverview from "./pages/admin/AdminOverview";
+import AdminStudents from "./pages/admin/AdminStudents";
+import AdminTrainers from "./pages/admin/AdminTrainers";
+import AdminEnrollments from "./pages/admin/AdminEnrollments";
+import AdminPayments from "./pages/admin/AdminPayments";
+import AdminEnquiries from "./pages/admin/AdminEnquiries";
+import AdminReports from "./pages/admin/AdminReports";
+import AdminSettings from "./pages/admin/AdminSettings";
+import PlaceholderPage from "./pages/admin/PlaceholderPage";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -66,6 +76,7 @@ function App() {
     }
   }, [theme]);
 
+  // Triggering HMR
   return (
     <>
       <Toaster 
@@ -89,6 +100,26 @@ function App() {
         <Route path="/courses/:id" element={<CourseDetail />} />
         <Route path="/enroll" element={<PublicEnrollment />} />
 
+        {/* Admin Dashboard Routes (Standalone Layout) */}
+        <Route
+          path="/dashboard/admin"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<AdminOverview />} />
+          <Route path="students" element={<AdminStudents />} />
+          <Route path="courses" element={<AdminCourseManagement />} />
+          <Route path="trainers" element={<AdminTrainers />} />
+          <Route path="enrollments" element={<AdminEnrollments />} />
+          <Route path="payments" element={<AdminPayments />} />
+          <Route path="enquiries" element={<AdminEnquiries />} />
+          <Route path="reports" element={<AdminReports />} />
+          <Route path="settings" element={<AdminSettings />} />
+        </Route>
+
         {/* Protected Dashboard Routes */}
         <Route
           path="/dashboard"
@@ -100,39 +131,8 @@ function App() {
         >
           <Route index element={<Navigate to="overview" />} />
 
-          {/* Admin Routes */}
-          <Route
-            path="admin"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="admin/courses"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <AdminCourseManagement />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="admin/hr"
-            element={
-              <ProtectedRoute allowedRoles={["admin", "hr"]}>
-                <HRDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="admin/bookings"
-            element={
-              <ProtectedRoute allowedRoles={["admin", "hr"]}>
-                <AllBookings />
-              </ProtectedRoute>
-            }
-          />
+
+
           <Route
             path="attendance"
             element={

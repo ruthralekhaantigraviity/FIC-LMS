@@ -66,12 +66,12 @@ export default function HRDashboard() {
       {" "}
       <div>
         {" "}
-        <h1 className="text-3xl font-bold text-slate-900 font-display">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-display">
           Admissions Management
-        </h1>{" "}
-        <p className="text-slate-500">
+        </h1>
+        <p className="text-slate-500 dark:text-slate-400">
           Review and approve new student applications.
-        </p>{" "}
+        </p>
       </div>{" "}
       {/* Pending Notification Banner */}
       {pendingCount > 0 && (
@@ -94,9 +94,9 @@ export default function HRDashboard() {
           </div>
         </motion.div>
       )}
-      <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm dark:shadow-none">
         {" "}
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+        <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
           {" "}
           <div className="relative">
             {" "}
@@ -107,7 +107,7 @@ export default function HRDashboard() {
             <input
               type="text"
               placeholder="Search applications..."
-              className="pl-10 pr-4 py-2 bg-slate-50 border-none rounded-xl text-sm w-64 focus:ring-2 focus:ring-primary-500 outline-none"
+              className="pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm w-64 text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-400/50 outline-none"
             />{" "}
           </div>{" "}
           <div className="flex gap-2">
@@ -128,7 +128,7 @@ export default function HRDashboard() {
             {" "}
             <thead>
               {" "}
-              <tr className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              <tr className="bg-slate-50 dark:bg-slate-800/30 text-xs font-bold text-slate-400 uppercase tracking-wider">
                 {" "}
                 <th className="px-6 py-4">Applicant</th>{" "}
                 <th className="px-6 py-4">Course</th>{" "}
@@ -137,7 +137,7 @@ export default function HRDashboard() {
                 <th className="px-6 py-4 text-right">Actions</th>{" "}
               </tr>{" "}
             </thead>{" "}
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
               {" "}
               {loading ? (
                 <tr>
@@ -153,19 +153,19 @@ export default function HRDashboard() {
                 </tr>
               ) : (
                 admissions.map((app) => (
-                  <tr key={app._id} className="hover:bg-slate-50 transition">
+                  <tr key={app._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/20 transition">
                     {" "}
                     <td className="px-6 py-4">
                       {" "}
                       <div className="flex items-center gap-3">
                         {" "}
-                        <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-bold">
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ background: '#1A9FD4' }}>
                           {" "}
                           {app.fullName.charAt(0)}{" "}
                         </div>{" "}
                         <div>
                           {" "}
-                          <p className="text-sm font-bold text-slate-900">
+                           <p className="text-sm font-bold text-slate-900 dark:text-white">
                             {app.fullName}
                           </p>{" "}
                           <p className="text-xs text-slate-500">
@@ -197,7 +197,10 @@ export default function HRDashboard() {
                       {" "}
                       <button
                         onClick={() => setSelectedAdmission(app)}
-                        className="p-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-primary-600 hover:text-white transition"
+                        className="p-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-lg hover:text-white transition"
+                        style={{}} 
+                        onMouseEnter={e => { e.currentTarget.style.background='#1A9FD4'; e.currentTarget.style.color='white'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color=''; }}
                       >
                         {" "}
                         <Eye size={18} />{" "}
@@ -227,14 +230,14 @@ export default function HRDashboard() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl overflow-hidden"
+              className="relative w-full max-w-3xl bg-white dark:bg-[#0f172a] rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden"
             >
               {" "}
-              <div className="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+              <div className="p-8 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-800/50">
                 {" "}
                 <div className="flex items-center gap-4">
                   {" "}
-                  <div className="w-12 h-12 rounded-2xl bg-primary-600 flex items-center justify-center text-white text-xl font-bold">
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl font-bold" style={{ background: '#1A9FD4' }}>
                     {" "}
                     {selectedAdmission.fullName.charAt(0)}{" "}
                   </div>{" "}
@@ -319,12 +322,12 @@ export default function HRDashboard() {
                       value={reviewNotes}
                       onChange={(e) => setReviewNotes(e.target.value)}
                       placeholder="Add notes for this application..."
-                      className="w-full px-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-primary-500 outline-none text-sm h-32 resize-none"
+                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-400/50 outline-none text-sm h-32 resize-none"
                     ></textarea>{" "}
                   </div>{" "}
                 </div>{" "}
               </div>{" "}
-              <div className="p-8 bg-slate-50 border-t border-slate-100 flex gap-4">
+              <div className="p-8 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-200 dark:border-slate-800 flex gap-4">
                 {" "}
                 <button
                   onClick={() =>

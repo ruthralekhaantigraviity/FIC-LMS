@@ -84,26 +84,8 @@ export default function Footer() {
           {/* Brand Info */}{" "}
           <div className="lg:col-span-4">
             {" "}
-            <div className="flex items-center gap-3 mb-6">
-              {" "}
-              <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center p-2">
-                {" "}
-                <span className="text-[#0284c7] font-black text-xl">
-                  F
-                </span>{" "}
-              </div>{" "}
-              <div>
-                {" "}
-                <h3 className="text-xl font-black text-white leading-none tracking-tight">
-                  FORGE INDIA
-                </h3>{" "}
-                <p className="text-xs font-bold text-amber-500 tracking-[0.2em] mt-1">
-                  CONNECT
-                </p>{" "}
-                <p className="text-[10px] font-bold text-amber-500/80 tracking-widest">
-                  CONNECT ECOSYSTEM
-                </p>{" "}
-              </div>{" "}
+            <div className="flex items-center mb-6">
+              <img src="/logo.jpg" alt="FIC Logo" className="h-14 w-auto object-contain bg-white rounded-xl p-2" />
             </div>{" "}
             <p className="text-slate-400 mb-8 max-w-sm leading-relaxed text-sm">
               {" "}

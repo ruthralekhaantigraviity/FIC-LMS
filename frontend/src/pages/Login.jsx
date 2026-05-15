@@ -58,13 +58,8 @@ export default function Login() {
       >
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary-600 to-accent-purple rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/20">
-              <span className="text-white font-bold text-lg">F</span>
-            </div>
-            <span className="text-slate-900 font-display font-bold text-2xl tracking-tight">
-              FIC Learning
-            </span>
+          <div className="inline-flex items-center justify-center mb-4">
+            <img src="/logo.jpg" alt="FIC Logo" className="h-20 w-auto object-contain bg-white rounded-xl p-2" />
           </div>
           <h1 className="text-3xl font-display font-bold text-slate-900">
             Welcome back
@@ -88,7 +83,10 @@ export default function Login() {
                 onChange={handleChange}
                 required
                 placeholder="you@example.com"
-                className="w-full px-5 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-primary-500 focus:bg-white outline-none transition text-slate-900 placeholder-slate-400 font-medium"
+                className="w-full px-5 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:outline-none transition text-slate-900 placeholder-slate-400 font-medium"
+                style={{ '--tw-ring-color': '#1A9FD4' }}
+                onFocus={e => e.target.style.borderColor = '#1A9FD4'}
+                onBlur={e => e.target.style.borderColor = 'transparent'}
               />
             </div>
 
@@ -104,7 +102,9 @@ export default function Login() {
                   onChange={handleChange}
                   required
                   placeholder="••••••••"
-                  className="w-full px-5 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-primary-500 focus:bg-white outline-none transition text-slate-900 placeholder-slate-400 font-medium pr-14"
+                  className="w-full px-5 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:outline-none transition text-slate-900 placeholder-slate-400 font-medium pr-14"
+                  onFocus={e => e.target.style.borderColor = '#1A9FD4'}
+                  onBlur={e => e.target.style.borderColor = 'transparent'}
                 />
                 <button
                   type="button"
@@ -127,7 +127,8 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 bg-gradient-to-r from-primary-600 to-accent-purple text-white font-bold rounded-2xl hover:opacity-95 transition-all duration-300 shadow-xl shadow-primary-500/20 active:scale-[0.98] disabled:opacity-50"
+              style={{ background: 'linear-gradient(135deg, #1A9FD4, #7c3aed)' }}
+              className="w-full py-4 text-white font-bold rounded-2xl hover:brightness-110 transition-all duration-300 shadow-xl active:scale-[0.98] disabled:opacity-50"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>

@@ -15,5 +15,6 @@ router.get('/my-courses', admissionController.getMyEnrolledCourses);
 // HR/Admin only routes
 router.get('/all', restrictTo('hr', 'admin'), admissionController.getAllAdmissions);
 router.patch('/:id/status', restrictTo('hr', 'admin'), admissionController.updateAdmissionStatus);
+router.delete('/:id', restrictTo('hr', 'admin'), admissionController.deleteAdmission);
 
 module.exports = router;

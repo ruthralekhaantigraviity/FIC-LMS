@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   LayoutDashboard,
   BookOpen,
-  Users,
   Calendar,
   FileText,
   Settings,
@@ -14,12 +13,15 @@ import {
   X,
   Bell,
   Search,
-  User as UserIcon,
-  ChevronRight,
+  UserCheck,
   ClipboardList,
-  UserCheck
+  Sun,
+  Moon,
 } from "lucide-react";
 import { logout } from "../../store/slices/authSlice";
+import { setTheme } from "../../store/slices/uiSlice";
+
+const BRAND = "#1A9FD4";
 
 export default function DashboardLayout() {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -27,6 +29,7 @@ export default function DashboardLayout() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const { theme } = useSelector((state) => state.ui);
 
   const menuItems = [
     { name: "Overview", path: "/dashboard/overview", icon: LayoutDashboard },
@@ -38,24 +41,26 @@ export default function DashboardLayout() {
     },
     {
       name: user?.role === "admin" ? "Manage Courses" : "My Courses",
-      path: user?.role === "admin" ? "/dashboard/admin/courses" : user?.role === "trainer" ? "/dashboard/trainer/courses" : "/dashboard/student/courses",
+      path:
+        user?.role === "admin"
+          ? "/dashboard/admin/courses"
+          : user?.role === "trainer"
+          ? "/dashboard/trainer/courses"
+          : "/dashboard/student/courses",
       icon: BookOpen,
-      role: ["admin", "trainer", "student"]
+      role: ["admin", "trainer", "student"],
     },
-    { name: "Attendance", path: "/dashboard/attendance", icon: Calendar, role: ["trainer", "hr"] },
-    { name: "Assignments", path: "/dashboard/assignments", icon: FileText, role: ["trainer", "hr"] },
-    {
-      name: "Manage Staff",
-      path: "/dashboard/admin/users",
-      icon: UserCheck,
-      role: ["admin"],
-    },
-    { name: "Settings", path: "/dashboard/settings", icon: Settings },
+    { name: "Attendance",   path: "/dashboard/attendance",   icon: Calendar,      role: ["trainer", "hr"] },
+    { name: "Assignments",  path: "/dashboard/assignments",  icon: FileText,      role: ["trainer", "hr"] },
+    { name: "Manage Staff", path: "/dashboard/admin/users",  icon: UserCheck,     role: ["admin"] },
+    { name: "Settings",     path: "/dashboard/settings",     icon: Settings },
   ];
 
   const filteredMenuItems = menuItems.filter(
-    (item) => !item.role || item.role.includes(user?.role),
+    (item) => !item.role || item.role.includes(user?.role)
   );
+
+  const isActive = (path) => location.pathname === path;
 
   const handleLogout = () => {
     dispatch(logout());
@@ -63,89 +68,132 @@ export default function DashboardLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex">
+
+      {/* Mobile overlay */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200 transition-transform duration-300 transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:relative lg:translate-x-0`}
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-[#0f172a] border-r border-slate-200 dark:border-slate-800 transition-transform duration-300 transform ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:relative lg:translate-x-0 flex flex-col`}
       >
-        <div className="flex flex-col h-full p-6">
-          <div className="flex items-center gap-3 mb-10 px-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary-600 to-accent-purple rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-xl">F</span>
-            </div>
-            <span className="text-2xl font-display font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-accent-purple">
-              FIC
-            </span>
+        {/* Logo */}
+        <div className="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-800">
+          <div className="flex items-center gap-3">
+            <img src="/logo.jpg" alt="FIC Logo" className="h-8 w-auto object-contain bg-white rounded p-1" />
           </div>
+          <button
+            className="lg:hidden p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white"
+            onClick={() => setSidebarOpen(false)}
+          >
+            <X size={18} />
+          </button>
+        </div>
 
-          <nav className="flex-1 space-y-2">
-            {filteredMenuItems.map((item) => (
+        {/* Nav */}
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          {filteredMenuItems.map((item) => {
+            const active = isActive(item.path);
+            return (
               <Link
                 key={item.path}
                 to={item.path}
-                onClick={() => {
-                  if (window.innerWidth < 1024) {
-                    setSidebarOpen(false);
-                  }
-                }}
-                className={`sidebar-link ${location.pathname === item.path ? "sidebar-link-active" : ""}`}
+                onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium ${
+                  active
+                    ? "font-bold"
+                    : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-white"
+                }`}
+                style={active ? { background: `${BRAND}18`, color: BRAND } : {}}
               >
-                <item.icon size={20} />
+                <item.icon size={19} style={active ? { color: BRAND } : {}} />
                 <span>{item.name}</span>
-                {location.pathname === item.path && (
+                {active && (
                   <motion.div
-                    layoutId="active-indicator"
-                    className="ml-auto w-1.5 h-1.5 bg-primary-600 rounded-full"
+                    layoutId="dash-active-dot"
+                    className="ml-auto w-1.5 h-1.5 rounded-full"
+                    style={{ background: BRAND }}
                   />
                 )}
               </Link>
-            ))}
-          </nav>
+            );
+          })}
+        </nav>
 
-          <div className="mt-auto pt-6 border-t border-slate-200">
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 px-4 py-3 w-full text-slate-600 hover:text-red-500 transition-colors"
-            >
-              <LogOut size={20} />
-              <span className="font-medium">Logout</span>
-            </button>
-          </div>
+        {/* Logout */}
+        <div className="p-4 border-t border-slate-200 dark:border-slate-800">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-3 py-2.5 w-full text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 rounded-xl transition-all text-sm font-medium"
+          >
+            <LogOut size={18} />
+            <span>Logout</span>
+          </button>
         </div>
       </aside>
 
-      {/* Main Content */}
+      {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Header */}
-        <header className="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-6 sticky top-0 z-40">
-          <button
-            onClick={() => setSidebarOpen(!isSidebarOpen)}
-            className="lg:hidden p-2 text-slate-600"
-          >
-            <Menu size={24} />
-          </button>
-
-          <div className="hidden md:flex items-center bg-slate-100 px-4 py-2 rounded-xl border border-slate-200 w-96">
-            <Search size={18} className="text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search anything..."
-              className="bg-transparent border-none focus:ring-0 ml-2 text-sm w-full"
-            />
+        {/* Topbar */}
+        <header className="h-16 bg-white/90 dark:bg-[#0f172a]/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-5 sticky top-0 z-40">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setSidebarOpen(!isSidebarOpen)}
+              className="lg:hidden p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition"
+            >
+              <Menu size={20} />
+            </button>
+            <div className="hidden md:flex items-center bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 w-72 focus-within:border-sky-400 focus-within:ring-2 focus-within:ring-sky-400/20 transition-all">
+              <Search size={16} className="text-slate-400 flex-shrink-0" />
+              <input
+                type="text"
+                placeholder="Search anything..."
+                className="bg-transparent border-none focus:ring-0 ml-2 text-sm w-full text-slate-700 dark:text-slate-200 placeholder:text-slate-400 outline-none"
+              />
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <button className="p-2 text-slate-600 hover:bg-slate-100 rounded-xl relative">
-              <Bell size={20} />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+          <div className="flex items-center gap-2">
+            {/* Theme toggle */}
+            <button
+              onClick={() => dispatch(setTheme(theme === "dark" ? "light" : "dark"))}
+              className="p-2.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
+            >
+              {theme === "dark"
+                ? <Sun size={18} className="text-amber-400" />
+                : <Moon size={18} className="text-slate-500" />
+              }
             </button>
 
-            <div className="flex items-center gap-3 pl-4">
-              <div className="text-right hidden sm:block">
-                <p className="text-sm font-semibold">{user?.name || "User"}</p>
-                <p className="text-xs text-slate-500 capitalize">
-                  {user?.role || "Student"}
-                </p>
+            {/* Notifications */}
+            <button className="relative p-2.5 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+              <Bell size={18} />
+              <span
+                className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full border-2 border-white dark:border-[#0f172a]"
+                style={{ background: BRAND }}
+              />
+            </button>
+
+            <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1" />
+
+            {/* Avatar */}
+            <div className="flex items-center gap-2.5">
+              <div className="hidden sm:block text-right">
+                <p className="text-sm font-semibold text-slate-800 dark:text-white leading-tight">{user?.name || "User"}</p>
+                <p className="text-[11px] text-slate-400 capitalize">{user?.role || "Student"}</p>
+              </div>
+              <div
+                className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md"
+                style={{ background: `linear-gradient(135deg, ${BRAND}, #7c3aed)` }}
+              >
+                {user?.name?.charAt(0)?.toUpperCase() || "U"}
               </div>
             </div>
           </div>

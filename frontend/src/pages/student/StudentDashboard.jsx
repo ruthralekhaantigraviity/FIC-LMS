@@ -77,7 +77,8 @@ export default function StudentDashboard() {
 
         <motion.button 
           whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2 transition"
+          style={{ background: '#1A9FD4' }}
+          className="w-full text-white font-bold py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2 transition hover:brightness-110"
         >
           <Download size={18} /> CLICK HERE TO DOWNLOAD OUR PLACEMENT BROCHURE
         </motion.button>

@@ -66,11 +66,8 @@ export default function PublicEnrollment() {
         </div>
 
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-12">
-            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
-              <span className="text-primary-600 font-bold text-xl">F</span>
-            </div>
-            <span className="text-2xl font-display font-bold tracking-tight">FIC Learning</span>
+          <div className="flex items-center mb-12">
+            <img src="/logo.jpg" alt="FIC Logo" className="h-16 w-auto object-contain bg-white rounded-xl p-2" />
           </div>
 
           <h1 className="text-4xl lg:text-5xl font-display font-bold leading-tight mb-6">

@@ -68,6 +68,18 @@ exports.updateAdmissionStatus = async (req, res) => {
   }
 };
 
+exports.deleteAdmission = async (req, res) => {
+  try {
+    const admission = await Admission.findByIdAndDelete(req.params.id);
+    if (!admission) {
+      return res.status(404).json({ message: 'No admission found with that ID' });
+    }
+    res.status(204).json({ status: 'success', data: null });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
 exports.getMyAdmissions = async (req, res) => {
   try {
     const admissions = await Admission.find({ student: req.user.id })

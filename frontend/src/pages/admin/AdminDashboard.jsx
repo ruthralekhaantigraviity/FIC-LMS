@@ -95,9 +95,9 @@ export default function AdminDashboard() {
           className="bg-orange-50 border border-orange-200 rounded-2xl p-5 flex items-center justify-between cursor-pointer hover:bg-orange-100 transition group"
         >
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center text-white relative">
+            <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center text-slate-900 dark:text-white relative">
               <Bell size={22} />
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-slate-900 dark:text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                 {pendingCount}
               </span>
             </div>
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
               <p className="text-sm text-slate-500">New student applications are waiting for your approval.</p>
             </div>
           </div>
-          <ArrowRight className="text-slate-400 group-hover:text-orange-600 transition" size={20} />
+          <ArrowRight className="text-slate-500 dark:text-slate-400 group-hover:text-orange-600 transition" size={20} />
         </motion.div>
       )}
 
@@ -118,10 +118,10 @@ export default function AdminDashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
             onClick={() => stat.path && navigate(stat.path)}
-            className={`bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition ${stat.path ? 'cursor-pointer' : ''}`}
+            className={`bg-white p-6 rounded-2xl border border-slate-200 shadow-sm dark:shadow-none hover:shadow-md transition ${stat.path ? 'cursor-pointer' : ''}`}
           >
             <div className="flex items-center gap-4">
-              <div className={`p-3 rounded-xl ${stat.color} text-white`}>
+              <div className={`p-3 rounded-xl ${stat.color} text-slate-900 dark:text-white`}>
                 <stat.icon size={24} />
               </div>
               <div>
@@ -136,7 +136,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm dark:shadow-none">
           <h3 className="text-lg font-bold mb-6">Student Enrollment</h3>
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -171,7 +171,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm dark:shadow-none">
           <h3 className="text-lg font-bold mb-6">Recent Activities</h3>
           <div className="space-y-6">
             {loading ? (
@@ -195,7 +195,7 @@ export default function AdminDashboard() {
                     <p className="text-xs text-slate-500">
                       Applied for {app.course?.title}
                     </p>
-                    <p className="text-[10px] text-slate-400 mt-1">
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">
                       {new Date(app.appliedAt || app.createdAt).toLocaleDateString()}
                     </p>
                   </div>
