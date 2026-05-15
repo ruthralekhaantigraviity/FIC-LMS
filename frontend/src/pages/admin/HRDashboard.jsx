@@ -14,6 +14,7 @@ import {
   MessageCircle,
   Bell,
   ArrowRight,
+  BookOpen,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../../utils/api";
