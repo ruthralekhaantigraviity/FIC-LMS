@@ -99,10 +99,7 @@ export default function TrainerDashboard() {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-5 py-3 bg-white dark:bg-slate-800 text-slate-700 dark:text-white font-bold rounded-2xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-sm">
-              <Award size={18} className="text-amber-500" />
-              Download Certificate
-            </button>
+
             <button 
               onClick={() => navigate("/dashboard/trainer/courses")}
               style={{ background: BRAND }}
