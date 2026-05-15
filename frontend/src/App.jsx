@@ -19,6 +19,10 @@ import StudentCourseViewer from "./pages/student/StudentCourseViewer";
 import TrainerDashboard from "./pages/trainer/TrainerDashboard";
 import TrainerCourses from "./pages/trainer/TrainerCourses";
 import TrainerCourseManager from "./pages/trainer/TrainerCourseManager";
+import Discussions from "./pages/trainer/Discussions";
+import Reviews from "./pages/trainer/Reviews";
+import Achievements from "./pages/trainer/Achievements";
+import TrainerStudents from "./pages/trainer/TrainerStudents";
 import CourseCatalog from "./pages/courses/CourseCatalog";
 import CourseDetail from "./pages/courses/CourseDetail";
 import Assignments from "./pages/common/Assignments";
@@ -165,6 +169,38 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["trainer"]}>
                 <TrainerCourseManager />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="discussions"
+            element={
+              <ProtectedRoute allowedRoles={["trainer"]}>
+                <Discussions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="reviews"
+            element={
+              <ProtectedRoute allowedRoles={["trainer"]}>
+                <Reviews />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="achievements"
+            element={
+              <ProtectedRoute allowedRoles={["trainer"]}>
+                <Achievements />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="admin/students"
+            element={
+              <ProtectedRoute allowedRoles={["trainer"]}>
+                <TrainerStudents />
               </ProtectedRoute>
             }
           />
