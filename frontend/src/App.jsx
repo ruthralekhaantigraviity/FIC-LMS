@@ -117,6 +117,7 @@ function App() {
           <Route path="students" element={<AdminStudents />} />
           <Route path="courses" element={<AdminCourseManagement />} />
           <Route path="trainers" element={<AdminTrainers />} />
+          <Route path="bookings" element={<AllBookings />} />
           <Route path="enrollments" element={<AdminEnrollments />} />
           <Route path="payments" element={<AdminPayments />} />
           <Route path="enquiries" element={<AdminEnquiries />} />
