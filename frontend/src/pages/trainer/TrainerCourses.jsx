@@ -99,7 +99,6 @@ export default function TrainerCourses() {
               <div className="flex-1 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                  <div className="flex items-center gap-2 mb-2">
                     <span className="text-xs font-bold text-sky-600 bg-sky-50 dark:bg-sky-500/10 px-2.5 py-0.5 rounded-md">
                       {course.category}
                     </span>
