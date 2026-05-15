@@ -73,7 +73,7 @@ const AdminReports = () => {
     });
 
     // Section 2: Revenue Trend
-    doc.text("Monthly Revenue Trend", 14, doc.previousAutoTable.finalY + 15);
+    doc.text("Monthly Revenue Trend", 14, (doc.lastAutoTable ? doc.lastAutoTable.finalY : 50) + 15);
     
     const revenueTableData = revenueTrendData.map(r => [
       r.month,
@@ -81,7 +81,7 @@ const AdminReports = () => {
     ]);
 
     autoTable(doc, {
-      startY: doc.previousAutoTable.finalY + 20,
+      startY: (doc.lastAutoTable ? doc.lastAutoTable.finalY : 50) + 20,
       head: [["Month", "Revenue Collected"]],
       body: revenueTableData,
       theme: 'striped',
@@ -89,7 +89,7 @@ const AdminReports = () => {
     });
 
     // Section 3: Demographics
-    doc.text("Student Demographics", 14, doc.previousAutoTable.finalY + 15);
+    doc.text("Student Demographics", 14, (doc.lastAutoTable ? doc.lastAutoTable.finalY : 50) + 15);
     
     const demoTableData = studentDemographics.map(d => [
       d.name,
@@ -97,7 +97,7 @@ const AdminReports = () => {
     ]);
 
     autoTable(doc, {
-      startY: doc.previousAutoTable.finalY + 20,
+      startY: (doc.lastAutoTable ? doc.lastAutoTable.finalY : 50) + 20,
       head: [["Category", "Percentage share"]],
       body: demoTableData,
       theme: 'grid'
