@@ -118,6 +118,7 @@ function App() {
           <Route path="enquiries" element={<AdminEnquiries />} />
           <Route path="reports" element={<AdminReports />} />
           <Route path="settings" element={<AdminSettings />} />
+          <Route path="users" element={<UserManagement />} />
         </Route>
 
         {/* Protected Dashboard Routes */}
@@ -210,14 +211,7 @@ function App() {
             }
           />
 
-          <Route
-            path="admin/users"
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <UserManagement />
-              </ProtectedRoute>
-            }
-          />
+
 
           {/* Common Routes */}
           <Route path="assignments" element={<Assignments />} />

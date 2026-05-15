@@ -27,7 +27,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
     { icon: LayoutDashboard, label: 'Dashboard',    path: '/dashboard/admin' },
     { icon: Users,           label: 'Students',     path: '/dashboard/admin/students' },
     { icon: BookOpen,        label: 'Courses',      path: '/dashboard/admin/courses' },
-    { icon: UserSquare2,     label: 'Trainers',     path: '/dashboard/admin/trainers' },
+    { icon: UserSquare2,     label: 'Manage Staff', path: '/dashboard/admin/users' },
     { icon: ClipboardList,   label: 'Enrollments',  path: '/dashboard/admin/enrollments' },
     { icon: CreditCard,      label: 'Fees / Payments', path: '/dashboard/admin/payments' },
     { icon: MessageSquare,   label: 'Enquiries',    path: '/dashboard/admin/enquiries' },
