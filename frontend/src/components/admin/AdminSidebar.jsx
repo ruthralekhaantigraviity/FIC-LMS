@@ -44,8 +44,11 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
     <aside className={`fixed top-0 left-0 h-full bg-white dark:bg-[#0f172a] text-slate-600 dark:text-slate-300 transition-all duration-300 z-50 border-r border-slate-200 dark:border-slate-800 ${isOpen ? 'w-64' : 'w-20'}`}>
       {/* Logo */}
       <div className="flex items-center justify-between p-5">
-        <div className={`flex items-center gap-3 ${!isOpen && 'hidden'}`}>
+        <div className={`flex items-center gap-2 ${!isOpen && 'hidden'}`}>
           <img src="/logo.jpg" alt="FIC Logo" className="h-8 w-auto object-contain bg-white rounded p-1" />
+          <span className="font-bold text-sm tracking-tight text-slate-800 dark:text-white whitespace-nowrap">
+            <span style={{ color: BRAND }}>Forge</span> India <span className="text-slate-400">Connect</span>
+          </span>
         </div>
         <button 
           onClick={toggleSidebar} 

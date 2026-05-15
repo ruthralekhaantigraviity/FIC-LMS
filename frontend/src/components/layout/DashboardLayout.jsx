@@ -113,8 +113,11 @@ export default function DashboardLayout() {
       >
         {/* Logo */}
         <div className="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-800">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <img src="/logo.jpg" alt="FIC Logo" className="h-8 w-auto object-contain bg-white rounded p-1" />
+            <span className="font-bold text-sm tracking-tight text-slate-800 dark:text-white whitespace-nowrap">
+              <span style={{ color: BRAND }}>Forge</span> India <span className="text-slate-400">Connect</span>
+            </span>
           </div>
           <button
             className="lg:hidden p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white"

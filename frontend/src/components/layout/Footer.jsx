@@ -84,8 +84,11 @@ export default function Footer() {
           {/* Brand Info */}{" "}
           <div className="lg:col-span-4">
             {" "}
-            <div className="flex items-center mb-6">
+            <div className="flex items-center gap-3 mb-6">
               <img src="/logo.jpg" alt="FIC Logo" className="h-14 w-auto object-contain bg-white rounded-xl p-2" />
+              <span className="font-bold text-xl tracking-tight text-white whitespace-nowrap">
+                <span style={{ color: '#1A9FD4' }}>Forge</span> India <span className="text-slate-500">Connect</span>
+              </span>
             </div>{" "}
             <p className="text-slate-400 mb-8 max-w-sm leading-relaxed text-sm">
               {" "}
