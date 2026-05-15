@@ -16,6 +16,8 @@ import {
 } from 'recharts';
 import StatsCard from '../../components/admin/StatsCard';
 import axios from 'axios';
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 
 // Mock Data for demonstration
 const revenueData = [
@@ -72,6 +74,69 @@ const AdminOverview = () => {
     fetchStats();
   }, []);
 
+  const handleGenerateReport = () => {
+    const doc = new jsPDF();
+    
+    // Add Title
+    doc.setFontSize(20);
+    doc.setTextColor(26, 159, 212); // Brand color
+    doc.text("FIC LMS - Business Performance Report", 14, 22);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+    doc.text("---------------------------------------------------------------------------------------------------", 14, 35);
+
+    // Stats Section
+    doc.setFontSize(14);
+    doc.setTextColor(33);
+    doc.text("Executive Summary", 14, 45);
+    
+    const statsTableData = [
+      ["Metric", "Current Value", "Trend"],
+      ["Total Students", stats?.stats?.totalStudents || "1,284", "+12.5%"],
+      ["Active Courses", stats?.stats?.activeCourses || "42", "+4.2%"],
+      ["Total Revenue", stats?.stats?.totalRevenue ? `₹${stats.stats.totalRevenue.toLocaleString()}` : "₹4.82M", "+18.7%"],
+      ["Pending Fees", stats?.stats?.pendingFees ? `₹${stats.stats.pendingFees.toLocaleString()}` : "₹152K", "-2.4%"]
+    ];
+
+    doc.autoTable({
+      startY: 50,
+      head: [statsTableData[0]],
+      body: statsTableData.slice(1),
+      theme: 'grid',
+      headStyles: { fillColor: [26, 159, 212] }
+    });
+
+    // Recent Activities Section
+    doc.text("Recent Activities", 14, doc.lastAutoTable.finalY + 15);
+    
+    const activityData = recentActivities.map(a => [
+      a.user,
+      a.type.toUpperCase(),
+      a.course,
+      a.time,
+      a.amount
+    ]);
+
+    doc.autoTable({
+      startY: doc.lastAutoTable.finalY + 20,
+      head: [["User", "Type", "Course", "Time", "Amount"]],
+      body: activityData,
+      theme: 'striped'
+    });
+
+    // Footer
+    const pageCount = doc.internal.getNumberOfPages();
+    for(let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(10);
+      doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width - 30, doc.internal.pageSize.height - 10);
+    }
+
+    doc.save(`FIC_LMS_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+  };
+
   return (
     <div className="space-y-8 pb-12">
       {/* Header Section */}
@@ -86,7 +151,10 @@ const AdminOverview = () => {
             <Clock size={16} className="text-blue-500" />
             Last 30 Days
           </div>
-          <button className="bg-blue-600 hover:bg-blue-700 text-slate-900 dark:text-white px-5 py-2.5 rounded-xl font-semibold transition-all shadow-lg shadow-blue-600/20 flex items-center gap-2">
+          <button 
+            onClick={handleGenerateReport}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold transition-all shadow-lg shadow-blue-600/20 flex items-center gap-2"
+          >
             <Filter size={18} />
             Generate Report
           </button>
