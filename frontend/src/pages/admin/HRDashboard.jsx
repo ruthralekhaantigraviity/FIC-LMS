@@ -15,7 +15,17 @@ import {
   Bell,
   ArrowRight,
   BookOpen,
+  Users,
 } from "lucide-react";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import toast from "react-hot-toast";
 import api from "../../utils/api";
 export default function HRDashboard() {
