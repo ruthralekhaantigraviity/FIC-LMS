@@ -60,12 +60,7 @@ export default function DashboardLayout() {
       icon: BookOpen,
       role: ["admin", "trainer", "student"],
     },
-    {
-      name: "Students",
-      path: "/dashboard/admin/students",
-      icon: Users,
-      role: ["trainer"]
-    },
+
     {
       name: "Reviews",
       path: "/dashboard/reviews",

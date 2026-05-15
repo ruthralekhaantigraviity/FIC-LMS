@@ -155,82 +155,83 @@ export default function TrainerCourseManager() {
     <div className="space-y-8 max-w-5xl mx-auto">
       <button 
         onClick={() => navigate("/dashboard/trainer/courses")}
-        className="flex items-center gap-2 text-slate-500 hover:text-primary-600 transition"
+        className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 transition font-medium"
       >
         <ArrowLeft size={16} /> Back to My Courses
       </button>
 
-      <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-        <div className="flex items-start sm:items-center justify-between gap-4 flex-col sm:flex-row mb-6">
+      <div className="bg-white dark:bg-[#1e293b] p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div className="flex items-start sm:items-center justify-between gap-4 flex-col sm:flex-row mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">{course?.title}</h1>
-            <p className="text-slate-500 text-sm mt-1">Manage course lessons, videos, and assignments</p>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-display tracking-tight">{course?.title}</h1>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 font-medium">Manage course lessons, videos, and study materials</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button 
               onClick={() => setIsModuleModalOpen(true)}
-              className="flex items-center gap-2 px-5 py-2.5 bg-white text-slate-700 font-bold rounded-xl border border-slate-200 hover:bg-slate-50 transition"
+              className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 text-slate-700 dark:text-white font-bold rounded-2xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-sm"
             >
-              <Plus size={18} /> Add Module
+              <Plus size={20} /> Add Module
             </button>
             <button 
               onClick={() => activeTab === 'lessons' ? handleOpenModal() : setIsAssignmentModalOpen(true)}
-              className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition"
+              style={{ background: '#1A9FD4' }}
+              className="flex items-center gap-2 px-6 py-3 text-white font-bold rounded-2xl hover:brightness-110 transition shadow-lg shadow-sky-600/20"
             >
-              <Plus size={18} /> {activeTab === 'lessons' ? 'Add Topic' : 'Add Assignment'}
+              <Plus size={20} /> {activeTab === 'lessons' ? 'Add Topic' : 'Add Assignment'}
             </button>
           </div>
         </div>
 
-        <div className="flex border-b border-slate-100">
+        <div className="flex border-b border-slate-100 dark:border-slate-800">
           <button 
             onClick={() => setActiveTab('lessons')}
-            className={`px-6 py-3 text-sm font-bold border-b-2 transition ${activeTab === 'lessons' ? 'border-primary-600 text-primary-600' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
+            className={`px-8 py-4 text-sm font-bold border-b-2 transition-all ${activeTab === 'lessons' ? 'border-sky-500 text-sky-500' : 'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-white'}`}
           >
             Modules & Topics ({subjects.length})
           </button>
           <button 
             onClick={() => setActiveTab('assignments')}
-            className={`px-6 py-3 text-sm font-bold border-b-2 transition ${activeTab === 'assignments' ? 'border-primary-600 text-primary-600' : 'border-transparent text-slate-400 hover:text-slate-600'}`}
+            className={`px-8 py-4 text-sm font-bold border-b-2 transition-all ${activeTab === 'assignments' ? 'border-sky-500 text-sky-500' : 'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-white'}`}
           >
             Assignments ({assignments.length})
           </button>
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         {activeTab === 'lessons' ? (
           modules.length === 0 ? (
-            <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 border-dashed">
-              <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
-                <FileText size={24} />
+            <div className="text-center py-20 bg-white dark:bg-slate-800/50 rounded-[40px] border border-slate-200 dark:border-slate-800 border-dashed">
+              <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300 dark:text-slate-600">
+                <FileText size={32} />
               </div>
-              <h3 className="text-lg font-bold text-slate-900">No modules yet</h3>
-              <p className="text-slate-500 mt-1 mb-4">Create modules to organize your topics.</p>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">No modules yet</h3>
+              <p className="text-slate-500 dark:text-slate-400 mt-2 mb-6 max-w-sm mx-auto">Create modules to organize your topics into a structured learning path.</p>
               <button 
                 onClick={() => setIsModuleModalOpen(true)}
-                className="text-primary-600 font-semibold hover:underline"
+                className="text-sky-500 font-bold hover:underline"
               >
                 + Create First Module
               </button>
             </div>
           ) : (
-            <div className="space-y-8">
+            <div className="space-y-10">
               {modules.map((module) => (
-                <div key={module._id} className="space-y-4">
-                  <div className="flex items-center justify-between px-2">
-                    <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center text-xs">M</div>
+                <div key={module._id} className="space-y-6">
+                  <div className="flex items-center justify-between px-4">
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-2xl bg-slate-900 dark:bg-sky-500 text-white flex items-center justify-center text-sm font-black shadow-lg shadow-sky-500/20">M</div>
                       {module.title}
                     </h2>
-                    <div className="flex gap-2">
+                    <div className="flex gap-4">
                       <button 
                         onClick={() => {
                           setEditingSubject(null);
                           setFormData({ ...formData, module: module._id, order: subjects.filter(s => (s.module?._id || s.module) === module._id).length + 1 });
                           setIsModalOpen(true);
                         }}
-                        className="text-xs font-bold text-primary-600 hover:underline"
+                        className="text-sm font-bold text-sky-500 hover:underline"
                       >
                         + Add Topic
                       </button>
@@ -241,38 +242,38 @@ export default function TrainerCourseManager() {
                             fetchCourseData();
                           }
                         }}
-                        className="text-xs font-bold text-red-500 hover:underline"
+                        className="text-sm font-bold text-red-500 hover:underline"
                       >
                         Delete
                       </button>
                     </div>
                   </div>
                   
-                  <div className="grid gap-3">
+                  <div className="grid gap-4">
                     {subjects.filter(s => (s.module?._id || s.module) === module._id).length === 0 ? (
-                      <p className="text-xs text-slate-400 italic px-4 py-3 bg-white rounded-2xl border border-slate-100">No topics in this module yet.</p>
+                      <p className="text-sm text-slate-400 dark:text-slate-500 italic px-8 py-6 bg-white dark:bg-slate-800/30 rounded-[32px] border border-slate-100 dark:border-slate-800">No topics in this module yet.</p>
                     ) : (
                       subjects.filter(s => (s.module?._id || s.module) === module._id).map((subject, index) => (
                         <motion.div
                           key={subject._id}
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-start md:items-center group hover:border-primary-200 transition"
+                          className="bg-white dark:bg-[#1e293b] p-6 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-start md:items-center group hover:border-sky-500 transition-all duration-300"
                         >
                           <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-1">
-                              <span className="text-xs font-bold text-slate-400">#{subject.order}</span>
-                              <h3 className="font-bold text-slate-900">{subject.title}</h3>
-                              {subject.duration && <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded text-slate-500">{subject.duration}</span>}
+                            <div className="flex items-center gap-3 mb-2">
+                              <span className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Topic #{subject.order}</span>
+                              <h3 className="font-bold text-slate-900 dark:text-white text-lg">{subject.title}</h3>
+                              {subject.duration && <span className="text-[10px] font-black bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md text-slate-500 uppercase tracking-wider">{subject.duration}</span>}
                             </div>
-                            <div className="flex items-center gap-3 mt-1 text-[11px]">
-                              {subject.videoUrl && <span className="text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded flex items-center gap-1"><Video size={10}/> Video</span>}
-                              {subject.pdfUrl && <span className="text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded flex items-center gap-1"><FileText size={10}/> PDF</span>}
+                            <div className="flex items-center gap-3 mt-1 text-[11px] font-bold uppercase tracking-wider">
+                              {subject.videoUrl && <span className="text-sky-600 bg-sky-50 dark:bg-sky-500/10 px-2.5 py-1 rounded-md flex items-center gap-1.5"><Video size={14}/> Video Lesson</span>}
+                              {subject.pdfUrl && <span className="text-purple-600 bg-purple-50 dark:bg-purple-500/10 px-2.5 py-1 rounded-md flex items-center gap-1.5"><FileText size={14}/> PDF Notes</span>}
                             </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <button onClick={() => handleOpenModal(subject)} className="p-1.5 text-slate-400 hover:text-primary-600"><Edit size={16} /></button>
-                            <button onClick={() => handleDelete(subject._id)} className="p-1.5 text-slate-400 hover:text-red-600"><Trash2 size={16} /></button>
+                          <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onClick={() => handleOpenModal(subject)} className="p-3 text-slate-400 hover:text-sky-500 hover:bg-sky-50 dark:hover:bg-sky-500/10 rounded-xl transition"><Edit size={18} /></button>
+                            <button onClick={() => handleDelete(subject._id)} className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition"><Trash2 size={18} /></button>
                           </div>
                         </motion.div>
                       ))
@@ -285,80 +286,85 @@ export default function TrainerCourseManager() {
         ) : (
           /* Assignments View */
           assignments.length === 0 ? (
-            <div className="text-center py-16 bg-white rounded-3xl border border-slate-200 border-dashed">
-              <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
-                <FileText size={24} />
+            <div className="text-center py-20 bg-white dark:bg-slate-800/50 rounded-[40px] border border-slate-200 dark:border-slate-800 border-dashed">
+              <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300 dark:text-slate-600">
+                <FileText size={32} />
               </div>
-              <h3 className="text-lg font-bold text-slate-900">No assignments yet</h3>
-              <p className="text-slate-500 mt-1 mb-4">Create assignments for your students.</p>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">No assignments yet</h3>
+              <p className="text-slate-500 dark:text-slate-400 mt-2 mb-6">Create assignments to evaluate student learning.</p>
               <button 
                 onClick={() => setIsAssignmentModalOpen(true)}
-                className="text-primary-600 font-semibold hover:underline"
+                className="text-sky-500 font-bold hover:underline"
               >
                 + Create First Assignment
               </button>
             </div>
           ) : (
-            assignments.map((assignment, index) => (
-              <motion.div
-                key={assignment._id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-start md:items-center group hover:border-primary-200 transition"
-              >
-                <div className="flex-1">
-                  <h3 className="font-bold text-slate-900 text-lg">{assignment.title}</h3>
-                  <p className="text-sm text-slate-500 line-clamp-1">{assignment.description}</p>
-                  <div className="mt-2 text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded-md inline-flex">
-                    Due: {new Date(assignment.dueDate).toLocaleDateString()}
+            <div className="grid gap-4">
+              {assignments.map((assignment, index) => (
+                <motion.div
+                  key={assignment._id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="bg-white dark:bg-[#1e293b] p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-start md:items-center group hover:border-sky-500 transition-all duration-300"
+                >
+                  <div className="flex-1">
+                    <h3 className="font-bold text-slate-900 dark:text-white text-xl">{assignment.title}</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-1 mt-1">{assignment.description}</p>
+                    <div className="mt-4 text-xs font-black text-orange-600 bg-orange-50 dark:bg-orange-500/10 px-3 py-1.5 rounded-xl inline-flex uppercase tracking-wider">
+                      Due: {new Date(assignment.dueDate).toLocaleDateString()}
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-2">
-                   <button 
-                    className="px-4 py-2 text-primary-600 bg-primary-50 font-bold rounded-lg hover:bg-primary-100 transition"
-                  >
-                    View Submissions
-                  </button>
-                </div>
-              </motion.div>
-            ))
+                  <div className="flex items-center gap-2">
+                    <button 
+                      className="px-6 py-3 text-sky-600 bg-sky-50 dark:bg-sky-500/10 font-bold rounded-2xl hover:bg-sky-100 dark:hover:bg-sky-500/20 transition shadow-sm"
+                    >
+                      View Submissions
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           )
         )}
       </div>
 
       {/* Add/Edit Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl"
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="bg-white dark:bg-[#1e293b] rounded-[40px] w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800"
           >
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white z-10">
-              <h2 className="text-xl font-bold text-slate-900">
-                {editingSubject ? "Edit Topic" : "Add New Topic"}
+            <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center sticky top-0 bg-white dark:bg-[#1e293b] z-10">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-display">
+                {editingSubject ? "Edit Topic" : "Create New Topic"}
               </h2>
-              <button onClick={handleCloseModal} className="text-slate-400 hover:text-slate-600">
-                &times;
+              <button 
+                onClick={handleCloseModal} 
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-white transition"
+              >
+                <Plus size={24} className="rotate-45" />
               </button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-6 space-y-5">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Module *</label>
+            <form onSubmit={handleSubmit} className="p-8 space-y-8">
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-widest text-[10px]">Learning Module *</label>
                   {modules.length === 0 ? (
-                    <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-sm">
+                    <div className="p-6 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-2xl text-amber-800 dark:text-amber-400 text-sm">
                       <p className="font-bold mb-2">No modules found!</p>
-                      <p className="mb-3">You need to create at least one module (e.g. "Basics") before adding topics.</p>
+                      <p className="mb-4">You need to create at least one module before adding topics.</p>
                       <button
                         type="button"
                         onClick={() => {
                           setIsModalOpen(false);
                           setIsModuleModalOpen(true);
                         }}
-                        className="px-4 py-2 bg-amber-600 text-white rounded-lg font-bold text-xs"
+                        className="px-6 py-2.5 bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-600/20"
                       >
                         + Create Module Now
                       </button>
@@ -368,7 +374,7 @@ export default function TrainerCourseManager() {
                       required
                       value={formData.module}
                       onChange={(e) => setFormData({ ...formData, module: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                      className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-500/50 outline-none appearance-none font-medium"
                     >
                       <option value="">Select a Module</option>
                       {modules.map(m => <option key={m._id} value={m._id}>{m.title}</option>)}
@@ -376,88 +382,96 @@ export default function TrainerCourseManager() {
                   )}
                 </div>
 
-                <div className="col-span-2">
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Topic Title *</label>
-                  <input
-                    type="text"
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-widest text-[10px]">Topic Title *</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-500/50 outline-none font-medium"
+                      placeholder="e.g. Introduction to React Hooks"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-widest text-[10px]">Est. Duration</label>
+                    <input
+                      type="text"
+                      value={formData.duration}
+                      onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+                      className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-500/50 outline-none font-medium"
+                      placeholder="e.g. 25 mins"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-widest text-[10px]">Display Order</label>
+                    <input
+                      type="number"
+                      value={formData.order}
+                      onChange={(e) => setFormData({ ...formData, order: e.target.value })}
+                      className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-500/50 outline-none font-medium"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-widest text-[10px] flex items-center gap-2">
+                      <Video size={14} className="text-sky-500" /> Video URL
+                    </label>
+                    <input
+                      type="url"
+                      value={formData.videoUrl}
+                      onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                      className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-500/50 outline-none font-medium"
+                      placeholder="YouTube / Vimeo / CDN URL"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-widest text-[10px] flex items-center gap-2">
+                      <FileText size={14} className="text-purple-500" /> PDF Resource URL
+                    </label>
+                    <input
+                      type="url"
+                      value={formData.pdfUrl}
+                      onChange={(e) => setFormData({ ...formData, pdfUrl: e.target.value })}
+                      className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-500/50 outline-none font-medium"
+                      placeholder="Google Drive / Dropbox / Direct Link"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-widest text-[10px]">Notes & Theory Content *</label>
+                  <textarea
                     required
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
-                    placeholder="e.g. What is UI Design"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Duration</label>
-                  <input
-                    type="text"
-                    value={formData.duration}
-                    onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
-                    placeholder="e.g. 15 mins"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Order Number</label>
-                  <input
-                    type="number"
-                    value={formData.order}
-                    onChange={(e) => setFormData({ ...formData, order: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4 mt-5">
-                <div className="col-span-2 sm:col-span-1">
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Video URL</label>
-                  <input
-                    type="url"
-                    value={formData.videoUrl}
-                    onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
-                    placeholder="e.g. https://youtube.com/..."
-                  />
-                </div>
-                <div className="col-span-2 sm:col-span-1">
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">PDF Upload / URL</label>
-                  <input
-                    type="url"
-                    value={formData.pdfUrl}
-                    onChange={(e) => setFormData({ ...formData, pdfUrl: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
-                    placeholder="e.g. https://drive.google.com/..."
-                  />
+                    rows="8"
+                    value={formData.content}
+                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                    className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-[24px] text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-500/50 outline-none resize-none font-medium leading-relaxed"
+                    placeholder="Enter the detailed theoretical notes for this topic..."
+                  ></textarea>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">Theory / Content *</label>
-                <textarea
-                  required
-                  rows="6"
-                  value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none resize-y"
-                  placeholder="Write the theoretical content here..."
-                ></textarea>
-              </div>
-
-              <div className="flex justify-end gap-3 pt-4">
+              <div className="flex justify-end gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="px-5 py-2.5 text-slate-600 font-bold hover:bg-slate-100 rounded-xl transition"
+                  className="px-8 py-3.5 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 rounded-2xl transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-6 py-2.5 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition disabled:opacity-50"
+                  style={{ background: '#1A9FD4' }}
+                  className="px-10 py-3.5 text-white font-bold rounded-2xl hover:brightness-110 transition disabled:opacity-50 shadow-lg shadow-sky-600/20"
                 >
-                  {isSubmitting ? "Saving..." : "Save Topic"}
+                  {isSubmitting ? "Saving..." : editingSubject ? "Update Topic" : "Create Topic"}
                 </button>
               </div>
             </form>
@@ -467,21 +481,25 @@ export default function TrainerCourseManager() {
 
       {/* Assignment Modal */}
       {isAssignmentModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl"
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="bg-white dark:bg-[#1e293b] rounded-[40px] w-full max-w-2xl shadow-2xl border border-slate-200 dark:border-slate-800"
           >
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-slate-900">Create Assignment</h2>
-              <button onClick={() => setIsAssignmentModalOpen(false)} className="text-slate-400 hover:text-slate-600">
-                &times;
+            <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center sticky top-0 bg-white dark:bg-[#1e293b] z-10">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-display">Create Assignment</h2>
+              <button 
+                onClick={() => setIsAssignmentModalOpen(false)} 
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-white transition"
+              >
+                <Plus size={24} className="rotate-45" />
               </button>
             </div>
             
             <form onSubmit={async (e) => {
               e.preventDefault();
+              setIsSubmitting(true);
               try {
                 await api.post("/assignments", { ...assignmentFormData, course: id });
                 toast.success("Assignment created!");
@@ -489,41 +507,52 @@ export default function TrainerCourseManager() {
                 fetchCourseData();
               } catch (err) {
                 toast.error("Failed to create assignment");
+              } finally {
+                setIsSubmitting(false);
               }
-            }} className="p-6 space-y-5">
+            }} className="p-8 space-y-6">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">Assignment Title</label>
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-widest text-[10px]">Assignment Title</label>
                 <input
                   type="text"
                   required
                   value={assignmentFormData.title}
                   onChange={(e) => setAssignmentFormData({ ...assignmentFormData, title: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                  className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-500/50 outline-none font-medium"
+                  placeholder="e.g. Building a Weather App"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">Due Date</label>
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-widest text-[10px]">Due Date</label>
                 <input
                   type="date"
                   required
                   value={assignmentFormData.dueDate}
                   onChange={(e) => setAssignmentFormData({ ...assignmentFormData, dueDate: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                  className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-500/50 outline-none font-medium"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">Description / Instructions</label>
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-widest text-[10px]">Description & Instructions</label>
                 <textarea
                   required
-                  rows="4"
+                  rows="6"
                   value={assignmentFormData.description}
                   onChange={(e) => setAssignmentFormData({ ...assignmentFormData, description: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                  className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-[24px] text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-500/50 outline-none resize-none font-medium"
+                  placeholder="Provide detailed instructions for this assignment..."
                 ></textarea>
               </div>
-              <div className="flex justify-end gap-3 pt-4">
-                <button type="button" onClick={() => setIsAssignmentModalOpen(false)} className="px-5 py-2.5 text-slate-600 font-bold hover:bg-slate-100 rounded-xl transition">Cancel</button>
-                <button type="submit" className="px-6 py-2.5 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition">Create Assignment</button>
+              <div className="flex justify-end gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onClick={() => setIsAssignmentModalOpen(false)} className="px-8 py-3.5 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 rounded-2xl transition">Cancel</button>
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  style={{ background: '#1A9FD4' }}
+                  className="px-10 py-3.5 text-white font-bold rounded-2xl hover:brightness-110 transition disabled:opacity-50 shadow-lg shadow-sky-600/20"
+                >
+                  {isSubmitting ? "Creating..." : "Create Assignment"}
+                </button>
               </div>
             </form>
           </motion.div>
@@ -531,18 +560,23 @@ export default function TrainerCourseManager() {
       )}
       {/* Module Modal */}
       {isModuleModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl w-full max-w-md shadow-2xl p-6">
-            <h2 className="text-xl font-bold mb-4">Add New Module</h2>
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 20 }} 
+            animate={{ opacity: 1, scale: 1, y: 0 }} 
+            className="bg-white dark:bg-[#1e293b] rounded-[40px] w-full max-w-md shadow-2xl p-10 border border-slate-200 dark:border-slate-800"
+          >
+            <h2 className="text-2xl font-bold mb-2 text-slate-900 dark:text-white font-display">New Module</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-8">Group your topics into modules for better organization.</p>
             <input 
               type="text" 
               value={moduleTitle} 
               onChange={(e) => setModuleTitle(e.target.value)}
-              placeholder="e.g. Introduction"
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none mb-4"
+              placeholder="e.g. Module 1: Introduction"
+              className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-500/50 outline-none font-medium mb-8"
             />
-            <div className="flex justify-end gap-3">
-              <button onClick={() => setIsModuleModalOpen(false)} className="px-4 py-2 text-slate-500 font-bold">Cancel</button>
+            <div className="flex justify-end gap-4">
+              <button onClick={() => setIsModuleModalOpen(false)} className="px-6 py-3 text-slate-500 dark:text-slate-400 font-bold">Cancel</button>
               <button 
                 onClick={async () => {
                   try {
@@ -555,7 +589,8 @@ export default function TrainerCourseManager() {
                     toast.error('Failed to create module');
                   }
                 }}
-                className="px-6 py-2 bg-primary-600 text-white font-bold rounded-xl"
+                style={{ background: '#1A9FD4' }}
+                className="px-8 py-3 text-white font-bold rounded-2xl hover:brightness-110 transition shadow-lg shadow-sky-600/20"
               >
                 Create
               </button>
