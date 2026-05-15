@@ -58,11 +58,15 @@ export default function UserManagement() {
     e.preventDefault();
     try {
       if (editingUser) {
-        await api.patch(`/auth/users/${editingUser._id}`, {
+        const updateData = {
           name: formData.name,
           email: formData.email,
           role: formData.role
-        });
+        };
+        if (formData.password) {
+          updateData.password = formData.password;
+        }
+        await api.patch(`/auth/users/${editingUser._id}`, updateData);
         toast.success('User updated successfully!');
       } else {
         await api.post('/auth/register', formData);
@@ -323,22 +327,22 @@ export default function UserManagement() {
                   </div>
                 </div>
 
-                {!editingUser && (
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">Assign Password</label>
-                    <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                      <input 
-                        type="password" 
-                        required
-                        value={formData.password}
-                        onChange={(e) => setFormData({...formData, password: e.target.value})}
-                        placeholder="••••••••"
-                        className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-400/50 outline-none"
-                      />
-                    </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                    {editingUser ? 'New Password (Optional)' : 'Assign Password'}
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <input 
+                      type="password" 
+                      value={formData.password}
+                      onChange={(e) => setFormData({...formData, password: e.target.value})}
+                      placeholder={editingUser ? "Leave blank to keep current" : "••••••••"}
+                      required={!editingUser}
+                      className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-400/50 outline-none"
+                    />
                   </div>
-                )}
+                </div>
 
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Role</label>
