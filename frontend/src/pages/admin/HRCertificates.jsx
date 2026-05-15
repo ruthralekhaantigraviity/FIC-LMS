@@ -29,82 +29,87 @@ const HRCertificates = () => {
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
 
-    // 1. Brand Blue Top & Bottom Bars
-    doc.setFillColor(26, 159, 212); // Brand Blue (#1A9FD4)
-    doc.rect(0, 0, pageWidth, 6, 'F');
-    doc.rect(0, pageHeight - 6, pageWidth, 6, 'F');
+    // 1. Double Border Design
+    doc.setDrawColor(26, 159, 212); // Brand Blue
+    doc.setLineWidth(2);
+    doc.rect(5, 5, pageWidth - 10, pageHeight - 10, 'S');
     
-    // 2. Light Blue Side Borders (Subtle)
-    doc.setFillColor(240, 249, 255); // sky-50
-    doc.rect(0, 6, 6, pageHeight - 12, 'F');
-    doc.rect(pageWidth - 6, 6, 6, pageHeight - 12, 'F');
+    doc.setDrawColor(30, 41, 59); // Slate
+    doc.setLineWidth(0.5);
+    doc.rect(7, 7, pageWidth - 14, pageHeight - 14, 'S');
 
-    // 3. Logo Placeholder (or text if no image)
-    doc.setFontSize(24);
+    // 2. Brand Blue Top & Bottom Bars
+    doc.setFillColor(26, 159, 212);
+    doc.rect(0, 0, pageWidth, 4, 'F');
+    doc.rect(0, pageHeight - 4, pageWidth, 4, 'F');
+
+    // 3. Header Section
+    doc.setFontSize(22);
     doc.setTextColor(26, 159, 212);
     doc.setFont("helvetica", "bold");
-    doc.text("FORGE INDIA", pageWidth / 2, 30, { align: "center" });
+    doc.text("FORGE INDIA", pageWidth / 2, 25, { align: "center" });
 
-    // 4. Subtitle
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setTextColor(150);
     doc.setFont("helvetica", "normal");
-    doc.text("CERTIFICATE OF EXCELLENCE", pageWidth / 2, 45, { align: "center", charSpace: 1 });
+    doc.text("CERTIFICATE OF EXCELLENCE", pageWidth / 2, 35, { align: "center", charSpace: 1 });
 
-    // 5. Main Title
-    doc.setFontSize(48);
-    doc.setTextColor(30, 41, 59); // slate-800
+    // 4. Main Title
+    doc.setFontSize(44);
+    doc.setTextColor(30, 41, 59);
     doc.setFont("helvetica", "bold");
-    doc.text("CERTIFICATE", pageWidth / 2, 65, { align: "center" });
+    doc.text("CERTIFICATE", pageWidth / 2, 55, { align: "center" });
 
-    // 6. Certification Text
-    doc.setFontSize(18);
-    doc.setTextColor(100);
-    doc.setFont("helvetica", "italic");
-    doc.text("This is to proudly certify that", pageWidth / 2, 80, { align: "center" });
-
-    // 7. Student Name
-    doc.setFontSize(54);
-    doc.setTextColor(26, 159, 212); // Brand Blue
-    doc.setFont("helvetica", "bold");
-    doc.text(cert.studentName.toUpperCase(), pageWidth / 2, 105, { align: "center" });
-
-    // 8. Completion Text
     doc.setFontSize(16);
     doc.setTextColor(100);
-    doc.setFont("helvetica", "normal");
-    doc.text("has successfully completed the professional training program in", pageWidth / 2, 125, { align: "center" });
+    doc.setFont("helvetica", "italic");
+    doc.text("This is to proudly certify that", pageWidth / 2, 70, { align: "center" });
 
-    // 9. Course Name
-    doc.setFontSize(32);
+    // 5. Student Name
+    doc.setFontSize(50);
+    doc.setTextColor(26, 159, 212);
+    doc.setFont("helvetica", "bold");
+    doc.text(cert.studentName.toUpperCase(), pageWidth / 2, 95, { align: "center" });
+
+    // 6. Course Details
+    doc.setFontSize(14);
+    doc.setTextColor(100);
+    doc.setFont("helvetica", "normal");
+    doc.text("has successfully completed the professional training program in", pageWidth / 2, 115, { align: "center" });
+
+    doc.setFontSize(28);
     doc.setTextColor(30, 41, 59);
     doc.setFont("helvetica", "bold");
-    doc.text(cert.course, pageWidth / 2, 145, { align: "center" });
+    doc.text(cert.course, pageWidth / 2, 135, { align: "center" });
 
-    // 10. Signatures and Seal
+    // 7. Signatures and Seal (Moved UP for visibility)
+    const sigY = 165;
+    
     // Left Signature
     doc.setDrawColor(200);
-    doc.line(40, 175, 100, 175);
-    doc.setFontSize(10);
+    doc.setLineWidth(0.2);
+    doc.line(40, sigY, 100, sigY);
+    doc.setFontSize(9);
     doc.setTextColor(30, 41, 59);
     doc.setFont("helvetica", "bold");
-    doc.text("PROGRAM COORDINATOR", 70, 182, { align: "center" });
+    doc.text("PROGRAM COORDINATOR", 70, sigY + 6, { align: "center" });
 
-    // Middle Seal (Mock Circle)
-    doc.setDrawColor(251, 191, 36); // amber-400
-    doc.setLineWidth(1);
-    doc.circle(pageWidth / 2, 175, 12, 'S');
-    doc.setFontSize(14);
+    // Middle Seal
+    doc.setDrawColor(251, 191, 36);
+    doc.setLineWidth(0.8);
+    doc.circle(pageWidth / 2, sigY - 5, 10, 'S');
+    doc.setFontSize(12);
     doc.setTextColor(251, 191, 36);
-    doc.text("★", pageWidth / 2, 177, { align: "center" });
+    doc.text("★", pageWidth / 2, sigY - 3, { align: "center" });
 
     // Right Signature
     doc.setDrawColor(200);
-    doc.line(pageWidth - 100, 175, pageWidth - 40, 175);
-    doc.setFontSize(10);
+    doc.setLineWidth(0.2);
+    doc.line(pageWidth - 100, sigY, pageWidth - 40, sigY);
+    doc.setFontSize(9);
     doc.setTextColor(30, 41, 59);
     doc.setFont("helvetica", "bold");
-    doc.text("DIRECTOR, FORGE INDIA", pageWidth - 70, 182, { align: "center" });
+    doc.text("DIRECTOR, FORGE INDIA", pageWidth - 70, sigY + 6, { align: "center" });
 
     doc.save(`Certificate_${cert.studentName.replace(' ', '_')}.pdf`);
     toast.success('Downloading certificate...');
