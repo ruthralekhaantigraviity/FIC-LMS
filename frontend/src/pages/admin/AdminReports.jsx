@@ -116,7 +116,8 @@ const AdminReports = () => {
     doc.save(`FIC_Detailed_Analytics_${new Date().toISOString().split('T')[0]}.pdf`);
   };
 
-  const timeframes = ["Last 30 Days", "Last 3 Months", "Last 6 Months", "Last Year"];
+  const timeframes = ["Last 30 Days", "Last 3 Months", "Last 6 Months", "Last Year", "Custom Range"];
+  const [customRange, setCustomRange] = useState({ from: "", to: "" });
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500 pb-12">
@@ -125,16 +126,37 @@ const AdminReports = () => {
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Reports & Analytics</h1>
           <p className="text-slate-500 mt-1">Deep dive into performance metrics and business intelligence.</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col md:flex-row items-end md:items-center gap-4">
+          {timeframe === "Custom Range" && (
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-2 bg-white dark:bg-[#0f172a] p-1.5 rounded-xl border border-slate-200 dark:border-slate-800"
+            >
+              <input 
+                type="date" 
+                value={customRange.from}
+                onChange={(e) => setCustomRange({...customRange, from: e.target.value})}
+                className="bg-transparent border-none text-xs text-slate-600 dark:text-slate-300 focus:ring-0 outline-none"
+              />
+              <span className="text-slate-300">to</span>
+              <input 
+                type="date" 
+                value={customRange.to}
+                onChange={(e) => setCustomRange({...customRange, to: e.target.value})}
+                className="bg-transparent border-none text-xs text-slate-600 dark:text-slate-300 focus:ring-0 outline-none"
+              />
+            </motion.div>
+          )}
           <div className="relative">
             <button 
               onClick={() => setShowTimeframeDropdown(!showTimeframeDropdown)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+              className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all shadow-sm"
             >
               <Calendar size={16} /> {timeframe}
             </button>
             {showTimeframeDropdown && (
-              <div className="absolute top-full mt-2 left-0 w-48 bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl z-50 overflow-hidden">
+              <div className="absolute top-full mt-2 right-0 w-48 bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl z-50 overflow-hidden">
                 {timeframes.map((t) => (
                   <button
                     key={t}
@@ -142,7 +164,7 @@ const AdminReports = () => {
                       setTimeframe(t);
                       setShowTimeframeDropdown(false);
                     }}
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ${timeframe === t ? 'text-blue-500 font-bold bg-blue-50/50 dark:bg-blue-500/10' : 'text-slate-600 dark:text-slate-400'}`}
+                    className={`w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ${timeframe === t ? 'text-blue-500 font-bold bg-blue-50/50 dark:bg-blue-500/10' : 'text-slate-600 dark:text-slate-400'}`}
                   >
                     {t}
                   </button>
