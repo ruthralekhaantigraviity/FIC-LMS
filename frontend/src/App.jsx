@@ -41,6 +41,10 @@ import AdminEnquiries from "./pages/admin/AdminEnquiries";
 import AdminReports from "./pages/admin/AdminReports";
 import AdminSettings from "./pages/admin/AdminSettings";
 import PlaceholderPage from "./pages/admin/PlaceholderPage";
+import HREnrollments from "./pages/admin/HREnrollments";
+import HRCertificates from "./pages/admin/HRCertificates";
+import HRSupport from "./pages/admin/HRSupport";
+import HRReports from "./pages/admin/HRReports";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -269,13 +273,24 @@ function App() {
           } />
           <Route path="hr/reports" element={
             <ProtectedRoute allowedRoles={["hr"]}>
-              <AdminReports />
+              <HRReports />
             </ProtectedRoute>
           } />
-          <Route path="hr/enrollments" element={<PlaceholderPage title="Course Enrollment" />} />
-          <Route path="hr/certificates" element={<PlaceholderPage title="Certificates Management" />} />
-          <Route path="hr/support" element={<PlaceholderPage title="Support & Queries" />} />
-          <Route path="hr/notifications" element={<PlaceholderPage title="System Notifications" />} />
+          <Route path="hr/enrollments" element={
+            <ProtectedRoute allowedRoles={["hr"]}>
+              <HREnrollments />
+            </ProtectedRoute>
+          } />
+          <Route path="hr/certificates" element={
+            <ProtectedRoute allowedRoles={["hr"]}>
+              <HRCertificates />
+            </ProtectedRoute>
+          } />
+          <Route path="hr/support" element={
+            <ProtectedRoute allowedRoles={["hr"]}>
+              <HRSupport />
+            </ProtectedRoute>
+          } />
         </Route>
 
         <Route path="*" element={<NotFound />} />

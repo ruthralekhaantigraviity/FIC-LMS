@@ -64,7 +64,7 @@ export default function DashboardLayout() {
       name: "Attendance",   
       path: "/dashboard/attendance",   
       icon: Calendar,      
-      role: ["hr", "admin", "trainer"] 
+      role: ["admin", "trainer"] 
     },
     { 
       name: "Certificates", 
@@ -82,12 +82,6 @@ export default function DashboardLayout() {
       name: "Reports", 
       path: "/dashboard/hr/reports", 
       icon: FileText, 
-      role: ["hr"] 
-    },
-    { 
-      name: "Notifications", 
-      path: "/dashboard/hr/notifications", 
-      icon: Bell, 
       role: ["hr"] 
     },
     {

@@ -81,11 +81,12 @@ export default function HRDashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: "Total Students", value: admissions.filter(a => a.status === 'completed').length, icon: User, color: "blue" },
-          { label: "Active Courses", value: 12, icon: BookOpen, color: "green" },
-          { label: "Completion %", value: "84%", icon: CheckCircle, color: "amber" },
+          { label: "Total Students", value: "1,245", icon: User, color: "blue" },
+          { label: "Active Courses", value: "12", icon: BookOpen, color: "green" },
+          { label: "New Admissions (Week)", value: "85", icon: Users, color: "purple" },
+          { label: "Completion Rate", value: "68%", icon: CheckCircle, color: "amber" },
         ].map((stat, i) => (
           <motion.div
             key={i}
@@ -95,7 +96,7 @@ export default function HRDashboard() {
             className="bg-white dark:bg-[#1e293b] p-6 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm"
           >
             <div className="flex items-center gap-4">
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center`} style={{ backgroundColor: stat.color === 'blue' ? 'rgba(59,130,246,0.1)' : stat.color === 'green' ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)', color: stat.color === 'blue' ? '#3b82f6' : stat.color === 'green' ? '#10b981' : '#f59e0b' }}>
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center`} style={{ backgroundColor: stat.color === 'blue' ? 'rgba(59,130,246,0.1)' : stat.color === 'green' ? 'rgba(16,185,129,0.1)' : stat.color === 'purple' ? 'rgba(139,92,246,0.1)' : 'rgba(245,158,11,0.1)', color: stat.color === 'blue' ? '#3b82f6' : stat.color === 'green' ? '#10b981' : stat.color === 'purple' ? '#8b5cf6' : '#f59e0b' }}>
                 <stat.icon size={24} />
               </div>
               <div>
@@ -106,6 +107,117 @@ export default function HRDashboard() {
           </motion.div>
         ))}
       </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Charts Section */}
+        <div className="lg:col-span-2 space-y-8">
+           <div className="bg-white dark:bg-[#1e293b] p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm">
+             <div className="flex items-center justify-between mb-8">
+               <h3 className="text-xl font-bold text-slate-900 dark:text-white font-display">Student Enrollment Growth</h3>
+               <select className="bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-xs font-bold px-4 py-2 outline-none">
+                 <option>Monthly</option>
+                 <option>Yearly</option>
+               </select>
+             </div>
+             <div className="h-[300px] w-full">
+               <ResponsiveContainer width="100%" height="100%">
+                 <AreaChart data={[
+                   { name: 'Jan', value: 400 },
+                   { name: 'Feb', value: 300 },
+                   { name: 'Mar', value: 600 },
+                   { name: 'Apr', value: 800 },
+                   { name: 'May', value: 500 },
+                   { name: 'Jun', value: 900 },
+                 ]}>
+                   <defs>
+                     <linearGradient id="colorEnroll" x1="0" y1="0" x2="0" y2="1">
+                       <stop offset="5%" stopColor="#0EA5E9" stopOpacity={0.3}/>
+                       <stop offset="95%" stopColor="#0EA5E9" stopOpacity={0}/>
+                     </linearGradient>
+                   </defs>
+                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
+                   <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
+                   <Tooltip contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
+                   <Area type="monotone" dataKey="value" stroke="#0EA5E9" strokeWidth={4} fillOpacity={1} fill="url(#colorEnroll)" />
+                 </AreaChart>
+               </ResponsiveContainer>
+             </div>
+           </div>
+
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+             <div className="bg-white dark:bg-[#1e293b] p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6">Course Completion Progress</h3>
+                <div className="space-y-6">
+                  {[
+                    { label: "MERN Stack", value: 75, color: "blue" },
+                    { label: "UI/UX Design", value: 45, color: "purple" },
+                    { label: "Data Science", value: 60, color: "green" },
+                  ].map((item, i) => (
+                    <div key={i}>
+                      <div className="flex justify-between text-sm mb-2">
+                        <span className="font-bold text-slate-700 dark:text-slate-300">{item.label}</span>
+                        <span className="text-slate-500">{item.value}%</span>
+                      </div>
+                      <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${item.value}%` }}
+                          className={`h-full bg-${item.color === 'blue' ? 'sky' : item.color === 'purple' ? 'purple' : 'emerald'}-500`}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+             </div>
+
+             <div className="bg-white dark:bg-[#1e293b] p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-center items-center text-center">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Dropout Rate</h3>
+                <div className="relative w-32 h-32 flex items-center justify-center mb-4">
+                  <svg className="w-full h-full transform -rotate-90">
+                    <circle cx="64" cy="64" r="58" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-slate-100 dark:text-slate-800" />
+                    <circle cx="64" cy="64" r="58" stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray={364} strokeDashoffset={364 - (364 * 12 / 100)} className="text-red-500" strokeLinecap="round" />
+                  </svg>
+                  <span className="absolute text-2xl font-black text-slate-900 dark:text-white">12%</span>
+                </div>
+                <p className="text-sm text-slate-500">Decreased by 2% from last month</p>
+             </div>
+           </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div className="bg-white dark:bg-[#1e293b] p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm h-full">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-8 font-display">Recent Activity</h3>
+          <div className="space-y-8">
+            {[
+              { name: "Riya", action: "enrolled in", target: "MERN Stack", time: "2 mins ago", color: "blue" },
+              { name: "Arun", action: "completed", target: "UI/UX course", time: "1 hour ago", color: "green" },
+              { name: "Suresh", action: "submitted", target: "Assignment #4", time: "3 hours ago", color: "purple" },
+              { name: "Meera", action: "applied for", target: "Data Science", time: "5 hours ago", color: "orange" },
+            ].map((activity, i) => (
+              <div key={i} className="flex gap-4">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold text-white`} style={{ background: '#1A9FD4' }}>
+                  {activity.name.charAt(0)}
+                </div>
+                <div>
+                  <p className="text-sm text-slate-900 dark:text-white font-medium">
+                    <span className="font-bold">{activity.name}</span> {activity.action} <span className="text-sky-600 font-bold">{activity.target}</span>
+                  </p>
+                  <p className="text-xs text-slate-400 mt-1">{activity.time}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button className="w-full mt-10 py-4 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-2xl border border-slate-100 dark:border-slate-700 hover:bg-slate-100 transition">
+            View All Activity
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-12">
+        <h2 className="text-2xl font-black text-slate-900 dark:text-white font-display mb-6">Recent Admissions</h2>
+      </div>
+
       {/* Pending Notification Banner */}
       {pendingCount > 0 && (
         <motion.div
@@ -177,77 +289,67 @@ export default function HRDashboard() {
               </tr>{" "}
             </thead>{" "}
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-              {" "}
               {loading ? (
                 <tr>
-                  <td colSpan="5" className="text-center py-10">
-                    Loading...
-                  </td>
+                  <td colSpan="5" className="text-center py-10 text-slate-500">Loading admissions...</td>
                 </tr>
               ) : admissions.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="text-center py-10 text-slate-500">
-                    No applications found.
-                  </td>
+                  <td colSpan="5" className="text-center py-10 text-slate-500">No applications found.</td>
                 </tr>
               ) : (
                 admissions.map((app) => (
                   <tr key={app._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/20 transition">
-                    {" "}
                     <td className="px-6 py-4">
-                      {" "}
                       <div className="flex items-center gap-3">
-                        {" "}
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ background: '#1A9FD4' }}>
-                          {" "}
-                          {app.fullName.charAt(0)}{" "}
-                        </div>{" "}
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm" style={{ background: '#1A9FD4' }}>
+                          {app.fullName.charAt(0)}
+                        </div>
                         <div>
-                          {" "}
-                           <p className="text-sm font-bold text-slate-900 dark:text-white">
-                            {app.fullName}
-                          </p>{" "}
-                          <p className="text-xs text-slate-500">
-                            {app.email}
-                          </p>{" "}
-                        </div>{" "}
-                      </div>{" "}
-                    </td>{" "}
+                           <p className="text-sm font-bold text-slate-900 dark:text-white">{app.fullName}</p>
+                           <p className="text-xs text-slate-500">{app.email}</p>
+                        </div>
+                      </div>
+                    </td>
                     <td className="px-6 py-4">
-                      {" "}
-                      <span className="text-sm font-medium">
-                        {app.course?.title}
-                      </span>{" "}
-                    </td>{" "}
+                      <span className="text-sm font-medium">{app.course?.title}</span>
+                    </td>
                     <td className="px-6 py-4 text-sm text-slate-500">
-                      {" "}
-                      {new Date(app.appliedAt).toLocaleDateString()}{" "}
-                    </td>{" "}
+                      {new Date(app.appliedAt).toLocaleDateString()}
+                    </td>
                     <td className="px-6 py-4">
-                      {" "}
-                      <span
-                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border ${getStatusColor(app.status)}`}
-                      >
-                        {" "}
-                        {app.status}{" "}
-                      </span>{" "}
-                    </td>{" "}
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border ${getStatusColor(app.status)}`}>
+                        {app.status === 'completed' ? 'Approved' : app.status === 'pending' ? 'Pending' : 'Rejected'}
+                      </span>
+                    </td>
                     <td className="px-6 py-4 text-right">
-                      {" "}
-                      <button
-                        onClick={() => setSelectedAdmission(app)}
-                        className="p-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-lg hover:text-white transition"
-                        style={{}} 
-                        onMouseEnter={e => { e.currentTarget.style.background='#1A9FD4'; e.currentTarget.style.color='white'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background=''; e.currentTarget.style.color=''; }}
-                      >
-                        {" "}
-                        <Eye size={18} />{" "}
-                      </button>{" "}
-                    </td>{" "}
+                      <div className="flex items-center justify-end gap-2">
+                        <button 
+                          onClick={() => handleUpdateStatus(app._id, "completed")}
+                          className="p-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-600 hover:text-white transition shadow-sm"
+                          title="Approve"
+                        >
+                          <CheckCircle size={18} />
+                        </button>
+                        <button 
+                          onClick={() => handleUpdateStatus(app._id, "rejected")}
+                          className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition shadow-sm"
+                          title="Reject"
+                        >
+                          <XCircle size={18} />
+                        </button>
+                        <button
+                          onClick={() => setSelectedAdmission(app)}
+                          className="p-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-lg hover:bg-slate-900 hover:text-white transition"
+                          title="View Details"
+                        >
+                          <Eye size={18} />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))
-              )}{" "}
+              )}
             </tbody>{" "}
           </table>{" "}
         </div>{" "}
