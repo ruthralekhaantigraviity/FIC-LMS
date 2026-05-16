@@ -153,41 +153,7 @@ export default function StudentDashboard() {
 
 
 
-        {/* Learning Paths */}
-        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6">
-          <h2 className="font-bold text-slate-800 text-lg mb-5 flex items-center gap-2">
-            <span className="w-6 h-6 rounded-md bg-blue-100 text-blue-600 flex items-center justify-center">
-              <PlayCircle size={14} />
-            </span>
-            Learning paths / Bootcamps / Programs
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {courses.slice(1, 5).map((course, i) => {
-              const bgGradients = [
-                "from-red-500 to-pink-500",
-                "from-purple-600 to-indigo-600",
-                "from-blue-600 to-cyan-500",
-                "from-green-500 to-emerald-600"
-              ];
-              return (
-                <div key={course._id} className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-                  <div className={`h-28 bg-gradient-to-br ${bgGradients[i % 4]} p-4 flex flex-col justify-end`}>
-                    <h3 className="text-white font-bold text-lg leading-tight">{course.title}</h3>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs text-slate-500 font-semibold mb-3 border-b pb-3">{course.category}</p>
-                    <Link 
-                      to={`/dashboard/student/learn/${course._id}`} 
-                      className="block w-full py-2 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold rounded text-center transition"
-                    >
-                      EXPLORE
-                    </Link>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
+
 
       </div>
 
