@@ -65,6 +65,7 @@ export default function Home() {
   const [enquiryForm, setEnquiryForm] = useState({ fullName: '', email: '', phoneNumber: '', courseInterest: '', message: '' });
   const [enquiryLoading, setEnquiryLoading] = useState(false);
   const [enquirySuccess, setEnquirySuccess] = useState(false);
+  const [activeNav, setActiveNav] = useState('');
 
   const handleEnquiryChange = (e) => setEnquiryForm({ ...enquiryForm, [e.target.name]: e.target.value });
 
@@ -129,16 +130,26 @@ export default function Home() {
           </a>{" "}
           <div className="hidden md:flex items-center gap-8 text-sm font-semibold">
             {" "}
-            <a href="#courses" className="transition-all hover:scale-105" style={{ color: '#1A9FD4' }}>
-              Courses
-            </a>{" "}
-            <a href="#features" className="transition-all hover:scale-105" style={{ color: '#7c3aed' }}>
-              Features
-            </a>{" "}
-            <a href="#about" className="transition-all hover:scale-105" style={{ color: '#10b981' }}>
-              About
-            </a>{" "}
-            <a href="#enquiry" className="transition-all hover:scale-105 px-4 py-2 rounded-xl text-white font-bold shadow-md hover:shadow-lg" style={{ background: 'linear-gradient(135deg, #1A9FD4, #7c3aed)' }}>
+            {[{id:'courses',label:'Courses'},{id:'features',label:'Features'},{id:'about',label:'About'}].map(({ id, label }) => (
+              <a
+                key={id}
+                href={`#${id}`}
+                onClick={() => setActiveNav(id)}
+                className="transition-all duration-200 hover:scale-105"
+                style={{ color: activeNav === id ? '#1A9FD4' : '#1e293b', fontWeight: activeNav === id ? 700 : 600 }}
+              >
+                {label}
+              </a>
+            ))}
+            <a
+              href="#enquiry"
+              onClick={() => setActiveNav('enquiry')}
+              className="transition-all hover:scale-105 px-4 py-2 rounded-xl font-bold shadow-md hover:shadow-lg"
+              style={activeNav === 'enquiry'
+                ? { background: 'linear-gradient(135deg, #1A9FD4, #7c3aed)', color: 'white' }
+                : { background: 'linear-gradient(135deg, #1A9FD4, #7c3aed)', color: 'white' }
+              }
+            >
               Enquire Now
             </a>{" "}
           </div>{" "}
