@@ -3,17 +3,31 @@ const Assignment = require('../models/Assignment');
 exports.createAssignment = async (req, res) => {
   try {
     const { title, description, courseId, course, dueDate } = req.body;
+    
+    // Log the request for debugging
+    console.log('Creating Assignment:', { title, courseId, course, dueDate, userId: req.user?._id });
+
+    if (!title || (!courseId && !course) || !dueDate) {
+      return res.status(400).json({ 
+        message: 'Missing required fields: title, course, and dueDate are mandatory.' 
+      });
+    }
+
     const assignment = await Assignment.create({
       title,
       description,
       course: courseId || course,
-      trainer: req.user.id,
+      trainer: req.user._id || req.user.id,
       dueDate
     });
 
     res.status(201).json({ status: 'success', data: assignment });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error('Assignment Creation Error:', err);
+    res.status(400).json({ 
+      message: err.message,
+      error: err
+    });
   }
 };
 
