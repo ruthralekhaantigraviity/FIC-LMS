@@ -53,7 +53,7 @@ export default function AdminDashboard() {
       value: "1,284",
       icon: Users,
       color: "bg-blue-500",
-      path: "/dashboard/admin/users"
+      path: "/dashboard/admin/students"
     },
     {
       label: "Active Courses",

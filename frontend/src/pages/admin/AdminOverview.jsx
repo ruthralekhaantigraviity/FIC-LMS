@@ -15,7 +15,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, AreaChart, Area
 } from 'recharts';
 import StatsCard from '../../components/admin/StatsCard';
-import axios from 'axios';
+import api from '../../utils/api';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -67,7 +67,7 @@ const AdminOverview = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await axios.get('/api/admin-dashboard/stats');
+        const response = await api.get('/admin-dashboard/stats');
         setStats(response.data);
       } catch (error) {
         console.error('Error fetching stats:', error);

@@ -65,19 +65,26 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fic_lms')
     
     // Auto-create Admin if it doesn't exist
     try {
-      const adminExists = await User.findOne({ role: 'admin' });
-      if (!adminExists) {
-        console.log('No admin found. Creating default admin...');
+      const adminEmail = 'admin@fic.com';
+      const adminUser = await User.findOne({ email: adminEmail });
+      
+      if (!adminUser) {
+        console.log('No admin user found. Creating default admin...');
         await User.create({
           name: 'FIC Admin',
-          email: 'admin@fic.com',
+          email: adminEmail,
           password: 'admin123',
           role: 'admin'
         });
-        console.log('Default admin created: admin@fic.com / admin123');
+        console.log(`Default admin created: ${adminEmail} / admin123`);
+      } else if (adminUser.role !== 'admin') {
+        console.log('Admin user exists but role is not admin. Updating role...');
+        adminUser.role = 'admin';
+        await adminUser.save();
+        console.log('Admin role updated successfully.');
       }
     } catch (err) {
-      console.error('Error creating default admin:', err);
+      console.error('Error ensuring default admin:', err);
     }
 
     app.listen(PORT, () => {
