@@ -106,11 +106,11 @@ export default function StudentMyCourses() {
                   {/* Progress Area */}
                   <div className="mb-8">
                     <div className="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden mb-3">
-                      <div className="bg-[#22c55e] h-full w-[45%] rounded-full shadow-[0_0_12px_rgba(34,197,94,0.4)]"></div>
+                      <div className="bg-[#22c55e] h-full w-[0%] rounded-full shadow-[0_0_12px_rgba(34,197,94,0.4)]"></div>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Progress</span>
-                      <span className="text-[11px] font-bold text-slate-900 dark:text-slate-300">49 of 106 complete</span>
+                      <span className="text-[11px] font-bold text-slate-900 dark:text-slate-300">0 of {course.totalLessons || 12} complete</span>
                     </div>
                   </div>
 
@@ -118,7 +118,7 @@ export default function StudentMyCourses() {
                     to={`/dashboard/student/learn/${course._id}`} 
                     className="w-full py-4 bg-[#3b82f6] hover:bg-blue-600 text-white text-sm font-bold rounded-2xl text-center transition-all shadow-xl shadow-blue-500/25 active:scale-[0.98] uppercase tracking-[0.1em]"
                   >
-                    CONTINUE
+                    START
                   </Link>
                 </div>
               </div>

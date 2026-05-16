@@ -77,16 +77,16 @@ export default function StudentCourseViewer() {
           </button>
           <h2 className="font-bold text-xl">{course?.title}</h2>
           
-          {/* Progress Bar (Mocked to 45% for visual effect) */}
+          {/* Progress Bar (Dynamic) */}
           <div className="mt-4">
             <div className="flex justify-between text-xs font-medium mb-1">
-              <span>Overall Progress</span>
-              <span>45%</span>
+              <span>Course Progress</span>
+              <span>0%</span>
             </div>
             <div className="w-full h-1.5 bg-blue-700 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-white rounded-full" 
-                style={{ width: `45%` }}
+                style={{ width: `0%` }}
               ></div>
             </div>
           </div>

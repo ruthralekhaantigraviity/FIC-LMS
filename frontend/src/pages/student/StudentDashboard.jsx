@@ -137,16 +137,16 @@ export default function StudentDashboard() {
                     {/* Progress Area */}
                     <div className="mb-6">
                       <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden mb-2">
-                        <div className="bg-green-500 h-full w-[45%] rounded-full shadow-[0_0_8px_rgba(34,197,94,0.4)]"></div>
+                        <div className="bg-green-500 h-full w-[0%] rounded-full shadow-[0_0_8px_rgba(34,197,94,0.4)]"></div>
                       </div>
-                      <span className="text-xs font-bold text-slate-400">49 of 106 complete</span>
+                      <span className="text-xs font-bold text-slate-400">0 of {course.totalLessons || 12} complete</span>
                     </div>
 
                     <Link 
                       to={`/dashboard/student/learn/${course._id}`} 
                       className="w-full py-3 bg-[#3b82f6] hover:bg-blue-600 text-white text-sm font-bold rounded-xl text-center transition-all shadow-lg shadow-blue-500/25 active:scale-[0.98] uppercase tracking-wider"
                     >
-                      CONTINUE
+                      START
                     </Link>
                   </div>
                 </div>
