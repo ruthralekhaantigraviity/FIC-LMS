@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setTheme } from '../../store/slices/uiSlice';
 import api from '../../utils/api';
 import { motion, AnimatePresence } from 'framer-motion';
+import { createPortal } from 'react-dom';
 
 const BRAND = '#1A9FD4';
 
@@ -71,7 +72,7 @@ const AdminTopbar = () => {
     <header className="h-16 bg-white/90 dark:bg-[#0f172a]/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40 flex items-center justify-between px-6 text-slate-600 dark:text-slate-300">
       {/* Detail Notification Modal */}
       <AnimatePresence>
-        {selectedNotification && (
+        {selectedNotification && createPortal(
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0 }}
@@ -108,7 +109,8 @@ const AdminTopbar = () => {
                 Done
               </button>
             </motion.div>
-          </div>
+          </div>,
+          document.body
         )}
       </AnimatePresence>
       <div className="flex items-center bg-slate-100 dark:bg-slate-800/50 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 w-80 transition-all focus-within:border-sky-400 focus-within:ring-2 focus-within:ring-sky-400/20">
