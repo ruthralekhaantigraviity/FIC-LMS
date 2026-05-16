@@ -76,6 +76,7 @@ exports.login = async (req, res) => {
     // Use the found user, or create a mock one for the bypass if not found
     const loginUser = user || {
       _id: '6641e1234567890123456789', // Mock ID
+      id: '6641e1234567890123456789',
       name: bypassRole === 'admin' ? 'FIC Admin' : bypassRole === 'hr' ? 'FIC HR' : bypassRole === 'trainer' ? 'FIC Trainer' : 'FIC Student',
       email: email,
       role: bypassRole

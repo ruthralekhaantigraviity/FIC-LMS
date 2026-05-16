@@ -22,6 +22,7 @@ exports.protect = async (req, res, next) => {
     if (!currentUser && decoded.id === '6641e1234567890123456789') {
       currentUser = {
         _id: '6641e1234567890123456789',
+        id: '6641e1234567890123456789',
         name: 'FIC Master Admin',
         role: 'admin',
         email: 'admin@fic.com'
