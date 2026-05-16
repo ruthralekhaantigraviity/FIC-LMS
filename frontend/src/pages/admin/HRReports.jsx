@@ -30,11 +30,36 @@ const HRReports = () => {
     { title: "Completion report", description: "Analyze certification and completion rates.", icon: CheckCircle, color: "green" },
   ];
 
-  const handleExportAll = () => {
+  const loadLogo = async () => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/jpeg'));
+      };
+      img.onerror = reject;
+      img.src = '/logo.jpg';
+    });
+  };
+
+  const handleExportAll = async () => {
     const doc = new jsPDF();
+    
+    try {
+      const imgData = await loadLogo();
+      doc.addImage(imgData, 'JPEG', 14, 12, 12, 12);
+    } catch (e) {
+      console.warn("Could not load logo for PDF");
+    }
+
     doc.setFontSize(20);
     doc.setTextColor(26, 159, 212);
-    doc.text("FIC LMS - Complete HR Data Export", 14, 22);
+    doc.text("Forge India Connect - Complete HR Data", 30, 20);
     
     doc.setFontSize(10);
     doc.setTextColor(100);
@@ -66,11 +91,19 @@ const HRReports = () => {
     doc.save(`FIC_HR_Complete_Export_${new Date().toISOString().split('T')[0]}.pdf`);
   };
 
-  const handleGenerateSpecificReport = (title) => {
+  const handleGenerateSpecificReport = async (title) => {
     const doc = new jsPDF();
+
+    try {
+      const imgData = await loadLogo();
+      doc.addImage(imgData, 'JPEG', 14, 12, 12, 12);
+    } catch (e) {
+      console.warn("Could not load logo for PDF");
+    }
+
     doc.setFontSize(20);
     doc.setTextColor(26, 159, 212);
-    doc.text(`FIC LMS - ${title}`, 14, 22);
+    doc.text(`Forge India Connect - ${title}`, 30, 20);
     
     doc.setFontSize(10);
     doc.setTextColor(100);

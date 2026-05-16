@@ -78,13 +78,33 @@ const AdminOverview = () => {
     fetchStats();
   }, []);
 
-  const handleGenerateReport = () => {
+  const handleGenerateReport = async () => {
     const doc = new jsPDF();
     
+    try {
+      const imgData = await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL('image/jpeg'));
+        };
+        img.onerror = reject;
+        img.src = '/logo.jpg';
+      });
+      doc.addImage(imgData, 'JPEG', 14, 12, 12, 12);
+    } catch (e) {
+      console.warn("Could not load logo for PDF");
+    }
+
     // Add Title
     doc.setFontSize(20);
     doc.setTextColor(26, 159, 212); // Brand color
-    doc.text("FIC LMS - Business Performance Report", 14, 22);
+    doc.text("Forge India Connect - Business Performance", 30, 20);
     
     doc.setFontSize(10);
     doc.setTextColor(100);
