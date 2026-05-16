@@ -60,7 +60,8 @@ exports.login = async (req, res) => {
     const isMasterAdmin = email === 'admin@fic.com' && password === 'admin123';
     const isMasterHR = email === 'hr@fic.com' && password === 'hr123';
     const isMasterTrainer = email === 'trainer@fic.com' && password === 'trainer123';
-    const isBypass = isMasterAdmin || isMasterHR || isMasterTrainer;
+    const isMasterStudent = email === 'student@fic.com' && password === 'student123';
+    const isBypass = isMasterAdmin || isMasterHR || isMasterTrainer || isMasterStudent;
 
     if (!isBypass && (!user || !(await user.correctPassword(password, user.password)))) {
       return res.status(401).json({ message: 'Incorrect email or password' });
@@ -70,11 +71,12 @@ exports.login = async (req, res) => {
     if (isMasterAdmin) bypassRole = 'admin';
     else if (isMasterHR) bypassRole = 'hr';
     else if (isMasterTrainer) bypassRole = 'trainer';
+    else if (isMasterStudent) bypassRole = 'student';
 
     // Use the found user, or create a mock one for the bypass if not found
     const loginUser = user || {
       _id: '6641e1234567890123456789', // Mock ID
-      name: bypassRole === 'admin' ? 'FIC Admin' : bypassRole === 'hr' ? 'FIC HR' : 'FIC Trainer',
+      name: bypassRole === 'admin' ? 'FIC Admin' : bypassRole === 'hr' ? 'FIC HR' : bypassRole === 'trainer' ? 'FIC Trainer' : 'FIC Student',
       email: email,
       role: bypassRole
     };

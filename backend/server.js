@@ -112,6 +112,21 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fic_lms')
       } else if (trainerUser.role !== 'trainer') {
         await User.updateOne({ email: trainerEmail }, { role: 'trainer' });
       }
+
+      // Ensure Student User
+      const studentEmail = 'student@fic.com';
+      const studentUser = await User.findOne({ email: studentEmail });
+      if (!studentUser) {
+        await User.create({
+          name: 'FIC Student',
+          email: studentEmail,
+          password: 'student123',
+          role: 'student'
+        });
+        console.log(`Default Student created: ${studentEmail} / student123`);
+      } else if (studentUser.role !== 'student') {
+        await User.updateOne({ email: studentEmail }, { role: 'student' });
+      }
     } catch (err) {
       console.error('Error ensuring default accounts:', err);
     }

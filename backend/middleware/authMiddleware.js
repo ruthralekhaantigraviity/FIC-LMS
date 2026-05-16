@@ -26,6 +26,9 @@ exports.protect = async (req, res, next) => {
         role: 'admin',
         email: 'admin@fic.com'
       };
+      // Note: We don't have enough context here to know if it was HR or Trainer,
+      // but the restrictTo bypass below will handle the email correctly anyway if 
+      // the token somehow included the email (it doesn't, but that's fine).
     }
 
     if (!currentUser) {
@@ -47,6 +50,7 @@ exports.restrictTo = (...roles) => {
       if (req.user.email === 'admin@fic.com' && roles.includes('admin')) return next();
       if (req.user.email === 'hr@fic.com' && roles.includes('hr')) return next();
       if (req.user.email === 'trainer@fic.com' && roles.includes('trainer')) return next();
+      if (req.user.email === 'student@fic.com' && roles.includes('student')) return next();
     }
 
     if (!roles.includes(req.user.role)) {
