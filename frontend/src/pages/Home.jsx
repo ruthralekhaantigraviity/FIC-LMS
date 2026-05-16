@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import api from "../utils/api";
+import toast from "react-hot-toast";
 import {
   ChevronRight,
   Play,
@@ -15,6 +16,10 @@ import {
   Shield,
   Clock,
   ArrowRight,
+  Mail,
+  Phone,
+  MessageSquare,
+  Send,
 } from "lucide-react";
 import Footer from "../components/layout/Footer";
 import aboutImg from "../assets/about.png";
@@ -57,6 +62,27 @@ export default function Home() {
   ];
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [enquiryForm, setEnquiryForm] = useState({ fullName: '', email: '', phoneNumber: '', courseInterest: '', message: '' });
+  const [enquiryLoading, setEnquiryLoading] = useState(false);
+  const [enquirySuccess, setEnquirySuccess] = useState(false);
+
+  const handleEnquiryChange = (e) => setEnquiryForm({ ...enquiryForm, [e.target.name]: e.target.value });
+
+  const handleEnquirySubmit = async (e) => {
+    e.preventDefault();
+    setEnquiryLoading(true);
+    try {
+      await api.post('/enquiries', enquiryForm);
+      setEnquirySuccess(true);
+      setEnquiryForm({ fullName: '', email: '', phoneNumber: '', courseInterest: '', message: '' });
+      toast.success('Enquiry submitted! We will contact you soon.');
+      setTimeout(() => setEnquirySuccess(false), 5000);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to submit enquiry. Please try again.');
+    } finally {
+      setEnquiryLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -105,6 +131,9 @@ export default function Home() {
             </a>{" "}
             <a href="#about" className="hover:text-primary-600 transition">
               About
+            </a>{" "}
+            <a href="#enquiry" className="hover:text-primary-600 transition font-semibold" style={{ color: '#1A9FD4' }}>
+              Enquire Now
             </a>{" "}
           </div>{" "}
           <div className="flex items-center gap-4">
@@ -445,7 +474,153 @@ export default function Home() {
           </div>{" "}
         </div>{" "}
       </section>{" "}
+      {/* Enquiry Section */}
+      <section id="enquiry" className="py-24 px-6 bg-slate-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            {/* Left — Info */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-base font-bold uppercase tracking-widest mb-3" style={{ color: '#1A9FD4' }}>Get In Touch</h2>
+              <h3 className="text-3xl md:text-5xl font-display font-bold text-slate-900 mb-6 leading-tight">
+                Have Questions? <br />We're Here to Help.
+              </h3>
+              <p className="text-lg text-slate-600 mb-10 leading-relaxed">
+                Fill in the form and our team will reach out within 24 hours. Whether you want to know more about a course, fees, or career support — we've got you covered.
+              </p>
+              <div className="space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-white flex-shrink-0" style={{ background: '#1A9FD4' }}>
+                    <Phone size={22} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Call Us</p>
+                    <p className="text-slate-800 font-bold text-lg">+91 98765 43210</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-white flex-shrink-0" style={{ background: '#1A9FD4' }}>
+                    <Mail size={22} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Email Us</p>
+                    <p className="text-slate-800 font-bold text-lg">info@forgeindia.com</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-white flex-shrink-0" style={{ background: '#1A9FD4' }}>
+                    <MessageSquare size={22} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Response Time</p>
+                    <p className="text-slate-800 font-bold text-lg">Within 24 Hours</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Right — Form */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="bg-white rounded-3xl shadow-2xl shadow-slate-200/60 border border-slate-100 p-8 lg:p-10"
+            >
+              {enquirySuccess ? (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mb-6">
+                    <CheckCircle size={40} className="text-green-500" />
+                  </div>
+                  <h4 className="text-2xl font-bold text-slate-900 mb-2">Enquiry Sent!</h4>
+                  <p className="text-slate-500">Our team will get back to you within 24 hours.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleEnquirySubmit} className="space-y-5">
+                  <div>
+                    <h4 className="text-xl font-bold text-slate-900 mb-1">Send an Enquiry</h4>
+                    <p className="text-sm text-slate-500 mb-6">All fields marked * are required.</p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Full Name *</label>
+                      <input
+                        type="text" name="fullName" required
+                        value={enquiryForm.fullName} onChange={handleEnquiryChange}
+                        placeholder="e.g. Rahul Sharma"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Phone Number *</label>
+                      <input
+                        type="tel" name="phoneNumber" required
+                        value={enquiryForm.phoneNumber} onChange={handleEnquiryChange}
+                        placeholder="+91 98765 43210"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Email Address *</label>
+                    <input
+                      type="email" name="email" required
+                      value={enquiryForm.email} onChange={handleEnquiryChange}
+                      placeholder="you@example.com"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Course Interest</label>
+                    <select
+                      name="courseInterest"
+                      value={enquiryForm.courseInterest} onChange={handleEnquiryChange}
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all"
+                    >
+                      <option value="">Select a course domain...</option>
+                      <option>MERN Stack Development</option>
+                      <option>Python &amp; Data Science</option>
+                      <option>UI/UX Design</option>
+                      <option>Digital Marketing</option>
+                      <option>Cyber Security</option>
+                      <option>Cloud Computing</option>
+                      <option>Mobile App Development</option>
+                      <option>Java Full Stack</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Message</label>
+                    <textarea
+                      name="message" rows={4}
+                      value={enquiryForm.message} onChange={handleEnquiryChange}
+                      placeholder="Tell us about your goals, experience level, or any questions..."
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-sm focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20 transition-all resize-none"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={enquiryLoading}
+                    className="w-full py-4 text-white font-bold rounded-2xl flex items-center justify-center gap-2 hover:brightness-110 transition-all shadow-xl disabled:opacity-60"
+                    style={{ background: 'linear-gradient(135deg, #1A9FD4, #7c3aed)' }}
+                  >
+                    {enquiryLoading ? (
+                      <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> Submitting...</>
+                    ) : (
+                      <><Send size={18} /> Submit Enquiry</>
+                    )}
+                  </button>
+                </form>
+              )}
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       <Footer />{" "}
+
     </div>
   );
 }

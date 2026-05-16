@@ -37,6 +37,7 @@ const assignmentRoutes = require('./routes/assignmentRoutes');
 const moduleRoutes = require('./routes/moduleRoutes');
 const adminDashboardRoutes = require('./routes/adminDashboardRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const enquiryRoutes = require('./routes/enquiryRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
@@ -47,6 +48,7 @@ app.use('/api/assignments', assignmentRoutes);
 app.use('/api/modules', moduleRoutes);
 app.use('/api/admin-dashboard', adminDashboardRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/enquiries', enquiryRoutes);
 
 // Basic Route
 app.get('/', (req, res) => {
