@@ -33,11 +33,10 @@ export default function TrainerCourseManager() {
 
   const fetchCourseData = async () => {
     try {
-      const [courseRes, modulesRes, subjectsRes, assignmentsRes] = await Promise.all([
+      const [courseRes, modulesRes, subjectsRes] = await Promise.all([
         api.get(`/courses/${id}`),
         api.get(`/modules/course/${id}`),
-        api.get(`/subjects/course/${id}`),
-        api.get(`/assignments/course/${id}`)
+        api.get(`/subjects/course/${id}`)
       ]);
       setCourse(courseRes.data.data);
       setModules(modulesRes.data.data);
