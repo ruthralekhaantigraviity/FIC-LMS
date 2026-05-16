@@ -137,72 +137,118 @@ const StudentCertificates = () => {
   };
 
   return (
-    <div className="space-y-10 pb-20">
+    <div className="space-y-12 pb-20">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-display">My Certifications</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">Download and share your achievements.</p>
+          <h1 className="text-4xl font-black text-slate-900 dark:text-white font-display tracking-tight">My Achievements</h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage your professional certifications and domain credentials.</p>
         </div>
       </div>
 
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-           {[1, 2].map(i => <div key={i} className="h-48 bg-slate-100 dark:bg-slate-800 animate-pulse rounded-3xl" />)}
-        </div>
-      ) : courses.filter(c => c.isCompleted).length === 0 ? (
-        <div className="bg-white dark:bg-[#0f172a] rounded-[32px] border-2 border-dashed border-slate-200 dark:border-slate-800 p-20 text-center">
-           <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300 dark:text-slate-700">
-              <Award size={40} />
+      {/* Domain Enrollment Certification Section */}
+      <section className="space-y-6">
+        <div className="flex items-center gap-3">
+           <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-600/20">
+              <Award size={20} />
            </div>
-           <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No certificates earned yet</h3>
-           <p className="text-slate-500 dark:text-slate-400 max-w-sm mx-auto">Complete all topics and lessons in your enrolled courses to unlock your professional certification.</p>
+           <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Domain Credentials</h2>
         </div>
-      ) : (
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-           {courses.filter(c => c.isCompleted).map((course) => (
+           {courses.map((course) => (
              <motion.div
-               key={course._id}
-               initial={{ opacity: 0, scale: 0.95 }}
-               animate={{ opacity: 1, scale: 1 }}
-               className="bg-white dark:bg-[#1e293b] rounded-[32px] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl shadow-slate-200/20 group hover:shadow-2xl transition-all duration-500"
+               key={`enroll-${course._id}`}
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               className="bg-white dark:bg-[#0f172a] rounded-[32px] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl shadow-slate-200/20 group relative"
              >
-                <div className="h-32 bg-gradient-to-br from-sky-500 to-indigo-600 p-8 flex items-end relative">
-                   <div className="absolute top-0 right-0 p-6 opacity-20 group-hover:scale-110 transition-transform duration-500">
-                      <Award size={80} className="text-white" />
+                <div className="absolute top-0 right-0 p-4">
+                   <div className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-widest border border-blue-100">
+                      ACTIVE
                    </div>
-                   <h3 className="text-white font-bold text-xl leading-tight relative z-10">{course.title}</h3>
                 </div>
-                
-                <div className="p-8 space-y-6">
-                   <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-green-500/10 text-green-500 flex items-center justify-center">
-                         <CheckCircle size={20} />
-                      </div>
-                      <div>
-                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</p>
-                         <p className="text-sm font-bold text-slate-900 dark:text-white">Completed & Verified</p>
-                      </div>
+                <div className="p-8">
+                   <div className="w-14 h-14 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                      <BookOpen size={28} className="text-blue-600" />
                    </div>
+                   <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{course.title}</h3>
+                   <p className="text-sm text-slate-500 mb-8">Professional training and internship domain certification.</p>
                    
-                   <div className="flex gap-3">
-                      <button 
-                        onClick={() => setPreviewCert(course)}
-                        className="flex-1 py-3 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-xl hover:bg-slate-100 transition flex items-center justify-center gap-2 text-xs uppercase"
-                      >
-                         <Eye size={16} /> Preview
-                      </button>
-                      <button 
-                        onClick={() => handleDownload(course)}
-                        className="flex-1 py-3 bg-sky-600 text-white font-bold rounded-xl hover:bg-sky-700 transition shadow-lg shadow-sky-600/20 flex items-center justify-center gap-2 text-xs uppercase"
-                      >
-                         <Download size={16} /> Download
-                      </button>
-                   </div>
+                   <button 
+                     onClick={() => handleDownload(course)}
+                     className="w-full py-4 bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-bold rounded-2xl hover:opacity-90 transition shadow-xl flex items-center justify-center gap-2 uppercase text-xs tracking-widest"
+                   >
+                      <Download size={16} /> Domain Certificate
+                   </button>
                 </div>
              </motion.div>
            ))}
         </div>
-      )}
+      </section>
+
+      {/* Course Completion Certificates Section */}
+      <section className="space-y-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+        <div className="flex items-center gap-3">
+           <div className="w-10 h-10 rounded-xl bg-green-600 text-white flex items-center justify-center shadow-lg shadow-green-600/20">
+              <CheckCircle size={20} />
+           </div>
+           <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Completion Certificates</h2>
+        </div>
+
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+             {[1].map(i => <div key={i} className="h-48 bg-slate-100 dark:bg-slate-800 animate-pulse rounded-[32px]" />)}
+          </div>
+        ) : courses.filter(c => c.isCompleted).length === 0 ? (
+          <div className="bg-white dark:bg-[#0f172a] rounded-[32px] border-2 border-dashed border-slate-200 dark:border-slate-800 p-16 text-center">
+             <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300 dark:text-slate-700">
+                <Award size={32} />
+             </div>
+             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Completion Certificates Locked</h3>
+             <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto">Finish your current domain modules to unlock your final professional certification.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+             {courses.filter(c => c.isCompleted).map((course) => (
+               <motion.div
+                 key={`comp-${course._id}`}
+                 initial={{ opacity: 0, scale: 0.95 }}
+                 animate={{ opacity: 1, scale: 1 }}
+                 className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-[32px] overflow-hidden shadow-2xl p-1"
+               >
+                  <div className="bg-white dark:bg-[#1e293b] rounded-[31px] p-8 space-y-6 h-full flex flex-col">
+                     <div className="flex justify-between items-start">
+                        <div className="w-14 h-14 bg-green-500/10 text-green-500 rounded-2xl flex items-center justify-center">
+                           <Award size={32} />
+                        </div>
+                        <span className="px-3 py-1 bg-green-500 text-white rounded-full text-[10px] font-black uppercase tracking-tighter">VERIFIED</span>
+                     </div>
+                     
+                     <div className="flex-1">
+                        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{course.title}</h3>
+                        <p className="text-sm text-slate-500">Official completion certificate for professional training.</p>
+                     </div>
+
+                     <div className="flex gap-3 pt-4">
+                        <button 
+                          onClick={() => setPreviewCert(course)}
+                          className="flex-1 py-3 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-xl hover:bg-slate-100 transition flex items-center justify-center gap-2 text-xs uppercase"
+                        >
+                           <Eye size={16} /> Preview
+                        </button>
+                        <button 
+                          onClick={() => handleDownload(course)}
+                          className="flex-1 py-3 bg-sky-600 text-white font-bold rounded-xl hover:bg-sky-700 transition shadow-lg shadow-sky-600/20 flex items-center justify-center gap-2 text-xs uppercase"
+                        >
+                           <Download size={16} /> Download
+                        </button>
+                     </div>
+                  </div>
+               </motion.div>
+             ))}
+          </div>
+        )}
+      </section>
 
       {/* Preview Modal */}
       <AnimatePresence>
