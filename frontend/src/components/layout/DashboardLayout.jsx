@@ -79,6 +79,12 @@ export default function DashboardLayout() {
       role: ["hr"] 
     },
     { 
+      name: "Enquiries", 
+      path: "/dashboard/hr/enquiries", 
+      icon: User,
+      role: ["hr"] 
+    },
+    { 
       name: "Reports", 
       path: "/dashboard/hr/reports", 
       icon: FileText, 

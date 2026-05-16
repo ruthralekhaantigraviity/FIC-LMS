@@ -291,6 +291,11 @@ function App() {
               <HRSupport />
             </ProtectedRoute>
           } />
+          <Route path="hr/enquiries" element={
+            <ProtectedRoute allowedRoles={["hr"]}>
+              <AdminEnquiries />
+            </ProtectedRoute>
+          } />
         </Route>
 
         <Route path="*" element={<NotFound />} />
