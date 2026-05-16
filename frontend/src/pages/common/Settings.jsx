@@ -43,7 +43,7 @@ export default function Settings() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await api.patch(`/auth/users/${user.id}/role`, {
+      const { data } = await api.patch('/auth/updateMe', {
         name: formData.name,
         phoneNumber: formData.phoneNumber
       });
@@ -51,6 +51,27 @@ export default function Settings() {
       toast.success('Profile updated successfully!');
     } catch (err) {
       toast.error('Error updating profile');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+    if (formData.newPassword !== formData.confirmPassword) {
+      return toast.error("New passwords don't match!");
+    }
+    
+    setLoading(true);
+    try {
+      await api.patch('/auth/updateMyPassword', {
+        currentPassword: formData.currentPassword,
+        newPassword: formData.newPassword
+      });
+      toast.success('Password updated successfully!');
+      setFormData(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Error updating password');
     } finally {
       setLoading(false);
     }
@@ -165,12 +186,15 @@ export default function Settings() {
                     <p className="text-sm text-slate-500 dark:text-slate-400">Ensure your account is using a long, random password to stay secure.</p>
                   </div>
 
-                  <form className="p-8 space-y-6">
+                  <form onSubmit={handleUpdatePassword} className="p-8 space-y-6">
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Current Password</label>
                         <input 
                           type="password"
+                          required
+                          value={formData.currentPassword}
+                          onChange={(e) => setFormData({...formData, currentPassword: e.target.value})}
                           className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none" 
                         />
                       </div>
@@ -178,6 +202,9 @@ export default function Settings() {
                         <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">New Password</label>
                         <input 
                           type="password"
+                          required
+                          value={formData.newPassword}
+                          onChange={(e) => setFormData({...formData, newPassword: e.target.value})}
                           className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none" 
                         />
                       </div>
@@ -185,13 +212,20 @@ export default function Settings() {
                         <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Confirm New Password</label>
                         <input 
                           type="password"
+                          required
+                          value={formData.confirmPassword}
+                          onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
                           className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none" 
                         />
                       </div>
                     </div>
                     <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
-                      <button type="button" className="flex items-center gap-2 px-8 py-3 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition">
-                        Update Password
+                      <button 
+                        type="submit" 
+                        disabled={loading}
+                        className="flex items-center gap-2 px-8 py-3 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition disabled:opacity-50"
+                      >
+                        {loading ? 'Updating...' : 'Update Password'}
                       </button>
                     </div>
                   </form>

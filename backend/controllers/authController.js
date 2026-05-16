@@ -136,3 +136,41 @@ exports.deleteUser = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
+exports.updateMyPassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    
+    // 1) Get user from collection
+    const user = await User.findById(req.user.id).select('+password');
+
+    // 2) Check if posted current password is correct
+    if (!(await user.correctPassword(currentPassword, user.password))) {
+      return res.status(401).json({ message: 'Your current password is wrong' });
+    }
+
+    // 3) If so, update password
+    user.password = newPassword;
+    await user.save(); 
+
+    // 4) Log user in, send JWT
+    const token = signToken(user._id);
+    res.status(200).json({ status: 'success', token });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+exports.updateMe = async (req, res) => {
+  try {
+    const { name, phoneNumber } = req.body;
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (phoneNumber) updateData.phoneNumber = phoneNumber;
+    
+    const user = await User.findByIdAndUpdate(req.user.id, updateData, { new: true, runValidators: true });
+    res.status(200).json({ status: 'success', data: user });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
