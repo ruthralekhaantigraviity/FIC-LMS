@@ -2,11 +2,11 @@ const Assignment = require('../models/Assignment');
 
 exports.createAssignment = async (req, res) => {
   try {
-    const { title, description, courseId, dueDate } = req.body;
+    const { title, description, courseId, course, dueDate } = req.body;
     const assignment = await Assignment.create({
       title,
       description,
-      course: courseId,
+      course: courseId || course,
       trainer: req.user.id,
       dueDate
     });

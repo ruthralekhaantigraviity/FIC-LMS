@@ -244,16 +244,20 @@ export default function StudentCourseViewer() {
               ) : (
                 <div className="space-y-6">
                   {assignments.map(assign => (
-                    <div key={assign._id} className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4">
+                    <div key={assign._id} className="bg-white dark:bg-slate-800 p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/20 space-y-6 group">
                       <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="text-lg font-bold text-slate-900">{assign.title}</h3>
-                          <p className="text-xs text-orange-600 font-bold mt-1">Due Date: {new Date(assign.dueDate).toLocaleDateString()}</p>
+                        <div className="space-y-1">
+                          <h3 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-sky-600 transition-colors">{assign.title}</h3>
+                          <div className="flex items-center gap-2 text-xs font-black text-orange-600 bg-orange-50 dark:bg-orange-500/10 px-3 py-1.5 rounded-xl uppercase tracking-wider inline-flex">
+                            <Clock size={14} /> Due: {new Date(assign.dueDate).toLocaleDateString()}
+                          </div>
                         </div>
-                        <span className="px-3 py-1 bg-white border border-slate-200 text-[10px] font-bold rounded-full uppercase">Pending</span>
+                        <span className="px-4 py-1.5 bg-slate-50 dark:bg-slate-700 border border-slate-100 dark:border-slate-600 text-[10px] font-black rounded-full uppercase tracking-tighter">Pending</span>
                       </div>
-                      <p className="text-sm text-slate-600">{assign.description}</p>
-                      <button className="w-full py-2.5 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition shadow-sm">Submit Assignment</button>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{assign.description}</p>
+                      <button className="w-full py-4 bg-[#1A9FD4] text-white font-bold rounded-2xl hover:brightness-110 transition shadow-lg shadow-sky-600/20 uppercase text-xs tracking-widest">
+                        Submit Assignment
+                      </button>
                     </div>
                   ))}
                 </div>
