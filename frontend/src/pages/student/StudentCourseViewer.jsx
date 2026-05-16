@@ -14,6 +14,7 @@ export default function StudentCourseViewer() {
   const [activeSubjectId, setActiveSubjectId] = useState(null);
   const [assignments, setAssignments] = useState([]);
   const [activeTab, setActiveTab] = useState("content");
+  const [completedSubjects, setCompletedSubjects] = useState([]);
 
   useEffect(() => {
     const fetchCourseAndSubjects = async () => {
@@ -28,6 +29,10 @@ export default function StudentCourseViewer() {
         setModules(modulesRes.data.data);
         setSubjects(subjectsRes.data.data);
         setAssignments(assignmentsRes.data.data);
+        
+        // Fetch progress
+        const progressRes = await api.get(`/progress/${id}`);
+        setCompletedSubjects(progressRes.data.data.completedSubjects || []);
         
         if (subjectsRes.data.data.length > 0) {
           setActiveSubjectId(subjectsRes.data.data[0]._id);
@@ -52,6 +57,37 @@ export default function StudentCourseViewer() {
 
   const activeIndex = subjects.findIndex(s => s._id === activeSubjectId);
   const activeSubject = subjects.find(s => s._id === activeSubjectId);
+
+  const handleMarkComplete = async () => {
+    if (!activeSubjectId) return;
+    
+    try {
+      await api.post('/progress/mark-complete', {
+        courseId: id,
+        subjectId: activeSubjectId
+      });
+      
+      if (!completedSubjects.includes(activeSubjectId)) {
+        setCompletedSubjects([...completedSubjects, activeSubjectId]);
+      }
+      
+      // Move to next subject if available
+      const nextSubject = subjects[activeIndex + 1];
+      if (nextSubject) {
+        setActiveSubjectId(nextSubject._id);
+        toast.success("Lesson marked as complete!");
+      } else {
+        toast.success("Course completed! Great job!");
+      }
+    } catch (err) {
+      toast.error("Failed to update progress");
+    }
+  };
+
+  // Calculate dynamic progress percentage
+  const progressPercentage = subjects.length > 0 
+    ? Math.round((completedSubjects.length / subjects.length) * 100) 
+    : 0;
 
   // Function to convert YouTube URLs to embed URLs
   const getEmbedUrl = (url) => {
@@ -81,12 +117,12 @@ export default function StudentCourseViewer() {
           <div className="mt-4">
             <div className="flex justify-between text-xs font-medium mb-1">
               <span>Course Progress</span>
-              <span>0%</span>
+              <span>{progressPercentage}%</span>
             </div>
             <div className="w-full h-1.5 bg-blue-700 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-white rounded-full" 
-                style={{ width: `0%` }}
+                className="h-full bg-white rounded-full transition-all duration-500" 
+                style={{ width: `${progressPercentage}%` }}
               ></div>
             </div>
           </div>
@@ -116,8 +152,8 @@ export default function StudentCourseViewer() {
                   >
                     {isActive ? (
                       <Circle size={14} className="text-orange-500 fill-orange-50 flex-shrink-0" />
-                    ) : index < activeIndex ? (
-                      <CheckCircle size={14} className="text-blue-500 flex-shrink-0" />
+                    ) : completedSubjects.includes(subject._id) ? (
+                      <CheckCircle size={14} className="text-green-500 flex-shrink-0" />
                     ) : (
                       <Circle size={14} className="text-slate-300 flex-shrink-0" />
                     )}
@@ -278,11 +314,10 @@ export default function StudentCourseViewer() {
             </button>
             
             <button
-              onClick={() => setActiveSubjectId(subjects[activeIndex + 1]?._id)}
-              disabled={activeIndex >= subjects.length - 1}
-              className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 disabled:opacity-50 transition shadow-md"
+              onClick={handleMarkComplete}
+              className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-md active:scale-95"
             >
-              Mark as Complete & Next <ChevronRight size={18} />
+              {activeIndex >= subjects.length - 1 ? "Finish Course" : "Mark as Complete & Next"} <ChevronRight size={18} />
             </button>
           </div>
         )}

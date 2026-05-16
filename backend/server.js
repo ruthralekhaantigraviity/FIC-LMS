@@ -38,8 +38,10 @@ const moduleRoutes = require('./routes/moduleRoutes');
 const adminDashboardRoutes = require('./routes/adminDashboardRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const enquiryRoutes = require('./routes/enquiryRoutes');
+const progressRoutes = require('./routes/progressRoutes');
 
 app.use('/api/auth', authRoutes);
+app.use('/api/progress', progressRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/subjects', subjectRoutes);
 app.use('/api/admissions', admissionRoutes);
