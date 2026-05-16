@@ -118,6 +118,7 @@ exports.getMyAdmissions = async (req, res) => {
 
 exports.getMyEnrolledCourses = async (req, res) => {
   try {
+    // 1. Get courses from completed admissions
     const admissions = await Admission.find({ 
       student: req.user.id, 
       status: 'completed' 
@@ -126,20 +127,88 @@ exports.getMyEnrolledCourses = async (req, res) => {
       populate: { path: 'instructor', select: 'name' }
     });
     
-    const courses = admissions.map(adm => ({
-      _id: adm.course._id,
-      title: adm.course.title,
-      description: adm.course.description,
-      category: adm.course.category,
-      thumbnail: adm.course.thumbnail,
-      instructor: adm.course.instructor,
-      level: adm.course.level,
-      duration: adm.course.duration,
-      totalLessons: adm.course.totalLessons,
-      enrolledAt: adm.appliedAt,
-    }));
+    let courses = admissions.map(adm => {
+      if (!adm.course) return null;
+      return {
+        _id: adm.course._id,
+        title: adm.course.title,
+        description: adm.course.description,
+        category: adm.course.category,
+        thumbnail: adm.course.thumbnail,
+        instructor: adm.course.instructor,
+        level: adm.course.level,
+        duration: adm.course.duration,
+        totalLessons: adm.course.totalLessons,
+        enrolledAt: adm.appliedAt,
+      };
+    }).filter(c => c !== null);
+
+    // 2. Check Student profile for manual assignments not in Admission model
+    const studentProfile = await Student.findOne({ user: req.user.id }).populate({
+      path: 'enrolledCourses.course',
+      populate: { path: 'instructor', select: 'name' }
+    });
+
+    if (studentProfile && studentProfile.enrolledCourses) {
+      studentProfile.enrolledCourses.forEach(ec => {
+        if (!ec.course) return;
+        // Check if already in the list from admissions
+        const exists = courses.some(c => c._id.toString() === ec.course._id.toString());
+        if (!exists) {
+          courses.push({
+            _id: ec.course._id,
+            title: ec.course.title,
+            description: ec.course.description,
+            category: ec.course.category,
+            thumbnail: ec.course.thumbnail,
+            instructor: ec.course.instructor,
+            level: ec.course.level,
+            duration: ec.course.duration,
+            totalLessons: ec.course.totalLessons,
+            enrolledAt: ec.enrollmentDate,
+          });
+        }
+      });
+    }
 
     res.status(200).json({ status: 'success', data: courses });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+exports.assignCourse = async (req, res) => {
+  try {
+    const { studentId, courseId } = req.body;
+    
+    // 1. Create or Update Student Profile
+    let student = await Student.findOne({ user: studentId });
+    if (!student) {
+      const studentCount = await Student.countDocuments();
+      const studentIdStr = `FIC${new Date().getFullYear()}${(studentCount + 1).toString().padStart(4, '0')}`;
+      student = await Student.create({
+        user: studentId,
+        studentId: studentIdStr,
+        enrolledCourses: [{ course: courseId }]
+      });
+    } else {
+      const isEnrolled = student.enrolledCourses.some(ec => ec.course && ec.course.toString() === courseId);
+      if (!isEnrolled) {
+        student.enrolledCourses.push({ course: courseId });
+        await student.save();
+      }
+    }
+
+    // 2. Create a "completed" Admission record
+    await Admission.create({
+      student: studentId,
+      course: courseId,
+      status: 'completed',
+      reviewedBy: req.user.id,
+      appliedAt: new Date()
+    });
+
+    res.status(201).json({ status: 'success', data: student });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

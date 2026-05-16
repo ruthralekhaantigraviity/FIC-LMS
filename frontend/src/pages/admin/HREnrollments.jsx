@@ -23,19 +23,26 @@ const HREnrollments = () => {
 
   const fetchData = async () => {
     try {
-      const [usersRes, coursesRes] = await Promise.all([
+      const [usersRes, coursesRes, admissionsRes] = await Promise.all([
         api.get('/auth/users'),
-        api.get('/courses')
+        api.get('/courses'),
+        api.get('/admissions/all')
       ]);
       setStudents(usersRes.data.data.filter(u => u.role === 'student'));
       setCourses(coursesRes.data.data || []);
       
-      // Mock enrollments for UI demonstration
-      setEnrollments([
-        { id: 1, studentName: "Rahul Sharma", courseName: "MERN Stack", startDate: "2024-05-10", progress: 65 },
-        { id: 2, studentName: "Sneha Patil", courseName: "UI/UX Design", startDate: "2024-05-12", progress: 40 },
-        { id: 3, studentName: "Amit Verma", courseName: "Data Science", startDate: "2024-05-15", progress: 10 },
-      ]);
+      // Map admissions to the format expected by the table
+      const realEnrollments = admissionsRes.data.data
+        .filter(adm => adm.status === 'completed')
+        .map(adm => ({
+          id: adm._id,
+          studentName: adm.student?.name || 'Unknown',
+          courseName: adm.course?.title || 'Unknown',
+          startDate: new Date(adm.appliedAt).toISOString().split('T')[0],
+          progress: 0 // Progress tracking can be added later
+        }));
+      
+      setEnrollments(realEnrollments);
     } catch (err) {
       toast.error('Failed to load data');
     } finally {
@@ -43,26 +50,24 @@ const HREnrollments = () => {
     }
   };
 
-  const handleEnroll = (e) => {
+  const handleEnroll = async (e) => {
     e.preventDefault();
     if (!formData.studentId || !formData.courseId) {
        return toast.error('Please select both student and course');
     }
     
-    const student = students.find(s => s._id === formData.studentId);
-    const course = courses.find(c => c._id === formData.courseId);
-
-    const newEnrollment = {
-      id: Date.now(),
-      studentName: student.name,
-      courseName: course.title,
-      startDate: formData.startDate,
-      progress: 0
-    };
-
-    setEnrollments([newEnrollment, ...enrollments]);
-    setFormData({ ...formData, studentId: '', courseId: '' });
-    toast.success('Student enrolled successfully!');
+    try {
+      await api.post('/admissions/assign', {
+        studentId: formData.studentId,
+        courseId: formData.courseId
+      });
+      
+      toast.success('Student enrolled successfully!');
+      setFormData({ ...formData, studentId: '', courseId: '' });
+      fetchData(); // Refresh list
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to enroll student');
+    }
   };
 
   const filteredEnrollments = enrollments.filter(e => 
