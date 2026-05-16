@@ -19,20 +19,18 @@ export default function StudentCourseViewer() {
   useEffect(() => {
     const fetchCourseAndSubjects = async () => {
       try {
-        const [courseRes, modulesRes, subjectsRes, assignmentsRes] = await Promise.all([
+        const [courseRes, modulesRes, subjectsRes, progressRes] = await Promise.all([
           api.get(`/courses/${id}`),
           api.get(`/modules/course/${id}`),
           api.get(`/subjects/course/${id}`),
-          api.get(`/assignments/course/${id}`)
+          api.get(`/progress/${id}`)
         ]);
         setCourse(courseRes.data.data);
         setModules(modulesRes.data.data);
         setSubjects(subjectsRes.data.data);
-        setAssignments(assignmentsRes.data.data);
         
         // Fetch progress
-        const progressRes = await api.get(`/progress/${id}`);
-        setCompletedSubjects(progressRes.data.data.completedSubjects || []);
+        setCompletedSubjects(progressRes.data.data?.completedSubjects || []);
         
         if (subjectsRes.data.data.length > 0) {
           setActiveSubjectId(subjectsRes.data.data[0]._id);
@@ -140,7 +138,6 @@ export default function StudentCourseViewer() {
               </div>
               {subjects.filter(s => (s.module?._id || s.module) === module._id).map((subject) => {
                 const isActive = activeSubjectId === subject._id;
-                const index = subjects.findIndex(s => s._id === subject._id);
                 return (
                   <button
                     key={subject._id}
@@ -213,57 +210,13 @@ export default function StudentCourseViewer() {
                No content available yet.
              </div>
           )}
-
-          <div className="px-5 py-4 border-t border-slate-100 mt-4">
-            <button
-              onClick={() => setActiveTab('assignments')}
-              className={`w-full text-left px-4 py-3 rounded-xl flex gap-3 items-center transition ${
-                activeTab === 'assignments' 
-                  ? "bg-purple-600 text-white shadow-lg" 
-                  : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <FileText size={18} />
-              <span className="text-sm font-bold">Assignments</span>
-              <span className={`ml-auto text-[10px] px-1.5 py-0.5 rounded-full font-bold ${activeTab === 'assignments' ? 'bg-white/20' : 'bg-purple-100 text-purple-600'}`}>
-                {assignments.length}
-              </span>
-            </button>
-          </div>
         </div>
       </div>
 
       {/* Main Content Area */}
       <div className="flex-1 bg-white overflow-hidden flex flex-col h-full relative">
         <div className="flex-1 overflow-y-auto">
-          {activeTab === 'assignments' ? (
-            <div className="p-8 lg:p-12 max-w-4xl mx-auto space-y-8">
-              <h1 className="text-2xl font-bold text-slate-900 border-b border-slate-200 pb-4 mb-6">Course Assignments</h1>
-              {assignments.length === 0 ? (
-                <div className="text-center py-20 text-slate-500 italic">No assignments for this course yet.</div>
-              ) : (
-                <div className="space-y-6">
-                  {assignments.map(assign => (
-                    <div key={assign._id} className="bg-white dark:bg-slate-800 p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/20 space-y-6 group">
-                      <div className="flex justify-between items-start">
-                        <div className="space-y-1">
-                          <h3 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-sky-600 transition-colors">{assign.title}</h3>
-                          <div className="flex items-center gap-2 text-xs font-black text-orange-600 bg-orange-50 dark:bg-orange-500/10 px-3 py-1.5 rounded-xl uppercase tracking-wider inline-flex">
-                            <Clock size={14} /> Due: {new Date(assign.dueDate).toLocaleDateString()}
-                          </div>
-                        </div>
-                        <span className="px-4 py-1.5 bg-slate-50 dark:bg-slate-700 border border-slate-100 dark:border-slate-600 text-[10px] font-black rounded-full uppercase tracking-tighter">Pending</span>
-                      </div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{assign.description}</p>
-                      <button className="w-full py-4 bg-[#1A9FD4] text-white font-bold rounded-2xl hover:brightness-110 transition shadow-lg shadow-sky-600/20 uppercase text-xs tracking-widest">
-                        Submit Assignment
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ) : activeSubject ? (
+          {activeSubject ? (
             <>
               {activeSubject.videoUrl && (
                 <div className="w-full aspect-video bg-slate-900 border-b border-slate-200">
@@ -289,7 +242,7 @@ export default function StudentCourseViewer() {
                       rel="noreferrer"
                       className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition text-sm"
                     >
-                      <Download size={16} /> Download Notes
+                      Download Notes
                     </a>
                   )}
                 </div>

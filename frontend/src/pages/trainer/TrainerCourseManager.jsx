@@ -29,13 +29,6 @@ export default function TrainerCourseManager() {
     module: "",
   });
   const [activeTab, setActiveTab] = useState("lessons");
-  const [assignments, setAssignments] = useState([]);
-  const [isAssignmentModalOpen, setIsAssignmentModalOpen] = useState(false);
-  const [assignmentFormData, setAssignmentFormData] = useState({
-    title: "",
-    description: "",
-    dueDate: "",
-  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchCourseData = async () => {
@@ -49,7 +42,6 @@ export default function TrainerCourseManager() {
       setCourse(courseRes.data.data);
       setModules(modulesRes.data.data);
       setSubjects(subjectsRes.data.data);
-      setAssignments(assignmentsRes.data.data);
     } catch (err) {
       console.error("Error fetching course data:", err);
       toast.error("Failed to load course details");
@@ -174,11 +166,11 @@ export default function TrainerCourseManager() {
               <Plus size={20} /> Add Module
             </button>
             <button 
-              onClick={() => activeTab === 'lessons' ? handleOpenModal() : setIsAssignmentModalOpen(true)}
+              onClick={() => handleOpenModal()}
               style={{ background: '#1A9FD4' }}
               className="flex items-center gap-2 px-6 py-3 text-white font-bold rounded-2xl hover:brightness-110 transition shadow-lg shadow-sky-600/20"
             >
-              <Plus size={20} /> {activeTab === 'lessons' ? 'Add Topic' : 'Add Assignment'}
+              <Plus size={20} /> Add Topic
             </button>
           </div>
         </div>
@@ -189,12 +181,6 @@ export default function TrainerCourseManager() {
             className={`px-8 py-4 text-sm font-bold border-b-2 transition-all ${activeTab === 'lessons' ? 'border-sky-500 text-sky-500' : 'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-white'}`}
           >
             Modules & Topics ({subjects.length})
-          </button>
-          <button 
-            onClick={() => setActiveTab('assignments')}
-            className={`px-8 py-4 text-sm font-bold border-b-2 transition-all ${activeTab === 'assignments' ? 'border-sky-500 text-sky-500' : 'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-white'}`}
-          >
-            Assignments ({assignments.length})
           </button>
         </div>
       </div>
@@ -283,51 +269,7 @@ export default function TrainerCourseManager() {
               ))}
             </div>
           )
-        ) : (
-          /* Assignments View */
-          assignments.length === 0 ? (
-            <div className="text-center py-20 bg-white dark:bg-slate-800/50 rounded-[40px] border border-slate-200 dark:border-slate-800 border-dashed">
-              <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300 dark:text-slate-600">
-                <FileText size={32} />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white">No assignments yet</h3>
-              <p className="text-slate-500 dark:text-slate-400 mt-2 mb-6">Create assignments to evaluate student learning.</p>
-              <button 
-                onClick={() => setIsAssignmentModalOpen(true)}
-                className="text-sky-500 font-bold hover:underline"
-              >
-                + Create First Assignment
-              </button>
-            </div>
-          ) : (
-            <div className="grid gap-4">
-              {assignments.map((assignment, index) => (
-                <motion.div
-                  key={assignment._id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="bg-white dark:bg-[#1e293b] p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-start md:items-center group hover:border-sky-500 transition-all duration-300"
-                >
-                  <div className="flex-1">
-                    <h3 className="font-bold text-slate-900 dark:text-white text-xl">{assignment.title}</h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-1 mt-1">{assignment.description}</p>
-                    <div className="mt-4 text-xs font-black text-orange-600 bg-orange-50 dark:bg-orange-500/10 px-3 py-1.5 rounded-xl inline-flex uppercase tracking-wider">
-                      Due: {new Date(assignment.dueDate).toLocaleDateString()}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button 
-                      className="px-6 py-3 text-sky-600 bg-sky-50 dark:bg-sky-500/10 font-bold rounded-2xl hover:bg-sky-100 dark:hover:bg-sky-500/20 transition shadow-sm"
-                    >
-                      View Submissions
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )
-        )}
+
       </div>
 
       {/* Add/Edit Modal */}
@@ -479,85 +421,7 @@ export default function TrainerCourseManager() {
         </div>
       )}
 
-      {/* Assignment Modal */}
-      {isAssignmentModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="bg-white dark:bg-[#1e293b] rounded-[40px] w-full max-w-2xl shadow-2xl border border-slate-200 dark:border-slate-800"
-          >
-            <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center sticky top-0 bg-white dark:bg-[#1e293b] z-10">
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white font-display">Create Assignment</h2>
-              <button 
-                onClick={() => setIsAssignmentModalOpen(false)} 
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-white transition"
-              >
-                <Plus size={24} className="rotate-45" />
-              </button>
-            </div>
-            
-            <form onSubmit={async (e) => {
-              e.preventDefault();
-              setIsSubmitting(true);
-              try {
-                await api.post("/assignments", { ...assignmentFormData, course: id });
-                toast.success("Assignment created!");
-                setIsAssignmentModalOpen(false);
-                fetchCourseData();
-              } catch (err) {
-                toast.error("Failed to create assignment");
-              } finally {
-                setIsSubmitting(false);
-              }
-            }} className="p-8 space-y-6">
-              <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-widest text-[10px]">Assignment Title</label>
-                <input
-                  type="text"
-                  required
-                  value={assignmentFormData.title}
-                  onChange={(e) => setAssignmentFormData({ ...assignmentFormData, title: e.target.value })}
-                  className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-500/50 outline-none font-medium"
-                  placeholder="e.g. Building a Weather App"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-widest text-[10px]">Due Date</label>
-                <input
-                  type="date"
-                  required
-                  value={assignmentFormData.dueDate}
-                  onChange={(e) => setAssignmentFormData({ ...assignmentFormData, dueDate: e.target.value })}
-                  className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-500/50 outline-none font-medium"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-widest text-[10px]">Description & Instructions</label>
-                <textarea
-                  required
-                  rows="6"
-                  value={assignmentFormData.description}
-                  onChange={(e) => setAssignmentFormData({ ...assignmentFormData, description: e.target.value })}
-                  className="w-full px-5 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-[24px] text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-500/50 outline-none resize-none font-medium"
-                  placeholder="Provide detailed instructions for this assignment..."
-                ></textarea>
-              </div>
-              <div className="flex justify-end gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-                <button type="button" onClick={() => setIsAssignmentModalOpen(false)} className="px-8 py-3.5 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 rounded-2xl transition">Cancel</button>
-                <button 
-                  type="submit" 
-                  disabled={isSubmitting}
-                  style={{ background: '#1A9FD4' }}
-                  className="px-10 py-3.5 text-white font-bold rounded-2xl hover:brightness-110 transition disabled:opacity-50 shadow-lg shadow-sky-600/20"
-                >
-                  {isSubmitting ? "Creating..." : "Create Assignment"}
-                </button>
-              </div>
-            </form>
-          </motion.div>
-        </div>
-      )}
+
       {/* Module Modal */}
       {isModuleModalOpen && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
