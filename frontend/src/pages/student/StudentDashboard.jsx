@@ -35,9 +35,8 @@ export default function StudentDashboard() {
     );
   }
 
-  if (courses.length === 0) {
-    return <PendingApproval />;
-  }
+  // Students no longer require admin approval or existing courses to view dashboard.
+  // Removed PendingApproval redirection.
 
   return (
     <div className="max-w-6xl mx-auto pb-12 font-sans bg-[#fdfdfd]">
