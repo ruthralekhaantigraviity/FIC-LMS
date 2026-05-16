@@ -80,13 +80,13 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fic_lms')
         });
         console.log(`Default admin created: ${adminEmail} / admin123`);
       } else if (adminUser.role !== 'admin') {
-        adminUser.role = 'admin';
-        await adminUser.save();
+        await User.updateOne({ email: adminEmail }, { role: 'admin' });
       }
 
       // Ensure HR User
       const hrEmail = 'hr@fic.com';
-      if (!(await User.findOne({ email: hrEmail }))) {
+      const hrUser = await User.findOne({ email: hrEmail });
+      if (!hrUser) {
         await User.create({
           name: 'FIC HR Manager',
           email: hrEmail,
@@ -94,11 +94,14 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fic_lms')
           role: 'hr'
         });
         console.log(`Default HR created: ${hrEmail} / hr123`);
+      } else if (hrUser.role !== 'hr') {
+        await User.updateOne({ email: hrEmail }, { role: 'hr' });
       }
 
       // Ensure Trainer User
       const trainerEmail = 'trainer@fic.com';
-      if (!(await User.findOne({ email: trainerEmail }))) {
+      const trainerUser = await User.findOne({ email: trainerEmail });
+      if (!trainerUser) {
         await User.create({
           name: 'FIC Senior Trainer',
           email: trainerEmail,
@@ -106,6 +109,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fic_lms')
           role: 'trainer'
         });
         console.log(`Default Trainer created: ${trainerEmail} / trainer123`);
+      } else if (trainerUser.role !== 'trainer') {
+        await User.updateOne({ email: trainerEmail }, { role: 'trainer' });
       }
     } catch (err) {
       console.error('Error ensuring default accounts:', err);
