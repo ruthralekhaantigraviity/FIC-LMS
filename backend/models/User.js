@@ -34,6 +34,16 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  courseDomain: {
+    type: String,
+    enum: ['MERN Stack', 'Python & Data Science', 'UI/UX Design', 'Digital Marketing', 'Cyber Security', 'Cloud Computing', 'Mobile App Development', 'Java Full Stack', 'Other'],
+    default: 'Other'
+  },
+  studentStatus: {
+    type: String,
+    enum: ['active', 'completed', 'dropped'],
+    default: 'active'
+  },
   createdAt: {
     type: Date,
     default: Date.now

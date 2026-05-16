@@ -9,7 +9,7 @@ const signToken = (id) => {
 
 exports.register = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, courseDomain, studentStatus } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -21,7 +21,9 @@ exports.register = async (req, res) => {
       name,
       email,
       password,
-      role: role || 'student'
+      role: role || 'student',
+      courseDomain: courseDomain || 'Other',
+      studentStatus: studentStatus || 'active'
     });
 
     const token = signToken(newUser._id);
@@ -107,10 +109,17 @@ exports.updateUserRole = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const { name, email, role } = req.body;
+    const { name, email, role, courseDomain, studentStatus } = req.body;
+    const updateData = {};
+    if (name !== undefined) updateData.name = name;
+    if (email !== undefined) updateData.email = email;
+    if (role !== undefined) updateData.role = role;
+    if (courseDomain !== undefined) updateData.courseDomain = courseDomain;
+    if (studentStatus !== undefined) updateData.studentStatus = studentStatus;
+
     const user = await User.findByIdAndUpdate(
       req.params.id, 
-      { name, email, role }, 
+      updateData, 
       { new: true, runValidators: true }
     );
     res.status(200).json({ status: 'success', data: user });

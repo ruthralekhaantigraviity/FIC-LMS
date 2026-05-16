@@ -13,7 +13,7 @@ const AdminStudents = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', courseDomain: 'Other', studentStatus: 'active' });
 
   useEffect(() => { fetchStudents(); }, []);
 
@@ -30,13 +30,13 @@ const AdminStudents = () => {
 
   const openAddModal = () => {
     setEditingStudent(null);
-    setFormData({ name: '', email: '', password: '' });
+    setFormData({ name: '', email: '', password: '', courseDomain: 'Other', studentStatus: 'active' });
     setIsModalOpen(true);
   };
 
   const openEditModal = (student) => {
     setEditingStudent(student);
-    setFormData({ name: student.name, email: student.email, password: '' });
+    setFormData({ name: student.name, email: student.email, password: '', courseDomain: student.courseDomain || 'Other', studentStatus: student.studentStatus || 'active' });
     setIsModalOpen(true);
   };
 
@@ -44,7 +44,7 @@ const AdminStudents = () => {
     e.preventDefault();
     try {
       if (editingStudent) {
-        await api.patch(`/auth/users/${editingStudent._id}`, { name: formData.name, email: formData.email });
+        await api.patch(`/auth/users/${editingStudent._id}`, { name: formData.name, email: formData.email, courseDomain: formData.courseDomain, studentStatus: formData.studentStatus });
         toast.success('Student updated successfully');
       } else {
         await api.post('/auth/register', { ...formData, role: 'student' });
@@ -122,10 +122,10 @@ const AdminStudents = () => {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-800/30 text-xs font-bold text-slate-500 uppercase tracking-wider">
-                <th className="px-6 py-4">Name</th>
+                <th className="px-6 py-4">Student</th>
                 <th className="px-6 py-4">Email</th>
-                <th className="px-6 py-4">Phone</th>
-                <th className="px-6 py-4">Course</th>
+                <th className="px-6 py-4">Course Domain</th>
+                <th className="px-6 py-4">Joined</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
@@ -159,14 +159,14 @@ const AdminStudents = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                          <Mail size={12} className="text-blue-500" />{student.email}
-                        </div>
-                        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                          <Phone size={12} className="text-slate-500" />{student.phoneNumber || 'N/A'}
-                        </div>
+                      <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                        <Mail size={12} className="text-blue-500" />{student.email}
                       </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="px-2.5 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-bold uppercase rounded-lg border border-blue-500/20">
+                        {student.courseDomain || 'Not Set'}
+                      </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-slate-500">
                       <div className="flex items-center gap-2">
@@ -174,15 +174,20 @@ const AdminStudents = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      {student.isActive !== false ? (
-                        <span className="flex items-center gap-1.5 text-emerald-500 text-[10px] font-bold uppercase px-2 py-1 bg-emerald-500/10 rounded-lg w-fit border border-emerald-500/20">
-                          <UserCheck size={12} /> Active
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-1.5 text-red-500 text-[10px] font-bold uppercase px-2 py-1 bg-red-500/10 rounded-lg w-fit border border-red-500/20">
-                          <UserX size={12} /> Inactive
-                        </span>
-                      )}
+                      {(() => {
+                        const status = student.studentStatus || 'active';
+                        const styles = {
+                          active: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20',
+                          completed: 'text-blue-500 bg-blue-500/10 border-blue-500/20',
+                          dropped: 'text-red-500 bg-red-500/10 border-red-500/20',
+                        };
+                        return (
+                          <span className={`flex items-center gap-1.5 text-[10px] font-bold uppercase px-2 py-1 rounded-lg w-fit border ${styles[status]}`}>
+                            {status === 'active' ? <UserCheck size={12} /> : status === 'completed' ? <UserCheck size={12} /> : <UserX size={12} />}
+                            {status}
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
@@ -245,6 +250,32 @@ const AdminStudents = () => {
                       />
                     </div>
                   )}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Course Domain</label>
+                    <select value={formData.courseDomain} onChange={e => setFormData({ ...formData, courseDomain: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
+                    >
+                      <option value="MERN Stack">MERN Stack</option>
+                      <option value="Python & Data Science">Python &amp; Data Science</option>
+                      <option value="UI/UX Design">UI/UX Design</option>
+                      <option value="Digital Marketing">Digital Marketing</option>
+                      <option value="Cyber Security">Cyber Security</option>
+                      <option value="Cloud Computing">Cloud Computing</option>
+                      <option value="Mobile App Development">Mobile App Development</option>
+                      <option value="Java Full Stack">Java Full Stack</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Student Status</label>
+                    <select value={formData.studentStatus} onChange={e => setFormData({ ...formData, studentStatus: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
+                    >
+                      <option value="active">🟢 Active</option>
+                      <option value="completed">🔵 Completed</option>
+                      <option value="dropped">🔴 Dropped</option>
+                    </select>
+                  </div>
                 </div>
                 <div className="p-6 pt-0 flex gap-3">
                   <button type="submit" className="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-600/20">
