@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { PlayCircle, CheckCircle, Circle, ArrowLeft, Loader2, Video, ChevronRight, ChevronLeft } from "lucide-react";
+import { PlayCircle, CheckCircle, Circle, ArrowLeft, Loader2, Video, ChevronRight, ChevronLeft, FileText, Download, MonitorPlay } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../../utils/api";
 
