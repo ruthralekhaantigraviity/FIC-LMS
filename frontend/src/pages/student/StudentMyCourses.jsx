@@ -74,122 +74,46 @@ export default function StudentMyCourses() {
 
       <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-10">
         
-        {/* Main Course */}
-        <div>
-          <h3 className="font-bold text-lg text-slate-700 mb-5 px-2 border-l-4 border-primary-500">
-            Primary Course
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg flex flex-col justify-between h-48 transform hover:-translate-y-1 transition duration-300">
-              <div>
-                <MonitorPlay className="mb-3 opacity-90" size={32} />
-                <h4 className="font-bold text-xl">{courses.length > 0 ? courses[0].title : "C / C++"}</h4>
-                <p className="text-purple-100 text-sm mt-1">Core Programming</p>
-              </div>
-              <Link to={linkTarget} className="bg-white/20 hover:bg-white/30 text-white text-sm font-bold py-2.5 px-4 rounded-xl text-center transition backdrop-blur-sm">
-                Resume Course
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Phase 1 */}
+        {/* Dynamic Courses Grid */}
         <div>
           <h3 className="font-bold text-lg flex items-center gap-3 text-slate-800 mb-5 px-2 border-b border-slate-100 pb-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-bold shadow-sm">1</div>
-            Learning Phase 1 - General Software
+            <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-sm font-bold shadow-sm">
+              <Book size={16} />
+            </div>
+            Your Enrolled Programs & Topics
           </h3>
+          
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:shadow-md hover:border-blue-200 transition group flex flex-col h-full">
-              <div className="h-20 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 mb-5 flex items-center justify-center text-white shadow-inner">
-                <MonitorPlay size={32} />
-              </div>
-              <h4 className="font-bold text-slate-800 mb-2 text-lg">Basic Programs</h4>
-              <p className="text-sm text-slate-500 mb-6 flex-1">Foundational concepts and syntax overview.</p>
-              <Link to={linkTarget} className="block w-full py-2.5 bg-white border border-slate-200 text-slate-700 text-center font-bold rounded-xl group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition shadow-sm">
-                Start Learning
-              </Link>
-            </div>
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:shadow-md hover:border-rose-200 transition group flex flex-col h-full">
-              <div className="h-20 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 mb-5 flex items-center justify-center text-white shadow-inner">
-                <Code size={32} />
-              </div>
-              <h4 className="font-bold text-slate-800 mb-2 text-lg">Logic Building</h4>
-              <p className="text-sm text-slate-500 mb-6 flex-1">Enhance your problem solving skills.</p>
-              <Link to={linkTarget} className="block w-full py-2.5 bg-white border border-slate-200 text-slate-700 text-center font-bold rounded-xl group-hover:bg-rose-500 group-hover:text-white group-hover:border-rose-500 transition shadow-sm">
-                Start Learning
-              </Link>
-            </div>
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:shadow-md hover:border-indigo-200 transition group flex flex-col h-full">
-              <div className="h-20 rounded-xl bg-gradient-to-r from-indigo-400 to-blue-600 mb-5 flex items-center justify-center text-white shadow-inner">
-                <Video size={32} />
-              </div>
-              <h4 className="font-bold text-slate-800 mb-2 text-lg">Pattern Programs</h4>
-              <p className="text-sm text-slate-500 mb-6 flex-1">Learn to construct complex visual patterns.</p>
-              <Link to={linkTarget} className="block w-full py-2.5 bg-white border border-slate-200 text-slate-700 text-center font-bold rounded-xl group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition shadow-sm">
-                Start Learning
-              </Link>
-            </div>
-          </div>
-        </div>
+            {courses.map((course, index) => {
+              // Array of dynamic styles for the cards to keep them colorful
+              const styles = [
+                { from: "from-cyan-400", to: "to-blue-500", borderHover: "hover:border-blue-200", btnHover: "group-hover:bg-blue-600 group-hover:border-blue-600", Icon: MonitorPlay },
+                { from: "from-pink-500", to: "to-rose-500", borderHover: "hover:border-rose-200", btnHover: "group-hover:bg-rose-500 group-hover:border-rose-500", Icon: Code },
+                { from: "from-indigo-400", to: "to-blue-600", borderHover: "hover:border-indigo-200", btnHover: "group-hover:bg-indigo-600 group-hover:border-indigo-600", Icon: Video },
+                { from: "from-red-500", to: "to-pink-600", borderHover: "hover:border-red-200", btnHover: "group-hover:bg-red-500 group-hover:border-red-500", Icon: Code },
+                { from: "from-purple-500", to: "to-indigo-600", borderHover: "hover:border-purple-200", btnHover: "group-hover:bg-purple-600 group-hover:border-purple-600", Icon: Award },
+                { from: "from-emerald-400", to: "to-teal-500", borderHover: "hover:border-emerald-200", btnHover: "group-hover:bg-emerald-500 group-hover:border-emerald-500", Icon: Briefcase },
+                { from: "from-orange-400", to: "to-rose-500", borderHover: "hover:border-orange-200", btnHover: "group-hover:bg-orange-500 group-hover:border-orange-500", Icon: FileText }
+              ];
+              
+              const style = styles[index % styles.length];
+              const Icon = style.Icon;
 
-        {/* Phase 2 */}
-        <div>
-          <h3 className="font-bold text-lg flex items-center gap-3 text-slate-800 mb-5 px-2 border-b border-slate-100 pb-3">
-            <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center text-sm font-bold shadow-sm">2</div>
-            Learning Phase 2 - Specialized Programming
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:shadow-md hover:border-red-200 transition group flex flex-col h-full">
-              <div className="h-20 rounded-xl bg-gradient-to-r from-red-500 to-pink-600 mb-5 flex items-center justify-center text-white shadow-inner">
-                <Code size={32} />
-              </div>
-              <h4 className="font-bold text-slate-800 mb-2 text-lg">Data Structures</h4>
-              <p className="text-sm text-slate-500 mb-6 flex-1">Arrays, Linked Lists, Trees, and Graphs.</p>
-              <Link to={linkTarget} className="block w-full py-2.5 bg-white border border-slate-200 text-slate-700 text-center font-bold rounded-xl group-hover:bg-red-500 group-hover:text-white group-hover:border-red-500 transition shadow-sm">
-                Start Learning
-              </Link>
-            </div>
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:shadow-md hover:border-purple-200 transition group flex flex-col h-full">
-              <div className="h-20 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-600 mb-5 flex items-center justify-center text-white shadow-inner">
-                <Award size={32} />
-              </div>
-              <h4 className="font-bold text-slate-800 mb-2 text-lg">Algorithms</h4>
-              <p className="text-sm text-slate-500 mb-6 flex-1">Sorting, Searching, and Dynamic Programming.</p>
-              <Link to={linkTarget} className="block w-full py-2.5 bg-white border border-slate-200 text-slate-700 text-center font-bold rounded-xl group-hover:bg-purple-600 group-hover:text-white group-hover:border-purple-600 transition shadow-sm">
-                Start Learning
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Phase 3 & 4 */}
-        <div>
-           <h3 className="font-bold text-lg flex items-center gap-3 text-slate-800 mb-5 px-2 border-b border-slate-100 pb-3">
-            <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-sm font-bold shadow-sm">3</div>
-            Learning Phase 3 - Projects & Interview Prep
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:shadow-md hover:border-emerald-200 transition group flex flex-col h-full">
-              <div className="h-20 rounded-xl bg-gradient-to-r from-emerald-400 to-teal-500 mb-5 flex items-center justify-center text-white shadow-inner">
-                <Briefcase size={32} />
-              </div>
-              <h4 className="font-bold text-slate-800 mb-2 text-lg">Mini Projects</h4>
-              <p className="text-sm text-slate-500 mb-6 flex-1">Apply your knowledge to real-world scenarios.</p>
-              <Link to={linkTarget} className="block w-full py-2.5 bg-white border border-slate-200 text-slate-700 text-center font-bold rounded-xl group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 transition shadow-sm">
-                Start Learning
-              </Link>
-            </div>
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:shadow-md hover:border-orange-200 transition group flex flex-col h-full">
-              <div className="h-20 rounded-xl bg-gradient-to-r from-orange-400 to-rose-500 mb-5 flex items-center justify-center text-white shadow-inner">
-                <FileText size={32} />
-              </div>
-              <h4 className="font-bold text-slate-800 mb-2 text-lg">Resume Building</h4>
-              <p className="text-sm text-slate-500 mb-6 flex-1">Crafting a professional profile for placements.</p>
-              <Link to={linkTarget} className="block w-full py-2.5 bg-white border border-slate-200 text-slate-700 text-center font-bold rounded-xl group-hover:bg-orange-500 group-hover:text-white group-hover:border-orange-500 transition shadow-sm">
-                Start Learning
-              </Link>
-            </div>
+              return (
+                <div key={course._id} className={`bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:shadow-md ${style.borderHover} transition group flex flex-col h-full`}>
+                  <div className={`h-20 rounded-xl bg-gradient-to-r ${style.from} ${style.to} mb-5 flex items-center justify-center text-white shadow-inner`}>
+                    <Icon size={32} />
+                  </div>
+                  <h4 className="font-bold text-slate-800 mb-2 text-lg">{course.title}</h4>
+                  <p className="text-sm text-slate-500 mb-6 flex-1 line-clamp-2">
+                    {course.description || "Explore this module to enhance your technical skills."}
+                  </p>
+                  <Link to={`/dashboard/student/learn/${course._id}`} className={`block w-full py-2.5 bg-white border border-slate-200 text-slate-700 text-center font-bold rounded-xl ${style.btnHover} group-hover:text-white transition shadow-sm`}>
+                    Start Learning
+                  </Link>
+                </div>
+              );
+            })}
           </div>
         </div>
 
