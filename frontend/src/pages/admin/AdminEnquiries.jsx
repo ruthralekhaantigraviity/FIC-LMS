@@ -309,11 +309,8 @@ const AdminEnquiries = () => {
                   </div>
                 )}
               </div>
-              <div className="p-6 pt-0 flex gap-3">
-                <a href={`mailto:${viewEnquiry.email}`} className="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition text-center shadow-lg shadow-blue-600/20">
-                  Send Email
-                </a>
-                <button onClick={() => setViewEnquiry(null)} className="flex-1 py-3 bg-transparent text-slate-500 border border-slate-300 dark:border-slate-700 font-bold rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+              <div className="p-6 pt-0">
+                <button onClick={() => setViewEnquiry(null)} className="w-full py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-xl hover:opacity-90 transition shadow-lg">
                   Close
                 </button>
               </div>
