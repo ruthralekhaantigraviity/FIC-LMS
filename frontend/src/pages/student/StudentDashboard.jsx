@@ -115,41 +115,7 @@ export default function StudentDashboard() {
 
       <div className="max-w-6xl mx-auto px-4 mt-12 space-y-10">
         
-        {/* My Courses */}
-        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6">
-          <h2 className="font-bold text-slate-800 text-lg mb-5 flex items-center gap-2">
-            <span className="w-6 h-6 rounded-md bg-purple-100 text-purple-600 flex items-center justify-center">
-              <MonitorPlay size={14} />
-            </span>
-            My Courses
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {courses.slice(0, 4).map((course, i) => (
-              <div key={course._id} className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col">
-                <div className="h-28 bg-gradient-to-br from-purple-500 to-indigo-600 p-4 flex items-end">
-                  <h3 className="text-white font-bold text-lg leading-tight">{course.title}</h3>
-                </div>
-                <div className="p-4 flex-1 flex flex-col justify-between">
-                  <div>
-                    <div className="flex justify-between items-center text-xs text-slate-500 font-bold mb-1">
-                      <span>Progress</span>
-                      <span>0%</span>
-                    </div>
-                    <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden mb-4">
-                      <div className="bg-blue-500 h-full w-0 rounded-full"></div>
-                    </div>
-                  </div>
-                  <Link 
-                    to={`/dashboard/student/learn/${course._id}`} 
-                    className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold rounded text-center transition"
-                  >
-                    CONTINUE
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+
 
 
 
