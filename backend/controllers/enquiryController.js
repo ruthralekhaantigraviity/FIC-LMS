@@ -1,5 +1,6 @@
 const Enquiry = require('../models/Enquiry');
 const Course = require('../models/Course');
+const Notification = require('../models/Notification');
 
 // POST /api/enquiries - Public: Submit a new enquiry
 exports.createEnquiry = async (req, res) => {
@@ -16,6 +17,16 @@ exports.createEnquiry = async (req, res) => {
       phoneNumber,
       course: courseId || undefined,
       message,
+    });
+
+    // Create Notification for admin and hr
+    await Notification.create({
+      title: 'New Enquiry Received',
+      message: `A new enquiry has been submitted by ${fullName}.`,
+      type: 'enquiry',
+      roles: ['admin', 'hr'],
+      targetId: enquiry._id,
+      onModel: 'Enquiry'
     });
 
     res.status(201).json({ success: true, message: 'Enquiry submitted successfully!', data: enquiry });
