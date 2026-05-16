@@ -4,6 +4,8 @@ import {
 } from 'recharts';
 import { Download, FileText, TrendingUp, Users, BookOpen, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const HRReports = () => {
   const courseEnrollmentData = [
@@ -28,6 +30,86 @@ const HRReports = () => {
     { title: "Completion report", description: "Analyze certification and completion rates.", icon: CheckCircle, color: "green" },
   ];
 
+  const handleExportAll = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.setTextColor(26, 159, 212);
+    doc.text("FIC LMS - Complete HR Data Export", 14, 22);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+    doc.text("---------------------------------------------------------------------------------------------------", 14, 35);
+
+    doc.setFontSize(14);
+    doc.setTextColor(33);
+    doc.text("Course-wise Enrollment", 14, 45);
+    autoTable(doc, {
+      startY: 50,
+      head: [["Course Name", "Students Enrolled"]],
+      body: courseEnrollmentData.map(d => [d.name, d.count.toString()]),
+      theme: 'grid',
+      headStyles: { fillColor: [14, 165, 233] }
+    });
+
+    doc.setFontSize(14);
+    doc.setTextColor(33);
+    doc.text("Progress Growth Rate", 14, doc.lastAutoTable.finalY + 15);
+    autoTable(doc, {
+      startY: doc.lastAutoTable.finalY + 20,
+      head: [["Month", "Average Progress (%)"]],
+      body: progressGrowthData.map(d => [d.month, `${d.progress}%`]),
+      theme: 'grid',
+      headStyles: { fillColor: [139, 92, 246] }
+    });
+
+    doc.save(`FIC_HR_Complete_Export_${new Date().toISOString().split('T')[0]}.pdf`);
+  };
+
+  const handleGenerateSpecificReport = (title) => {
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.setTextColor(26, 159, 212);
+    doc.text(`FIC LMS - ${title}`, 14, 22);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+    doc.text("---------------------------------------------------------------------------------------------------", 14, 35);
+
+    if (title === "Course-wise enrollment") {
+      autoTable(doc, {
+        startY: 45,
+        head: [["Course Name", "Students Enrolled"]],
+        body: courseEnrollmentData.map(d => [d.name, d.count.toString()]),
+        theme: 'grid',
+        headStyles: { fillColor: [14, 165, 233] }
+      });
+    } else if (title === "Student progress report") {
+      autoTable(doc, {
+        startY: 45,
+        head: [["Month", "Average Progress (%)"]],
+        body: progressGrowthData.map(d => [d.month, `${d.progress}%`]),
+        theme: 'grid',
+        headStyles: { fillColor: [139, 92, 246] }
+      });
+    } else {
+      autoTable(doc, {
+        startY: 45,
+        head: [["Metric", "Value"]],
+        body: [
+          ["Total Completions", "1,245"], 
+          ["Average Completion Time", "42 Days"], 
+          ["Success Rate", "85%"]
+        ],
+        theme: 'grid',
+        headStyles: { fillColor: [16, 185, 129] }
+      });
+    }
+
+    doc.save(`${title.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`);
+  };
+
   return (
     <div className="space-y-8 pb-10">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -35,7 +117,10 @@ const HRReports = () => {
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-display">Academic Reports</h1>
           <p className="text-slate-500 dark:text-slate-400">Analyze platform performance and student engagement.</p>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold text-sm shadow-lg hover:opacity-90 transition">
+        <button 
+          onClick={handleExportAll}
+          className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold text-sm shadow-lg hover:opacity-90 transition"
+        >
           <Download size={18} /> Export All Data
         </button>
       </div>
@@ -47,14 +132,17 @@ const HRReports = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="bg-white dark:bg-[#0f172a] p-6 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm group hover:border-sky-400 transition cursor-pointer"
+            className="bg-white dark:bg-[#0f172a] p-6 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm group hover:border-sky-400 transition"
           >
             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 bg-slate-50 dark:bg-slate-800 text-slate-600 group-hover:bg-sky-500 group-hover:text-white transition`}>
               <type.icon size={24} />
             </div>
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{type.title}</h3>
             <p className="text-sm text-slate-500 mb-6">{type.description}</p>
-            <button className="text-sky-600 text-sm font-bold flex items-center gap-2">
+            <button 
+              onClick={() => handleGenerateSpecificReport(type.title)}
+              className="text-sky-600 text-sm font-bold flex items-center gap-2 hover:text-sky-700 transition"
+            >
                Generate Report <FileText size={14} />
             </button>
           </motion.div>
@@ -103,3 +191,4 @@ const HRReports = () => {
 };
 
 export default HRReports;
+
