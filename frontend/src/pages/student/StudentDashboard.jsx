@@ -52,23 +52,7 @@ export default function StudentDashboard() {
       </div>
 
       <div className="px-4 max-w-4xl mx-auto space-y-6">
-        {/* Banner Alert */}
-        <div className="bg-[#84cc16] p-4 rounded-xl shadow-sm border border-[#65a30d]">
-          <p className="text-red-700 font-bold text-[13px] leading-tight mb-2">
-            Dear Candidate, The Free access to the portal has been extended till your placements. Please continue your learning without any interruptions. Happy Learning!
-          </p>
-          <div className="bg-[#9333ea] p-3 rounded-lg text-white font-bold text-xs leading-relaxed">
-            IMPORTANT NOTE: If you fail to complete the required modules and assignments within the stipulated timeframe, your access might be restricted. Kindly focus on your curriculum. We have added a lot of new topics that might interest you. Please go to the learning path section and click the link to join new sessions.
-          </div>
-        </div>
 
-        <button className="w-full bg-[#3b82f6] hover:bg-blue-600 text-white font-bold py-3.5 rounded-xl text-sm transition shadow-sm">
-          SUBMIT YOUR PLACEMENT DETAILS FOR PLACEMENT
-        </button>
-
-        <p className="text-center text-sm text-slate-600">
-          Your profile isn't verified yet. So you are not allowed to edit the details. <span className="text-red-500 font-bold cursor-pointer hover:underline">VERIFY PROFILE NOW</span>
-        </p>
 
         {/* Welcome Text and Badges */}
         <div className="text-center pt-2">
