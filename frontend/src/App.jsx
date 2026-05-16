@@ -16,6 +16,7 @@ import PublicEnrollment from "./pages/student/PublicEnrollment";
 import MyApplications from "./pages/student/MyApplications";
 import StudentMyCourses from "./pages/student/StudentMyCourses";
 import StudentCourseViewer from "./pages/student/StudentCourseViewer";
+import StudentCertificates from "./pages/student/StudentCertificates";
 import TrainerDashboard from "./pages/trainer/TrainerDashboard";
 import TrainerCourses from "./pages/trainer/TrainerCourses";
 import TrainerCourseManager from "./pages/trainer/TrainerCourseManager";
@@ -224,6 +225,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["student"]}>
                 <StudentMyCourses />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="student/certificates"
+            element={
+              <ProtectedRoute allowedRoles={["student"]}>
+                <StudentCertificates />
               </ProtectedRoute>
             }
           />

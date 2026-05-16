@@ -103,6 +103,12 @@ export default function DashboardLayout() {
       role: ["trainer"]
     },
     {
+      name: "Certifications",
+      path: "/dashboard/student/certificates",
+      icon: Award,
+      role: ["student"]
+    },
+    {
       name: user?.role === "admin" ? "Manage Courses" : user?.role === "student" ? (user?.courseDomain || "My Courses") : "My Courses",
       path:
         user?.role === "admin"
