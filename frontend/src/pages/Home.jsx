@@ -115,24 +115,30 @@ export default function Home() {
         {" "}
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           {" "}
-          <div className="flex items-center gap-3">
-            <img src="/logo.jpg" alt="FIC Logo" className="h-10 w-auto object-contain" />
-            <span className="font-bold text-lg tracking-tight text-slate-800">
-              <span style={{ color: '#1A9FD4' }}>Forge</span> India <span className="text-slate-400">Connect</span>
+          <a
+            href="#"
+            onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            className="flex items-center gap-3 cursor-pointer group"
+          >
+            <img src="/logo.jpg" alt="FIC Logo" className="h-10 w-auto object-contain group-hover:scale-105 transition-transform" />
+            <span className="font-bold text-lg tracking-tight">
+              <span style={{ color: '#1A9FD4' }}>Forge</span>{" "}
+              <span className="text-slate-700">India</span>{" "}
+              <span style={{ color: '#7c3aed' }}>Connect</span>
             </span>
-          </div>{" "}
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+          </a>{" "}
+          <div className="hidden md:flex items-center gap-8 text-sm font-semibold">
             {" "}
-            <a href="#courses" className="hover:text-primary-600 transition">
+            <a href="#courses" className="transition-all hover:scale-105" style={{ color: '#1A9FD4' }}>
               Courses
             </a>{" "}
-            <a href="#features" className="hover:text-primary-600 transition">
+            <a href="#features" className="transition-all hover:scale-105" style={{ color: '#7c3aed' }}>
               Features
             </a>{" "}
-            <a href="#about" className="hover:text-primary-600 transition">
+            <a href="#about" className="transition-all hover:scale-105" style={{ color: '#10b981' }}>
               About
             </a>{" "}
-            <a href="#enquiry" className="hover:text-primary-600 transition font-semibold" style={{ color: '#1A9FD4' }}>
+            <a href="#enquiry" className="transition-all hover:scale-105 px-4 py-2 rounded-xl text-white font-bold shadow-md hover:shadow-lg" style={{ background: 'linear-gradient(135deg, #1A9FD4, #7c3aed)' }}>
               Enquire Now
             </a>{" "}
           </div>{" "}
