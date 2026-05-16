@@ -220,33 +220,26 @@ const AdminEnquiries = () => {
 
                         {/* Status dropdown */}
                         <div className="relative">
-                          <button
-                            onClick={(e) => { e.stopPropagation(); setActiveDropdown(activeDropdown === enquiry._id ? null : enquiry._id); }}
-                            className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-all"
+                          <select
+                            value=""
+                            onChange={(e) => {
+                              if(e.target.value) updateStatus(enquiry._id, e.target.value);
+                              e.target.value = "";
+                            }}
+                            className="appearance-none bg-blue-600 text-white text-xs font-bold rounded-lg px-3 py-1.5 pr-8 hover:bg-blue-700 transition-all cursor-pointer outline-none shadow-sm"
+                            style={{ 
+                              backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E")`, 
+                              backgroundRepeat: 'no-repeat', 
+                              backgroundPosition: 'right 8px center' 
+                            }}
                           >
-                            Update <ChevronDown size={12} />
-                          </button>
-                          <AnimatePresence>
-                            {activeDropdown === enquiry._id && (
-                              <motion.div
-                                initial={{ opacity: 0, y: -8, scale: 0.95 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                                className="absolute right-0 top-9 z-50 w-36 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                {STATUS_OPTIONS.map(s => (
-                                  <button
-                                    key={s}
-                                    onClick={() => updateStatus(enquiry._id, s)}
-                                    className={`w-full text-left px-3 py-2.5 text-xs font-semibold capitalize hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ${enquiry.status === s ? 'text-blue-500' : 'text-slate-700 dark:text-slate-300'}`}
-                                  >
-                                    {s}
-                                  </button>
-                                ))}
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
+                            <option value="" disabled className="bg-white text-slate-500">Update</option>
+                            {STATUS_OPTIONS.map(s => (
+                              <option key={s} value={s} className="bg-white text-slate-900 font-semibold capitalize">
+                                Mark as {s}
+                              </option>
+                            ))}
+                          </select>
                         </div>
 
                         {/* Delete */}
