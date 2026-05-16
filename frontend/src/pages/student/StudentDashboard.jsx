@@ -86,29 +86,7 @@ export default function StudentDashboard() {
           </div>
         </div>
 
-        {/* Champion Box */}
-        <div className="bg-[#fefce8] border border-[#fef08a] p-5 rounded-xl relative">
-          <div className="flex flex-wrap justify-between items-start gap-4 mb-3">
-            <div>
-              <div className="flex items-center gap-2 text-red-500 font-bold text-lg mb-1">
-                <Shield size={20} fill="currentColor" /> Team Champion
-              </div>
-              <p className="text-red-500 text-xs font-semibold cursor-pointer hover:underline">Know Your Benefits</p>
-            </div>
-            <select className="border border-slate-300 rounded-md px-3 py-1.5 text-sm bg-white font-medium text-slate-700 outline-none">
-              <option>Cohort 1</option>
-            </select>
-          </div>
-          
-          <div className="flex flex-col sm:flex-row gap-3 mt-5">
-            <button className="flex-1 bg-[#fee2e2] border border-[#fca5a5] text-red-600 font-bold py-2.5 rounded text-sm hover:bg-red-200 transition">
-              JOIN OUR TELEGRAM
-            </button>
-            <button className="flex-1 bg-[#dcfce7] border border-[#86efac] text-green-700 font-bold py-2.5 rounded text-sm hover:bg-green-200 transition">
-              JOIN OUR WHATSAPP
-            </button>
-          </div>
-        </div>
+
 
         {/* Instructions Side by Side */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
