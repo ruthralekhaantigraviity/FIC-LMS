@@ -275,33 +275,7 @@ export default function TrainerDashboard() {
 
       {/* Right Sidebar */}
       <div className="w-full xl:w-80 space-y-8">
-        {/* Messages Panel */}
-        <div className="bg-white dark:bg-[#1e293b] p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Messages</h2>
-            <button className="p-2 bg-slate-50 dark:bg-slate-800 rounded-xl text-slate-500 hover:text-sky-500 transition">
-              <MessageCircle size={18} />
-            </button>
-          </div>
-          <div className="space-y-6">
-            {messages.map((msg) => (
-              <div key={msg.id} className="flex gap-4 group cursor-pointer">
-                <img src={msg.avatar} alt="" className="w-12 h-12 rounded-2xl object-cover ring-2 ring-transparent group-hover:ring-sky-500/20 transition-all" />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-0.5">
-                    <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{msg.name}</p>
-                    <span className="text-[10px] font-medium text-slate-400">{msg.time}</span>
-                  </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 truncate leading-relaxed">{msg.msg}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <button className="w-full mt-8 py-3 text-xs font-bold text-slate-500 hover:text-sky-500 flex items-center justify-center gap-2 transition group">
-            View all messages
-            <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-          </button>
-        </div>
+
 
         {/* Progress Section (Circular Stats) */}
         <div className="bg-slate-900 dark:bg-[#020617] p-8 rounded-[32px] border border-slate-800 text-white shadow-2xl relative overflow-hidden">

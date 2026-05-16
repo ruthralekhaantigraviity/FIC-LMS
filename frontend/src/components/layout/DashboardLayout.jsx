@@ -64,7 +64,7 @@ export default function DashboardLayout() {
       name: "Attendance",   
       path: "/dashboard/attendance",   
       icon: Calendar,      
-      role: ["admin", "trainer"] 
+      role: ["admin"] 
     },
     { 
       name: "Certificates", 
@@ -89,6 +89,18 @@ export default function DashboardLayout() {
       path: "/dashboard/hr/reports", 
       icon: FileText, 
       role: ["hr"] 
+    },
+    {
+      name: "Reviews",
+      path: "/dashboard/reviews",
+      icon: Star,
+      role: ["trainer"]
+    },
+    {
+      name: "Latest Achievements",
+      path: "/dashboard/achievements",
+      icon: Award,
+      role: ["trainer"]
     },
     {
       name: user?.role === "admin" ? "Manage Courses" : "My Courses",
