@@ -151,41 +151,7 @@ export default function StudentDashboard() {
           </div>
         </div>
 
-        {/* Live tests / Assessments */}
-        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6">
-          <h2 className="font-bold text-slate-800 text-lg mb-5 flex items-center gap-2">
-            <span className="w-6 h-6 rounded-md bg-pink-100 text-pink-600 flex items-center justify-center">
-              <CheckCircle size={14} />
-            </span>
-            Live tests / Hacker / Skill assessments
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {/* Mock Test 1 */}
-            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-              <div className="h-24 bg-gradient-to-r from-blue-400 to-indigo-500 flex items-center px-4">
-                <h3 className="text-white font-bold text-lg">Module Test</h3>
-              </div>
-              <div className="p-4 text-center">
-                <p className="text-xs text-slate-500 font-semibold mb-3 border-b pb-3">Available from 10:00 AM</p>
-                <button className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold rounded transition">
-                  TAKE TEST
-                </button>
-              </div>
-            </div>
-            {/* Mock Test 2 */}
-            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-              <div className="h-24 bg-gradient-to-r from-pink-500 to-rose-500 flex items-center px-4">
-                <h3 className="text-white font-bold text-lg">Pre-Assessment</h3>
-              </div>
-              <div className="p-4 text-center">
-                <p className="text-xs text-slate-500 font-semibold mb-3 border-b pb-3">Starts Tomorrow</p>
-                <button className="w-full py-2 bg-slate-100 text-slate-400 text-xs font-bold rounded cursor-not-allowed">
-                  UPCOMING
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+
 
         {/* Learning Paths */}
         <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6">
