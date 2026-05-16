@@ -78,6 +78,10 @@ export default function StudentCourseViewer() {
         toast.success("Lesson marked as complete!");
       } else {
         toast.success("Course completed! Great job!");
+        // Redirect to certifications page after a short delay
+        setTimeout(() => {
+          navigate("/dashboard/student/certificates");
+        }, 1500);
       }
     } catch (err) {
       toast.error("Failed to update progress");
