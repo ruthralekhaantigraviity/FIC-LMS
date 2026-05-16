@@ -71,15 +71,20 @@ const StudentCertificates = () => {
     doc.rect(0, pageHeight - 4, pageWidth, 4, 'F');
 
     // 3. Header Section
-    doc.setFontSize(22);
+    doc.setFontSize(24);
     doc.setTextColor(26, 159, 212);
     doc.setFont("helvetica", "bold");
-    doc.text("FORGE INDIA", pageWidth / 2, 25, { align: "center" });
+    doc.text("FORGE INDIA CONNECT", pageWidth / 2, 25, { align: "center" });
+
+    doc.setFontSize(8);
+    doc.setTextColor(160);
+    doc.setFont("helvetica", "normal");
+    doc.text("Empowering Future Professionals", pageWidth / 2, 31, { align: "center", charSpace: 0.5 });
 
     doc.setFontSize(9);
     doc.setTextColor(150);
     doc.setFont("helvetica", "normal");
-    doc.text("CERTIFICATE OF EXCELLENCE", pageWidth / 2, 35, { align: "center", charSpace: 1 });
+    doc.text("CERTIFICATE OF EXCELLENCE", pageWidth / 2, 40, { align: "center", charSpace: 1.2 });
 
     // 4. Main Title
     doc.setFontSize(44);
@@ -267,6 +272,10 @@ const StudentCertificates = () => {
                       <div className="absolute bottom-0 left-0 w-full h-3 bg-sky-600" />
                       
                       <div className="text-center">
+                         <img src="/logo.jpg" alt="FIC Logo" className="h-12 md:h-16 mx-auto mb-4" />
+                         <h3 className="text-xl md:text-2xl font-black tracking-tight text-[#1A9FD4] mb-1">FORGE INDIA CONNECT</h3>
+                         <p className="text-[8px] md:text-[10px] font-bold text-slate-400 mb-6 uppercase tracking-[0.3em]">Empowering Future Professionals</p>
+                         
                          <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 font-display">CERTIFICATE</h2>
                          <p className="text-sm md:text-lg text-slate-500 italic mb-6">This is to proudly certify that</p>
                          
