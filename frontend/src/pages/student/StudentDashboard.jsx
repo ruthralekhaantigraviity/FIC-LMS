@@ -11,20 +11,25 @@ import PendingApproval from "./PendingApproval";
 export default function StudentDashboard() {
   const { user } = useSelector((state) => state.auth);
   const [courses, setCourses] = useState([]);
+  const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchMyCourses = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const { data } = await api.get("/admissions/my-courses");
-        setCourses(data.data);
+        const [coursesRes, appsRes] = await Promise.all([
+          api.get("/admissions/my-courses"),
+          api.get("/admissions/my-applications")
+        ]);
+        setCourses(coursesRes.data.data);
+        setApplications(appsRes.data.data);
       } catch (err) {
-        console.error("Error fetching enrolled courses:", err);
+        console.error("Error fetching dashboard data:", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchMyCourses();
+    fetchDashboardData();
   }, []);
 
   if (loading) {
@@ -35,8 +40,11 @@ export default function StudentDashboard() {
     );
   }
 
-  // Students no longer require admin approval or existing courses to view dashboard.
-  // Removed PendingApproval redirection.
+  // Show Pending Approval screen if no courses enrolled but there's an application
+  if (courses.length === 0 && applications.length > 0) {
+    const latestApp = applications[0]; // Assuming most recent is the one to track
+    return <PendingApproval application={latestApp} />;
+  }
 
   return (
     <div className="max-w-6xl mx-auto pb-12 font-sans bg-[#fdfdfd] dark:bg-transparent">
