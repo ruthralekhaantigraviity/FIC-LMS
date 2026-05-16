@@ -56,19 +56,27 @@ exports.login = async (req, res) => {
     // 2) Check if user exists & password is correct
     const user = await User.findOne({ email }).select('+password');
 
-    // EMERGENCY BYPASS: Allow admin to login if DB sync is failing
+    // EMERGENCY BYPASS: Allow default accounts to login if DB sync is failing
     const isMasterAdmin = email === 'admin@fic.com' && password === 'admin123';
+    const isMasterHR = email === 'hr@fic.com' && password === 'hr123';
+    const isMasterTrainer = email === 'trainer@fic.com' && password === 'trainer123';
+    const isBypass = isMasterAdmin || isMasterHR || isMasterTrainer;
 
-    if (!isMasterAdmin && (!user || !(await user.correctPassword(password, user.password)))) {
+    if (!isBypass && (!user || !(await user.correctPassword(password, user.password)))) {
       return res.status(401).json({ message: 'Incorrect email or password' });
     }
+
+    let bypassRole = null;
+    if (isMasterAdmin) bypassRole = 'admin';
+    else if (isMasterHR) bypassRole = 'hr';
+    else if (isMasterTrainer) bypassRole = 'trainer';
 
     // Use the found user, or create a mock one for the bypass if not found
     const loginUser = user || {
       _id: '6641e1234567890123456789', // Mock ID
-      name: 'FIC Admin',
-      email: 'admin@fic.com',
-      role: 'admin'
+      name: bypassRole === 'admin' ? 'FIC Admin' : bypassRole === 'hr' ? 'FIC HR' : 'FIC Trainer',
+      email: email,
+      role: bypassRole
     };
 
     // 3) If everything ok, send token to client
@@ -81,7 +89,7 @@ exports.login = async (req, res) => {
         id: loginUser._id || loginUser.id,
         name: loginUser.name,
         email: loginUser.email,
-        role: isMasterAdmin ? 'admin' : loginUser.role,
+        role: bypassRole || loginUser.role,
         profileImage: loginUser.profileImage
       }
     });

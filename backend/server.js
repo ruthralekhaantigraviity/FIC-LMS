@@ -80,13 +80,35 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/fic_lms')
         });
         console.log(`Default admin created: ${adminEmail} / admin123`);
       } else if (adminUser.role !== 'admin') {
-        console.log('Admin user exists but role is not admin. Updating role...');
         adminUser.role = 'admin';
         await adminUser.save();
-        console.log('Admin role updated successfully.');
+      }
+
+      // Ensure HR User
+      const hrEmail = 'hr@fic.com';
+      if (!(await User.findOne({ email: hrEmail }))) {
+        await User.create({
+          name: 'FIC HR Manager',
+          email: hrEmail,
+          password: 'hr123',
+          role: 'hr'
+        });
+        console.log(`Default HR created: ${hrEmail} / hr123`);
+      }
+
+      // Ensure Trainer User
+      const trainerEmail = 'trainer@fic.com';
+      if (!(await User.findOne({ email: trainerEmail }))) {
+        await User.create({
+          name: 'FIC Senior Trainer',
+          email: trainerEmail,
+          password: 'trainer123',
+          role: 'trainer'
+        });
+        console.log(`Default Trainer created: ${trainerEmail} / trainer123`);
       }
     } catch (err) {
-      console.error('Error ensuring default admin:', err);
+      console.error('Error ensuring default accounts:', err);
     }
 
     app.listen(PORT, () => {
