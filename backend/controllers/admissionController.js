@@ -200,9 +200,14 @@ exports.assignCourse = async (req, res) => {
     }
 
     // 2. Create a "completed" Admission record
+    // Fetch user details first to satisfy required fields in Admission model
+    const user = await User.findById(studentId);
+    
     await Admission.create({
       student: studentId,
       course: courseId,
+      fullName: user?.name || 'Assigned Student',
+      email: user?.email || 'assigned@example.com',
       status: 'completed',
       reviewedBy: req.user.id,
       appliedAt: new Date()
