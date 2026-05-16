@@ -123,40 +123,7 @@ export default function StudentDashboard() {
 
       </div>
 
-      {/* Footer */}
-      <footer className="bg-slate-800 text-slate-300 mt-16 pt-12 pb-8 px-4 rounded-t-3xl">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <div className="flex items-center gap-3 font-bold text-white text-lg mb-4">
-              <img src="/logo.jpg" alt="Logo" className="w-8 h-8 rounded-full object-cover" />
-              Forge India Connect
-            </div>
-            <p className="text-sm text-slate-400 mb-4 leading-relaxed">
-              Empowering students with industry-relevant skills and practical knowledge to build successful careers in technology.
-            </p>
-          </div>
-          <div>
-            <h4 className="text-white font-bold mb-4">Quick Links</h4>
-            <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:text-white transition">About Us</a></li>
-              <li><a href="#" className="hover:text-white transition">Careers</a></li>
-              <li><a href="#" className="hover:text-white transition">Contact Support</a></li>
-              <li><a href="#" className="hover:text-white transition">Help Center</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="text-white font-bold mb-4">Legal</h4>
-            <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:text-white transition">Terms of Use</a></li>
-              <li><a href="#" className="hover:text-white transition">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-white transition">Refund Policy</a></li>
-            </ul>
-          </div>
-        </div>
-        <div className="max-w-6xl mx-auto mt-12 pt-8 border-t border-slate-700 text-center text-xs text-slate-500">
-          © {new Date().getFullYear()} Forge India Connect. All rights reserved.
-        </div>
-      </footer>
+
 
     </div>
   );
