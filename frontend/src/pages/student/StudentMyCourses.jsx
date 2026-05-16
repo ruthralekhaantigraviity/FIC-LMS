@@ -83,37 +83,46 @@ export default function StudentMyCourses() {
             Your Enrolled Programs & Topics
           </h3>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {courses.map((course, index) => {
-              // Array of dynamic styles for the cards to keep them colorful
-              const styles = [
-                { from: "from-cyan-400", to: "to-blue-500", borderHover: "hover:border-blue-200", btnHover: "group-hover:bg-blue-600 group-hover:border-blue-600", Icon: MonitorPlay },
-                { from: "from-pink-500", to: "to-rose-500", borderHover: "hover:border-rose-200", btnHover: "group-hover:bg-rose-500 group-hover:border-rose-500", Icon: Code },
-                { from: "from-indigo-400", to: "to-blue-600", borderHover: "hover:border-indigo-200", btnHover: "group-hover:bg-indigo-600 group-hover:border-indigo-600", Icon: Video },
-                { from: "from-red-500", to: "to-pink-600", borderHover: "hover:border-red-200", btnHover: "group-hover:bg-red-500 group-hover:border-red-500", Icon: Code },
-                { from: "from-purple-500", to: "to-indigo-600", borderHover: "hover:border-purple-200", btnHover: "group-hover:bg-purple-600 group-hover:border-purple-600", Icon: Award },
-                { from: "from-emerald-400", to: "to-teal-500", borderHover: "hover:border-emerald-200", btnHover: "group-hover:bg-emerald-500 group-hover:border-emerald-500", Icon: Briefcase },
-                { from: "from-orange-400", to: "to-rose-500", borderHover: "hover:border-orange-200", btnHover: "group-hover:bg-orange-500 group-hover:border-orange-500", Icon: FileText }
-              ];
-              
-              const style = styles[index % styles.length];
-              const Icon = style.Icon;
-
-              return (
-                <div key={course._id} className={`bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:shadow-md ${style.borderHover} transition group flex flex-col h-full`}>
-                  <div className={`h-20 rounded-xl bg-gradient-to-r ${style.from} ${style.to} mb-5 flex items-center justify-center text-white shadow-inner`}>
-                    <Icon size={32} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {courses.map((course) => (
+              <div key={course._id} className="bg-white dark:bg-slate-800 rounded-[32px] overflow-hidden shadow-xl shadow-slate-200/50 dark:shadow-none transition-all duration-300 flex flex-col group border border-slate-100 dark:border-slate-800">
+                {/* Thumbnail / Image Area */}
+                <div className="aspect-[4/3] bg-purple-600 p-8 flex flex-col items-center justify-center text-center relative overflow-hidden group-hover:scale-[1.02] transition-transform duration-500">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-black/20" />
+                  <div className="relative z-10">
+                    <div className="w-20 h-20 bg-white/20 rounded-3xl flex items-center justify-center mb-5 mx-auto backdrop-blur-md border border-white/30 shadow-2xl">
+                      <Book className="text-white" size={40} />
+                    </div>
+                    <h4 className="text-white font-bold text-base tracking-[0.2em] uppercase leading-tight drop-shadow-md">
+                      {course.title}<br />
+                      <span className="text-white/80 text-xs tracking-widest">INTERNSHIP</span>
+                    </h4>
                   </div>
-                  <h4 className="font-bold text-slate-800 mb-2 text-lg">{course.title}</h4>
-                  <p className="text-sm text-slate-500 mb-6 flex-1 line-clamp-2">
-                    {course.description || "Explore this module to enhance your technical skills."}
-                  </p>
-                  <Link to={`/dashboard/student/learn/${course._id}`} className={`block w-full py-2.5 bg-white border border-slate-200 text-slate-700 text-center font-bold rounded-xl ${style.btnHover} group-hover:text-white transition shadow-sm`}>
-                    Start Learning
+                </div>
+
+                <div className="p-8 flex-1 flex flex-col">
+                  <h3 className="text-slate-900 dark:text-white font-bold text-xl mb-6">{course.title}</h3>
+                  
+                  {/* Progress Area */}
+                  <div className="mb-8">
+                    <div className="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden mb-3">
+                      <div className="bg-[#22c55e] h-full w-[45%] rounded-full shadow-[0_0_12px_rgba(34,197,94,0.4)]"></div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Progress</span>
+                      <span className="text-[11px] font-bold text-slate-900 dark:text-slate-300">49 of 106 complete</span>
+                    </div>
+                  </div>
+
+                  <Link 
+                    to={`/dashboard/student/learn/${course._id}`} 
+                    className="w-full py-4 bg-[#3b82f6] hover:bg-blue-600 text-white text-sm font-bold rounded-2xl text-center transition-all shadow-xl shadow-blue-500/25 active:scale-[0.98] uppercase tracking-[0.1em]"
+                  >
+                    CONTINUE
                   </Link>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </div>
 

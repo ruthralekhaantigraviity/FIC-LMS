@@ -108,37 +108,45 @@ export default function StudentDashboard() {
       <div className="max-w-6xl mx-auto px-4 mt-12 space-y-10">
         {/* My Courses Section - Visible only when enrolled */}
         {courses.length > 0 && (
-          <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl p-6">
-            <h2 className="font-bold text-slate-800 dark:text-white text-lg mb-5 flex items-center gap-2">
-              <span className="w-6 h-6 rounded-md bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-                <MonitorPlay size={14} />
+          <div className="bg-[#f5f3ff] dark:bg-purple-900/10 border border-purple-100 dark:border-purple-800/30 rounded-3xl p-8 shadow-sm">
+            <h2 className="font-bold text-slate-800 dark:text-white text-xl mb-8 flex items-center gap-3">
+              <span className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center shadow-lg shadow-purple-600/20">
+                <MonitorPlay size={20} />
               </span>
-              My Enrolled Courses
+              My Courses
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {courses.map((course) => (
-                <div key={course._id} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm flex flex-col hover:border-purple-300 dark:hover:border-purple-500 transition-all group">
-                  <div className="h-28 bg-gradient-to-br from-purple-500 to-indigo-600 p-4 flex items-end relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:scale-110 transition-transform">
-                      <PlayCircle size={64} />
+                <div key={course._id} className="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 flex flex-col group border border-slate-100 dark:border-slate-700">
+                  {/* Thumbnail / Image Area */}
+                  <div className="aspect-[4/3] bg-purple-600 p-6 flex flex-col items-center justify-center text-center relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-black/10 opacity-50" />
+                    <div className="relative z-10">
+                      <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-4 mx-auto backdrop-blur-sm border border-white/30">
+                        <MonitorPlay className="text-white" size={32} />
+                      </div>
+                      <h4 className="text-white font-bold text-sm tracking-widest uppercase leading-tight">
+                        {course.title}<br />INTERNSHIP
+                      </h4>
                     </div>
-                    <h3 className="text-white font-bold text-lg leading-tight relative z-10">{course.title}</h3>
                   </div>
-                  <div className="p-4 flex-1 flex flex-col justify-between">
-                    <div>
-                      <div className="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400 font-bold mb-1">
-                        <span>Progress</span>
-                        <span>0%</span>
+
+                  <div className="p-5 flex-1 flex flex-col">
+                    <h3 className="text-slate-900 dark:text-white font-bold text-lg mb-4">{course.title}</h3>
+                    
+                    {/* Progress Area */}
+                    <div className="mb-6">
+                      <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden mb-2">
+                        <div className="bg-green-500 h-full w-[45%] rounded-full shadow-[0_0_8px_rgba(34,197,94,0.4)]"></div>
                       </div>
-                      <div className="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden mb-4">
-                        <div className="bg-blue-500 h-full w-0 rounded-full"></div>
-                      </div>
+                      <span className="text-xs font-bold text-slate-400">49 of 106 complete</span>
                     </div>
+
                     <Link 
                       to={`/dashboard/student/learn/${course._id}`} 
-                      className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold rounded text-center transition"
+                      className="w-full py-3 bg-[#3b82f6] hover:bg-blue-600 text-white text-sm font-bold rounded-xl text-center transition-all shadow-lg shadow-blue-500/25 active:scale-[0.98] uppercase tracking-wider"
                     >
-                      CONTINUE LEARNING
+                      CONTINUE
                     </Link>
                   </div>
                 </div>
