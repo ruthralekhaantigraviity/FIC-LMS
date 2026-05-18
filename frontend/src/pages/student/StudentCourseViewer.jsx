@@ -108,22 +108,49 @@ export default function StudentCourseViewer() {
   // Function to convert YouTube URLs to embed URLs
   const getEmbedUrl = (url) => {
     if (!url) return null;
+    let absoluteUrl = url;
+    
+    // Upgrades relative paths to backend base URL
+    if (url.startsWith('/')) {
+      const backendBaseUrl = api.defaults.baseURL.replace('/api', '');
+      absoluteUrl = `${backendBaseUrl}${url}`;
+    }
+    
+    // Dynamically upgrade HTTP to HTTPS to avoid browser Mixed Content blocks in production
+    if (window.location.protocol === 'https:' && absoluteUrl.startsWith('http://') && !absoluteUrl.includes('localhost') && !absoluteUrl.includes('127.0.0.1')) {
+      absoluteUrl = absoluteUrl.replace('http://', 'https://');
+    }
+    
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = url.match(regExp);
+    const match = absoluteUrl.match(regExp);
     return (match && match[2].length === 11)
       ? `https://www.youtube.com/embed/${match[2]}`
-      : url;
+      : absoluteUrl;
   };
 
   // Function to load external PDFs beautifully without being blocked by X-Frame-Options/CORS
   const getPdfViewerUrl = (url) => {
     if (!url) return null;
-    // If it's a local/relative URL or hosted on our own server, load it directly
-    if (url.startsWith('/') || url.includes(window.location.hostname)) {
-      return url;
+    
+    let absoluteUrl = url;
+    // Prepend backend server domain if it's a relative path (e.g. /uploads/...)
+    if (url.startsWith('/')) {
+      const backendBaseUrl = api.defaults.baseURL.replace('/api', '');
+      absoluteUrl = `${backendBaseUrl}${url}`;
     }
-    // Otherwise, use Google Docs Viewer to bypass X-Frame-Options/CORS blocks!
-    return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+    
+    // Dynamically upgrade unsecure HTTP to secure HTTPS to prevent Mixed Content blocking in deployed Vercel
+    if (window.location.protocol === 'https:' && absoluteUrl.startsWith('http://') && !absoluteUrl.includes('localhost') && !absoluteUrl.includes('127.0.0.1')) {
+      absoluteUrl = absoluteUrl.replace('http://', 'https://');
+    }
+    
+    // If it's a localhost file path, serve it directly since external viewers cannot resolve local IPs
+    if (absoluteUrl.includes('localhost') || absoluteUrl.includes('127.0.0.1')) {
+      return absoluteUrl;
+    }
+    
+    // Otherwise, embed via Google Docs Viewer API to securely bypass CORS/X-Frame-Options in production
+    return `https://docs.google.com/viewer?url=${encodeURIComponent(absoluteUrl)}&embedded=true`;
   };
 
   return (
@@ -306,29 +333,42 @@ export default function StudentCourseViewer() {
 
               {activeTab === "notes" && (
                 (activeSubject.pdfUrl || activeSubject.resources?.length > 0) ? (
-                  <div className="w-full flex-1 min-h-[500px] flex flex-col bg-slate-50">
-                    {/* Inline PDF Action Bar */}
-                    <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-slate-200">
-                      <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-                        <FileText className="text-slate-400" size={16} /> Lesson Study Notes (PDF)
-                      </span>
-                      <a
-                        href={activeSubject.pdfUrl || activeSubject.resources?.[0]?.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition text-xs shadow-md shadow-blue-500/10 active:scale-95"
-                      >
-                        <Download size={14} /> Download PDF File
-                      </a>
-                    </div>
-                    <div className="flex-1 p-6 flex flex-col">
-                      <iframe
-                        src={getPdfViewerUrl(activeSubject.pdfUrl || activeSubject.resources?.[0]?.url)}
-                        className="w-full flex-1 rounded-2xl border border-slate-200 shadow-sm bg-white min-h-[500px]"
-                        title="PDF Preview"
-                      ></iframe>
-                    </div>
-                  </div>
+                  (() => {
+                    const rawPdfUrl = activeSubject.pdfUrl || activeSubject.resources?.[0]?.url;
+                    let absolutePdfUrl = rawPdfUrl;
+                    if (rawPdfUrl && rawPdfUrl.startsWith('/')) {
+                      const backendBaseUrl = api.defaults.baseURL.replace('/api', '');
+                      absolutePdfUrl = `${backendBaseUrl}${rawPdfUrl}`;
+                    }
+                    if (window.location.protocol === 'https:' && absolutePdfUrl.startsWith('http://') && !absolutePdfUrl.includes('localhost') && !absolutePdfUrl.includes('127.0.0.1')) {
+                      absolutePdfUrl = absolutePdfUrl.replace('http://', 'https://');
+                    }
+                    return (
+                      <div className="w-full flex-1 min-h-[500px] flex flex-col bg-slate-50">
+                        {/* Inline PDF Action Bar */}
+                        <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-slate-200">
+                          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                            <FileText className="text-slate-400" size={16} /> Lesson Study Notes (PDF)
+                          </span>
+                          <a
+                            href={absolutePdfUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition text-xs shadow-md shadow-blue-500/10 active:scale-95"
+                          >
+                            <Download size={14} /> Download PDF File
+                          </a>
+                        </div>
+                        <div className="flex-1 p-6 flex flex-col">
+                          <iframe
+                            src={getPdfViewerUrl(rawPdfUrl)}
+                            className="w-full flex-1 rounded-2xl border border-slate-200 shadow-sm bg-white min-h-[500px]"
+                            title="PDF Preview"
+                          ></iframe>
+                        </div>
+                      </div>
+                    );
+                  })()
                 ) : (
                   <div className="w-full flex-1 min-h-[400px] bg-slate-50 flex flex-col items-center justify-center p-8 text-center">
                     <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-950/20 text-blue-600 flex items-center justify-center mb-4 border border-blue-100/55">
