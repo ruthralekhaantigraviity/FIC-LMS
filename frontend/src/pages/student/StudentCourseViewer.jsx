@@ -244,31 +244,27 @@ export default function StudentCourseViewer() {
           <>
             {/* Modern Premium Tabs Selector */}
             <div className="flex border-b border-slate-200 bg-slate-50/50 px-6 py-2.5 gap-2">
-              {activeSubject.videoUrl && (
-                <button
-                  onClick={() => setActiveTab("video")}
-                  className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 ${
-                    activeTab === "video"
-                      ? "bg-blue-600 text-white shadow-md shadow-blue-500/10"
-                      : "text-slate-600 hover:bg-slate-100"
-                  }`}
-                >
-                  <MonitorPlay size={14} /> Video Lesson
-                </button>
-              )}
+              <button
+                onClick={() => setActiveTab("video")}
+                className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 ${
+                  activeTab === "video"
+                    ? "bg-blue-600 text-white shadow-md shadow-blue-500/10"
+                    : "text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                <MonitorPlay size={14} /> Video Lesson
+              </button>
               
-              {(activeSubject.pdfUrl || activeSubject.resources?.length > 0) && (
-                <button
-                  onClick={() => setActiveTab("notes")}
-                  className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 ${
-                    activeTab === "notes"
-                      ? "bg-blue-600 text-white shadow-md shadow-blue-500/10"
-                      : "text-slate-600 hover:bg-slate-100"
-                  }`}
-                >
-                  <FileText size={14} /> PDF Notes
-                </button>
-              )}
+              <button
+                onClick={() => setActiveTab("notes")}
+                className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 ${
+                  activeTab === "notes"
+                    ? "bg-blue-600 text-white shadow-md shadow-blue-500/10"
+                    : "text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                <FileText size={14} /> PDF Notes
+              </button>
 
               <button
                 onClick={() => setActiveTab("content")}
@@ -284,42 +280,66 @@ export default function StudentCourseViewer() {
 
             {/* Tab Contents */}
             <div className="flex-1 overflow-y-auto flex flex-col">
-              {activeTab === "video" && activeSubject.videoUrl && (
-                <div className="w-full flex-1 min-h-[400px] bg-slate-900 flex flex-col items-center justify-center">
-                  <iframe
-                    src={getEmbedUrl(activeSubject.videoUrl)}
-                    className="w-full h-full border-0 aspect-video flex-1 max-h-[85vh]"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    title={activeSubject.title}
-                  ></iframe>
-                </div>
+              {activeTab === "video" && (
+                activeSubject.videoUrl ? (
+                  <div className="w-full flex-1 min-h-[400px] bg-slate-900 flex flex-col items-center justify-center">
+                    <iframe
+                      src={getEmbedUrl(activeSubject.videoUrl)}
+                      className="w-full h-full border-0 aspect-video flex-1 max-h-[85vh]"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      title={activeSubject.title}
+                    ></iframe>
+                  </div>
+                ) : (
+                  <div className="w-full flex-1 min-h-[400px] bg-slate-50 flex flex-col items-center justify-center p-8 text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-purple-50 dark:bg-purple-950/20 text-purple-600 flex items-center justify-center mb-4 border border-purple-100/55">
+                      <MonitorPlay size={32} className="animate-pulse" />
+                    </div>
+                    <h3 className="text-slate-800 font-bold text-base mb-2">Video Lesson Coming Soon</h3>
+                    <p className="text-slate-500 text-xs max-w-sm leading-relaxed">
+                      The trainer is currently preparing the high-definition video lesson for <span className="font-bold text-slate-700">"{activeSubject.title}"</span>. Check back soon to watch it!
+                    </p>
+                  </div>
+                )
               )}
 
               {activeTab === "notes" && (
-                <div className="w-full flex-1 min-h-[500px] flex flex-col bg-slate-50">
-                  {/* Inline PDF Action Bar */}
-                  <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-slate-200">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-                      <FileText className="text-slate-400" size={16} /> Lesson Study Notes (PDF)
-                    </span>
-                    <a
-                      href={activeSubject.pdfUrl || activeSubject.resources?.[0]?.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition text-xs shadow-md shadow-blue-500/10 active:scale-95"
-                    >
-                      <Download size={14} /> Download PDF File
-                    </a>
+                (activeSubject.pdfUrl || activeSubject.resources?.length > 0) ? (
+                  <div className="w-full flex-1 min-h-[500px] flex flex-col bg-slate-50">
+                    {/* Inline PDF Action Bar */}
+                    <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-slate-200">
+                      <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                        <FileText className="text-slate-400" size={16} /> Lesson Study Notes (PDF)
+                      </span>
+                      <a
+                        href={activeSubject.pdfUrl || activeSubject.resources?.[0]?.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition text-xs shadow-md shadow-blue-500/10 active:scale-95"
+                      >
+                        <Download size={14} /> Download PDF File
+                      </a>
+                    </div>
+                    <div className="flex-1 p-6 flex flex-col">
+                      <iframe
+                        src={getPdfViewerUrl(activeSubject.pdfUrl || activeSubject.resources?.[0]?.url)}
+                        className="w-full flex-1 rounded-2xl border border-slate-200 shadow-sm bg-white min-h-[500px]"
+                        title="PDF Preview"
+                      ></iframe>
+                    </div>
                   </div>
-                  <div className="flex-1 p-6 flex flex-col">
-                    <iframe
-                      src={getPdfViewerUrl(activeSubject.pdfUrl || activeSubject.resources?.[0]?.url)}
-                      className="w-full flex-1 rounded-2xl border border-slate-200 shadow-sm bg-white min-h-[500px]"
-                      title="PDF Preview"
-                    ></iframe>
+                ) : (
+                  <div className="w-full flex-1 min-h-[400px] bg-slate-50 flex flex-col items-center justify-center p-8 text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-950/20 text-blue-600 flex items-center justify-center mb-4 border border-blue-100/55">
+                      <FileText size={32} className="animate-pulse" />
+                    </div>
+                    <h3 className="text-slate-800 font-bold text-base mb-2">Study Notes Coming Soon</h3>
+                    <p className="text-slate-500 text-xs max-w-sm leading-relaxed">
+                      The trainer is currently preparing the PDF study notes and resources for <span className="font-bold text-slate-700">"{activeSubject.title}"</span>. Check back soon to view and download them!
+                    </p>
                   </div>
-                </div>
+                )
               )}
 
               {activeTab === "content" && (
