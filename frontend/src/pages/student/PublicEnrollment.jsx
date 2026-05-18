@@ -39,6 +39,9 @@ export default function PublicEnrollment() {
   const [isSuccess, setIsSuccess] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.phoneNumber.length !== 10) {
+      return toast.error("Phone number must be exactly 10 digits");
+    }
     setLoading(true);
     try {
       // 1. Register User & Submit Admission in one go
@@ -237,9 +240,11 @@ export default function PublicEnrollment() {
                     <input
                       type="tel"
                       required
-                      placeholder="Phone Number"
+                      placeholder="Phone Number (10 digits)"
+                      pattern="[0-9]{10}"
+                      maxLength="10"
                       value={formData.phoneNumber}
-                      onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value.replace(/\D/g, '') })}
                       className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none"
                     />
                   </div>

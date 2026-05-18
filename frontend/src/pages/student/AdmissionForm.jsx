@@ -54,6 +54,9 @@ export default function AdmissionForm() {
   }, [selectedCourseId, allCourses]);
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.phoneNumber.length !== 10) {
+      return alert("Phone number must be exactly 10 digits");
+    }
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
@@ -213,12 +216,14 @@ export default function AdmissionForm() {
                   <input
                     type="tel"
                     required
+                    maxLength="10"
+                    pattern="[0-9]{10}"
                     value={formData.phoneNumber}
                     onChange={(e) =>
-                      setFormData({ ...formData, phoneNumber: e.target.value })
+                      setFormData({ ...formData, phoneNumber: e.target.value.replace(/\D/g, '') })
                     }
                     className="w-full pl-10 pr-4 py-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
-                    placeholder="+91 XXXXX XXXXX"
+                    placeholder="10-digit Phone Number"
                   />{" "}
                 </div>{" "}
               </div>{" "}
