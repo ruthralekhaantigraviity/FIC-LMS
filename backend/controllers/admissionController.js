@@ -136,6 +136,8 @@ exports.getMyAdmissions = async (req, res) => {
 
 exports.getMyEnrolledCourses = async (req, res) => {
   try {
+    const Subject = require('../models/Subject');
+    
     // 1. Get courses from completed admissions
     const admissions = await Admission.find({ 
       student: req.user.id, 
@@ -143,14 +145,17 @@ exports.getMyEnrolledCourses = async (req, res) => {
     }).populate({
       path: 'course',
       populate: [
-        { path: 'instructor', select: 'name' },
-        { path: 'subjects' }
+        { path: 'instructor', select: 'name' }
       ]
     });
     
-    let courses = admissions.map(adm => {
-      if (!adm.course) return null;
-      return {
+    let courses = [];
+    for (const adm of admissions) {
+      if (!adm.course) continue;
+      
+      const courseSubjects = await Subject.find({ course: adm.course._id });
+      
+      courses.push({
         _id: adm.course._id,
         title: adm.course.title,
         description: adm.course.description,
@@ -161,26 +166,27 @@ exports.getMyEnrolledCourses = async (req, res) => {
         duration: adm.course.duration,
         totalLessons: adm.course.totalLessons,
         enrolledAt: adm.appliedAt,
-        hasVideos: adm.course.subjects?.some(s => s.videoUrl) || false,
-        hasPdfs: adm.course.subjects?.some(s => s.pdfUrl || s.resources?.length > 0) || false,
-      };
-    }).filter(c => c !== null);
+        hasVideos: courseSubjects.some(s => s.videoUrl && s.videoUrl.trim() !== ""),
+        hasPdfs: courseSubjects.some(s => (s.pdfUrl && s.pdfUrl.trim() !== "") || (s.resources && s.resources.length > 0)),
+      });
+    }
 
     // 2. Check Student profile for manual assignments not in Admission model
     const studentProfile = await Student.findOne({ user: req.user.id }).populate({
       path: 'enrolledCourses.course',
       populate: [
-        { path: 'instructor', select: 'name' },
-        { path: 'subjects' }
+        { path: 'instructor', select: 'name' }
       ]
     });
 
     if (studentProfile && studentProfile.enrolledCourses) {
-      studentProfile.enrolledCourses.forEach(ec => {
-        if (!ec.course) return;
+      for (const ec of studentProfile.enrolledCourses) {
+        if (!ec.course) continue;
         // Check if already in the list from admissions
         const exists = courses.some(c => c._id.toString() === ec.course._id.toString());
         if (!exists) {
+          const courseSubjects = await Subject.find({ course: ec.course._id });
+          
           courses.push({
             _id: ec.course._id,
             title: ec.course.title,
@@ -192,11 +198,11 @@ exports.getMyEnrolledCourses = async (req, res) => {
             duration: ec.course.duration,
             totalLessons: ec.course.totalLessons,
             enrolledAt: ec.enrollmentDate,
-            hasVideos: ec.course.subjects?.some(s => s.videoUrl) || false,
-            hasPdfs: ec.course.subjects?.some(s => s.pdfUrl || s.resources?.length > 0) || false,
+            hasVideos: courseSubjects.some(s => s.videoUrl && s.videoUrl.trim() !== ""),
+            hasPdfs: courseSubjects.some(s => (s.pdfUrl && s.pdfUrl.trim() !== "") || (s.resources && s.resources.length > 0)),
           });
         }
-      });
+      }
     }
 
     res.status(200).json({ status: 'success', data: courses });

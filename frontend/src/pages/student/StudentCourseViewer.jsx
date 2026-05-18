@@ -161,7 +161,7 @@ export default function StudentCourseViewer() {
               <div className="px-5 py-2 bg-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                 {module.title}
               </div>
-              {subjects.filter(s => (s.module?._id || s.module) === module._id).map((subject) => {
+              {subjects.filter(s => (s.module?._id || s.module || "").toString() === module._id.toString()).map((subject) => {
                 const isActive = activeSubjectId === subject._id;
                 return (
                   <button
