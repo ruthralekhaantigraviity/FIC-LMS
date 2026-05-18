@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { 
   User, Shield, CheckCircle, MonitorPlay, 
-  Clock, PlayCircle, Loader2 
+  Clock, PlayCircle, Loader2, FileText 
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import api from "../../utils/api";
@@ -134,6 +134,22 @@ export default function StudentDashboard() {
                   <div className="p-5 flex-1 flex flex-col">
                     <h3 className="text-slate-900 dark:text-white font-bold text-lg mb-4">{course.title}</h3>
                     
+                    {/* Dynamic Media Badges */}
+                    {(course.hasVideos || course.hasPdfs) && (
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {course.hasVideos && (
+                          <span className="flex items-center gap-1 px-2 py-0.5 bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 text-[10px] font-bold rounded-lg uppercase tracking-wider border border-purple-100/55 dark:border-purple-900/30">
+                            <MonitorPlay size={11} /> Video Lessons
+                          </span>
+                        )}
+                        {course.hasPdfs && (
+                          <span className="flex items-center gap-1 px-2 py-0.5 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[10px] font-bold rounded-lg uppercase tracking-wider border border-blue-100/55 dark:border-blue-900/30">
+                            <FileText size={11} /> PDF Notes
+                          </span>
+                        )}
+                      </div>
+                    )}
+
                     {/* Progress Area */}
                     <div className="mb-6">
                       <div className="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden mb-2">

@@ -142,7 +142,10 @@ exports.getMyEnrolledCourses = async (req, res) => {
       status: 'completed' 
     }).populate({
       path: 'course',
-      populate: { path: 'instructor', select: 'name' }
+      populate: [
+        { path: 'instructor', select: 'name' },
+        { path: 'subjects' }
+      ]
     });
     
     let courses = admissions.map(adm => {
@@ -158,13 +161,18 @@ exports.getMyEnrolledCourses = async (req, res) => {
         duration: adm.course.duration,
         totalLessons: adm.course.totalLessons,
         enrolledAt: adm.appliedAt,
+        hasVideos: adm.course.subjects?.some(s => s.videoUrl) || false,
+        hasPdfs: adm.course.subjects?.some(s => s.pdfUrl || s.resources?.length > 0) || false,
       };
     }).filter(c => c !== null);
 
     // 2. Check Student profile for manual assignments not in Admission model
     const studentProfile = await Student.findOne({ user: req.user.id }).populate({
       path: 'enrolledCourses.course',
-      populate: { path: 'instructor', select: 'name' }
+      populate: [
+        { path: 'instructor', select: 'name' },
+        { path: 'subjects' }
+      ]
     });
 
     if (studentProfile && studentProfile.enrolledCourses) {
@@ -184,6 +192,8 @@ exports.getMyEnrolledCourses = async (req, res) => {
             duration: ec.course.duration,
             totalLessons: ec.course.totalLessons,
             enrolledAt: ec.enrollmentDate,
+            hasVideos: ec.course.subjects?.some(s => s.videoUrl) || false,
+            hasPdfs: ec.course.subjects?.some(s => s.pdfUrl || s.resources?.length > 0) || false,
           });
         }
       });
