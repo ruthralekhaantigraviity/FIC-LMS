@@ -221,21 +221,25 @@ export default function UserManagement() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <select 
-                        value={user?.role || 'student'}
-                        onChange={(e) => handleRoleChange(user?._id, e.target.value)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase border-none focus:ring-2 focus:ring-sky-400/50 outline-none transition cursor-pointer ${
-                          user?.role === 'admin' ? 'bg-red-50 dark:bg-red-500/10 text-red-600' :
-                          user?.role === 'hr' ? 'bg-orange-50 dark:bg-orange-500/10 text-orange-600' :
-                          user?.role === 'trainer' ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600' :
-                          'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-                        }`}
-                      >
-                        <option value="admin">Admin</option>
-                        <option value="hr">HR</option>
-                        <option value="trainer">Trainer</option>
-                        <option value="student">Student</option>
-                      </select>
+                      {user?.role === 'admin' || user?.role === 'student' ? (
+                        <span className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase ${
+                          user?.role === 'admin' ? 'bg-red-50 dark:bg-red-500/10 text-red-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                        }`}>
+                          {user?.role}
+                        </span>
+                      ) : (
+                        <select 
+                          value={user?.role || 'trainer'}
+                          onChange={(e) => handleRoleChange(user?._id, e.target.value)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase border-none focus:ring-2 focus:ring-sky-400/50 outline-none transition cursor-pointer ${
+                            user?.role === 'hr' ? 'bg-orange-50 dark:bg-orange-500/10 text-orange-600' :
+                            'bg-blue-50 dark:bg-blue-500/10 text-blue-600'
+                          }`}
+                        >
+                          <option value="hr">HR</option>
+                          <option value="trainer">Trainer</option>
+                        </select>
+                      )}
                     </td>
                     <td className="px-6 py-4 text-sm text-slate-500 hidden md:table-cell">
                       {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
@@ -355,8 +359,6 @@ export default function UserManagement() {
                     >
                       <option value="trainer">Trainer</option>
                       <option value="hr">HR Manager</option>
-                      <option value="admin">Administrator</option>
-                      <option value="student">Student</option>
                     </select>
                   </div>
                 </div>
