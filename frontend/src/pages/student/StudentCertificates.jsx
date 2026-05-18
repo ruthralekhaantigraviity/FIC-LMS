@@ -46,7 +46,7 @@ const StudentCertificates = () => {
     }
   };
 
-  const handleDownload = (course) => {
+  const handleDownload = async (course) => {
     const doc = new jsPDF({
       orientation: 'landscape',
       unit: 'mm',
@@ -70,52 +70,74 @@ const StudentCertificates = () => {
     doc.rect(0, 0, pageWidth, 4, 'F');
     doc.rect(0, pageHeight - 4, pageWidth, 4, 'F');
 
-    // 3. Header Section
-    doc.setFontSize(24);
+    // Load and add company logo centered at the top
+    try {
+      const imgData = await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL('image/jpeg'));
+        };
+        img.onerror = reject;
+        img.src = '/logo.jpg';
+      });
+      // Center the logo at the top
+      doc.addImage(imgData, 'JPEG', (pageWidth / 2) - 10, 11, 20, 20);
+    } catch (e) {
+      console.warn("Could not load logo for PDF", e);
+    }
+
+    // 3. Header Section (adjusted vertical coordinates to flow elegantly under the logo)
+    doc.setFontSize(22);
     doc.setTextColor(26, 159, 212);
     doc.setFont("helvetica", "bold");
-    doc.text("FORGE INDIA CONNECT", pageWidth / 2, 25, { align: "center" });
+    doc.text("FORGE INDIA CONNECT", pageWidth / 2, 38, { align: "center" });
 
     doc.setFontSize(8);
     doc.setTextColor(160);
     doc.setFont("helvetica", "normal");
-    doc.text("Empowering Future Professionals", pageWidth / 2, 31, { align: "center", charSpace: 0.5 });
+    doc.text("Empowering Future Professionals", pageWidth / 2, 43, { align: "center", charSpace: 0.5 });
 
     doc.setFontSize(9);
     doc.setTextColor(150);
     doc.setFont("helvetica", "normal");
-    doc.text("CERTIFICATE OF EXCELLENCE", pageWidth / 2, 40, { align: "center", charSpace: 1.2 });
+    doc.text("CERTIFICATE OF EXCELLENCE", pageWidth / 2, 50, { align: "center", charSpace: 1.2 });
 
     // 4. Main Title
-    doc.setFontSize(44);
+    doc.setFontSize(40);
     doc.setTextColor(30, 41, 59);
     doc.setFont("helvetica", "bold");
-    doc.text("CERTIFICATE", pageWidth / 2, 55, { align: "center" });
+    doc.text("CERTIFICATE", pageWidth / 2, 65, { align: "center" });
 
-    doc.setFontSize(16);
+    doc.setFontSize(15);
     doc.setTextColor(100);
     doc.setFont("helvetica", "italic");
-    doc.text("This is to proudly certify that", pageWidth / 2, 70, { align: "center" });
+    doc.text("This is to proudly certify that", pageWidth / 2, 77, { align: "center" });
 
     // 5. Student Name
-    doc.setFontSize(50);
+    doc.setFontSize(44);
     doc.setTextColor(26, 159, 212);
     doc.setFont("helvetica", "bold");
-    doc.text((user?.name || "Student").toUpperCase(), pageWidth / 2, 95, { align: "center" });
+    doc.text((user?.name || "Student").toUpperCase(), pageWidth / 2, 100, { align: "center" });
 
     // 6. Course Details
-    doc.setFontSize(14);
+    doc.setFontSize(13);
     doc.setTextColor(100);
     doc.setFont("helvetica", "normal");
-    doc.text("has successfully completed the professional training program in", pageWidth / 2, 115, { align: "center" });
+    doc.text("has successfully completed the professional training program in", pageWidth / 2, 118, { align: "center" });
 
-    doc.setFontSize(28);
+    doc.setFontSize(26);
     doc.setTextColor(30, 41, 59);
     doc.setFont("helvetica", "bold");
-    doc.text(course.title, pageWidth / 2, 135, { align: "center" });
+    doc.text(course.title, pageWidth / 2, 136, { align: "center" });
 
     // 7. Signatures and Seal
-    const sigY = 165;
+    const sigY = 168;
     doc.setDrawColor(200);
     doc.setLineWidth(0.2);
     doc.line(40, sigY, 100, sigY);
@@ -135,7 +157,7 @@ const StudentCertificates = () => {
     doc.setFontSize(9);
     doc.setTextColor(30, 41, 59);
     doc.setFont("helvetica", "bold");
-    doc.text("DIRECTOR, FORGE INDIA", pageWidth - 70, sigY + 6, { align: "center" });
+    doc.text("DIRECTOR, FORGE INDIA CONNECT", pageWidth - 70, sigY + 6, { align: "center" });
 
     doc.save(`Certificate_${course.title.replace(' ', '_')}.pdf`);
     toast.success('Downloading certificate...');
