@@ -11,7 +11,19 @@ exports.createModule = async (req, res) => {
 
 exports.getModulesByCourse = async (req, res) => {
   try {
-    const modules = await Module.find({ course: req.params.courseId }).sort('order');
+    const courseId = req.params.courseId;
+    const Course = require('../models/Course');
+    const requestedCourse = await Course.findById(courseId);
+    
+    let courseIds = [courseId];
+    if (requestedCourse) {
+      const matchingCourses = await Course.find({
+        title: { $regex: new RegExp(`^${requestedCourse.title.trim()}$`, 'i') }
+      });
+      courseIds = matchingCourses.map(c => c._id);
+    }
+    
+    const modules = await Module.find({ course: { $in: courseIds } }).sort('order');
     res.status(200).json({ status: 'success', data: modules });
   } catch (err) {
     res.status(400).json({ message: err.message });

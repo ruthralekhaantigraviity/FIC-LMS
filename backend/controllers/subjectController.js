@@ -46,7 +46,19 @@ exports.deleteSubject = async (req, res) => {
 
 exports.getSubjectsByCourse = async (req, res) => {
   try {
-    const filter = req.query.module ? { module: req.query.module } : { course: req.params.courseId };
+    const courseId = req.params.courseId;
+    const Course = require('../models/Course');
+    const requestedCourse = await Course.findById(courseId);
+    
+    let courseIds = [courseId];
+    if (requestedCourse) {
+      const matchingCourses = await Course.find({
+        title: { $regex: new RegExp(`^${requestedCourse.title.trim()}$`, 'i') }
+      });
+      courseIds = matchingCourses.map(c => c._id);
+    }
+    
+    const filter = req.query.module ? { module: req.query.module } : { course: { $in: courseIds } };
     const subjects = await Subject.find(filter)
       .sort({ order: 1 });
     res.status(200).json({ status: 'success', data: subjects });

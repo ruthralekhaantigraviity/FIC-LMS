@@ -13,15 +13,26 @@ exports.getAllCourses = async (req, res) => {
 
 exports.getCourse = async (req, res) => {
   try {
-    const course = await Course.findById(req.params.id)
-      .populate('instructor', 'name')
-      .populate('subjects');
+    const course = await Course.findById(req.params.id).populate('instructor', 'name');
     
     if (!course) {
       return res.status(404).json({ message: 'Course not found' });
     }
     
-    res.status(200).json({ status: 'success', data: course });
+    // Find all courses with matching case-insensitive title
+    const matchingCourses = await Course.find({
+      title: { $regex: new RegExp(`^${course.title.trim()}$`, 'i') }
+    });
+    const courseIds = matchingCourses.map(c => c._id);
+    
+    // Find all subjects belonging to any of these courses
+    const subjects = await Subject.find({ course: { $in: courseIds } }).sort({ order: 1 });
+    
+    // Attach subjects dynamically
+    const courseObj = course.toObject();
+    courseObj.subjects = subjects;
+    
+    res.status(200).json({ status: 'success', data: courseObj });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

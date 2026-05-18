@@ -153,7 +153,12 @@ exports.getMyEnrolledCourses = async (req, res) => {
     for (const adm of admissions) {
       if (!adm.course) continue;
       
-      const courseSubjects = await Subject.find({ course: adm.course._id });
+      // Find matching courses case-insensitively
+      const matchingCourses = await Course.find({
+        title: { $regex: new RegExp(`^${adm.course.title.trim()}$`, 'i') }
+      });
+      const courseIds = matchingCourses.map(c => c._id);
+      const courseSubjects = await Subject.find({ course: { $in: courseIds } });
       
       courses.push({
         _id: adm.course._id,
@@ -185,7 +190,12 @@ exports.getMyEnrolledCourses = async (req, res) => {
         // Check if already in the list from admissions
         const exists = courses.some(c => c._id.toString() === ec.course._id.toString());
         if (!exists) {
-          const courseSubjects = await Subject.find({ course: ec.course._id });
+          // Find matching courses case-insensitively
+          const matchingCourses = await Course.find({
+            title: { $regex: new RegExp(`^${ec.course.title.trim()}$`, 'i') }
+          });
+          const courseIds = matchingCourses.map(c => c._id);
+          const courseSubjects = await Subject.find({ course: { $in: courseIds } });
           
           courses.push({
             _id: ec.course._id,
