@@ -66,12 +66,16 @@ export default function StudentDashboard() {
         <div className="text-center pt-2">
           <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-3">Welcome {user?.name || "Student"}</h1>
           <div className="flex flex-wrap justify-center gap-2">
-            <span className="px-3 py-1 bg-[#e2e8f0] dark:bg-slate-800 border border-[#cbd5e1] dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded">
-              Reg No: {user?.studentId || "1210411032"}
-            </span>
-            <span className="px-3 py-1 bg-[#22c55e] text-white text-xs font-bold rounded">
-              Branch: {user?.courseDomain || "IT"}
-            </span>
+            {user?.studentId && (
+              <span className="px-3 py-1 bg-[#e2e8f0] dark:bg-slate-800 border border-[#cbd5e1] dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded">
+                Reg No: {user.studentId}
+              </span>
+            )}
+            {user?.courseDomain && (
+              <span className="px-3 py-1 bg-[#22c55e] text-white text-xs font-bold rounded">
+                Branch: {user.courseDomain}
+              </span>
+            )}
             <span className="px-3 py-1 bg-[#3b82f6] text-white text-xs font-bold rounded">
               Designation: Student
             </span>

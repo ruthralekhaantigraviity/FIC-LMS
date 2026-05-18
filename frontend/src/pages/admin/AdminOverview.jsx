@@ -19,47 +19,6 @@ import api from '../../utils/api';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-// Mock Data for demonstration
-const revenueData = [
-  { name: 'Jan', value: 45000 },
-  { name: 'Feb', value: 52000 },
-  { name: 'Mar', value: 48000 },
-  { name: 'Apr', value: 61000 },
-  { name: 'May', value: 55000 },
-  { name: 'Jun', value: 67000 },
-];
-
-const enrollmentData = [
-  { name: 'React Fullstack', students: 120 },
-  { name: 'Data Science', students: 85 },
-  { name: 'UI/UX Design', students: 95 },
-  { name: 'Digital Marketing', students: 60 },
-  { name: 'Cyber Security', students: 45 },
-  { name: 'Cloud Computing', students: 75 },
-  { name: 'Mobile App Dev', students: 55 },
-];
-
-const feeData = [
-  { name: 'Collected', value: 75, color: '#3b82f6' },
-  { name: 'Pending', value: 25, color: '#8b5cf6' },
-];
-
-const enquiryPipeline = [
-  { label: 'New Enquiries', count: 42, color: 'blue' },
-  { label: 'Contacted', count: 28, color: 'purple' },
-  { label: 'Converted', count: 15, color: 'green' },
-  { label: 'Dropped', count: 8, color: 'orange' },
-];
-
-const recentActivities = [
-  { id: 1, type: 'registration', user: 'Rahul Sharma', course: 'React Fullstack', time: '2 mins ago', amount: '₹15,000' },
-  { id: 2, type: 'payment', user: 'Sneha Patil', course: 'UI/UX Design', time: '15 mins ago', amount: '₹12,000' },
-  { id: 3, type: 'enrollment', user: 'Amit Verma', course: 'Data Science', time: '1 hour ago', amount: '₹25,000' },
-  { id: 4, type: 'registration', user: 'Priya Das', course: 'Digital Marketing', time: '3 hours ago', amount: '₹10,000' },
-  { id: 5, type: 'payment', user: 'Kunal Singh', course: 'Cyber Security', time: '5 hours ago', amount: '₹20,000' },
-  { id: 6, type: 'enrollment', user: 'Anjali Gupta', course: 'React Fullstack', time: '1 day ago', amount: '₹15,000' },
-];
-
 const AdminOverview = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -77,6 +36,109 @@ const AdminOverview = () => {
     };
     fetchStats();
   }, []);
+
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  
+  // 1. Dynamic Revenue data from database
+  const revenueData = stats?.monthlyRevenue && stats.monthlyRevenue.length > 0 
+    ? stats.monthlyRevenue.map(item => ({
+        name: months[item._id.month - 1] || `M${item._id.month}`,
+        value: item.revenue || 0
+      }))
+    : [
+        { name: 'Jan', value: 0 },
+        { name: 'Feb', value: 0 },
+        { name: 'Mar', value: 0 },
+        { name: 'Apr', value: 0 },
+        { name: 'May', value: 0 },
+        { name: 'Jun', value: 0 }
+      ];
+
+  // 2. Dynamic Course Enrollment data from database
+  const enrollmentData = stats?.courseEnrollments && stats.courseEnrollments.length > 0
+    ? stats.courseEnrollments.map(item => ({
+        name: item.title || 'Unknown Course',
+        students: item.count || 0
+      }))
+    : [
+        { name: 'No Enrolled Courses', students: 0 }
+      ];
+
+  // 3. Dynamic Fee Collection data
+  const totalPaid = stats?.stats?.totalRevenue || 0;
+  const totalPending = stats?.stats?.pendingFees || 0;
+  const totalFee = totalPaid + totalPending;
+  const collectedPercentage = totalFee > 0 ? Math.round((totalPaid / totalFee) * 100) : 0;
+  const pendingPercentage = totalFee > 0 ? Math.round((totalPending / totalFee) * 100) : 0;
+  
+  const feeData = totalFee > 0 
+    ? [
+        { name: 'Collected', value: collectedPercentage, color: '#3b82f6' },
+        { name: 'Pending', value: pendingPercentage, color: '#8b5cf6' }
+      ]
+    : [
+        { name: 'Collected', value: 100, color: '#3b82f6' },
+        { name: 'Pending', value: 0, color: '#8b5cf6' }
+      ];
+
+  // 4. Dynamic Enquiry Pipeline
+  const pipeline = stats?.pipeline || { new: 0, contacted: 0, converted: 0, dropped: 0 };
+  const enquiryPipeline = [
+    { label: 'New Enquiries', count: pipeline.new || 0, color: 'blue' },
+    { label: 'Contacted', count: pipeline.contacted || 0, color: 'purple' },
+    { label: 'Converted', count: pipeline.converted || 0, color: 'green' },
+    { label: 'Dropped', count: pipeline.dropped || 0, color: 'orange' }
+  ];
+
+  // 5. Dynamic Recent Activities from database
+  const getDynamicActivities = () => {
+    const list = [];
+    if (!stats?.recentActivities) return [];
+    
+    const { students, enrollments, payments } = stats.recentActivities;
+    
+    if (students) {
+      students.forEach((s, idx) => {
+        list.push({
+          id: `student-${s._id || idx}`,
+          user: s.name || 'New User',
+          type: 'registration',
+          course: 'Registered Student Account',
+          time: s.createdAt ? new Date(s.createdAt).toLocaleDateString() : 'Today',
+          amount: '-'
+        });
+      });
+    }
+    
+    if (enrollments) {
+      enrollments.forEach((e, idx) => {
+        list.push({
+          id: `enroll-${e._id || idx}`,
+          user: e.student?.name || 'Student',
+          type: 'enrollment',
+          course: e.course?.title || 'Course Applied',
+          time: e.createdAt ? new Date(e.createdAt).toLocaleDateString() : 'Today',
+          amount: '-'
+        });
+      });
+    }
+    
+    if (payments) {
+      payments.forEach((p, idx) => {
+        list.push({
+          id: `payment-${p._id || idx}`,
+          user: p.student?.name || 'Student',
+          type: 'payment',
+          course: p.course?.title || 'Course Payment',
+          time: p.paidAt || p.createdAt ? new Date(p.paidAt || p.createdAt).toLocaleDateString() : 'Today',
+          amount: p.amount ? `₹${p.amount.toLocaleString()}` : '-'
+        });
+      });
+    }
+    
+    return list.slice(0, 6);
+  };
+  const recentActivities = getDynamicActivities();
 
   const handleGenerateReport = async () => {
     const doc = new jsPDF();
@@ -189,34 +251,34 @@ const AdminOverview = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard 
           title="Total Students" 
-          value={stats?.stats?.totalStudents || "1,284"} 
+          value={stats?.stats?.totalStudents ?? 0} 
           icon={Users} 
           trend="up" 
-          trendValue="+12.5%" 
+          trendValue="" 
           color="blue"
         />
         <StatsCard 
           title="Active Courses" 
-          value={stats?.stats?.activeCourses || "42"} 
+          value={stats?.stats?.activeCourses ?? 0} 
           icon={BookOpen} 
           trend="up" 
-          trendValue="+4.2%" 
+          trendValue="" 
           color="purple"
         />
         <StatsCard 
           title="Total Revenue" 
-          value={stats?.stats?.totalRevenue ? `₹${stats.stats.totalRevenue.toLocaleString()}` : "₹4.82M"} 
+          value={stats?.stats?.totalRevenue ? `₹${stats.stats.totalRevenue.toLocaleString()}` : "₹0"} 
           icon={CreditCard} 
           trend="up" 
-          trendValue="+18.7%" 
+          trendValue="" 
           color="green"
         />
         <StatsCard 
           title="Pending Fees" 
-          value={stats?.stats?.pendingFees ? `₹${stats.stats.pendingFees.toLocaleString()}` : "₹152K"} 
+          value={stats?.stats?.pendingFees ? `₹${stats.stats.pendingFees.toLocaleString()}` : "₹0"} 
           icon={Clock} 
           trend="down" 
-          trendValue="-2.4%" 
+          trendValue="" 
           color="orange"
         />
       </div>
@@ -285,7 +347,7 @@ const AdminOverview = () => {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
-              <p className="text-2xl font-bold text-slate-900 dark:text-white">75%</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white">{collectedPercentage}%</p>
               <p className="text-[10px] text-slate-500 uppercase tracking-wider">Collected</p>
             </div>
           </div>
