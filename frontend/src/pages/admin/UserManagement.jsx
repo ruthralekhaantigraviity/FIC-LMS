@@ -167,7 +167,7 @@ export default function UserManagement() {
               onChange={(e) => setSelectedRole(e.target.value)}
               className="bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-sky-400/50"
             >
-              <option>All Roles</option>
+              <option value="All">All Roles</option>
               <option>Admin</option>
               <option>HR</option>
               <option>Trainer</option>

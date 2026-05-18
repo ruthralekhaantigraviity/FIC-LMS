@@ -35,6 +35,13 @@ const studentSchema = new mongoose.Schema({
       type: String,
       enum: ['active', 'completed', 'dropped'],
       default: 'active'
+    },
+    certificateIssued: {
+      type: Boolean,
+      default: false
+    },
+    certificateDate: {
+      type: Date
     }
   }],
   documents: [{

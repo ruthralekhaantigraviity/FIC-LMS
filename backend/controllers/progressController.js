@@ -45,9 +45,17 @@ exports.markComplete = async (req, res) => {
       const completed = progress.completedSubjects.length;
       const percentage = Math.round((completed / total) * 100);
       
+      const updateData = {
+        'enrolledCourses.$.progress': percentage
+      };
+      
+      if (percentage >= 100) {
+        updateData['enrolledCourses.$.status'] = 'completed';
+      }
+      
       await Student.findOneAndUpdate(
         { user: req.user.id, 'enrolledCourses.course': courseId },
-        { $set: { 'enrolledCourses.$.progress': percentage } }
+        { $set: updateData }
       );
     }
     

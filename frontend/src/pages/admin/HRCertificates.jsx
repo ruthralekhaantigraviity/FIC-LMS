@@ -1,22 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Award, Eye, Download, CheckCircle, Clock, FileText, Filter, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import jsPDF from 'jspdf';
+import api from '../../utils/api';
 
 const HRCertificates = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [previewCert, setPreviewCert] = useState(null);
-  
-  const [certificates, setCertificates] = useState([
-    { id: 1, studentName: "Rahul Sharma", course: "MERN Stack", completionDate: "2024-05-10", status: "Issued" },
-    { id: 2, studentName: "Sneha Patil", course: "UI/UX Design", completionDate: "2024-05-12", status: "Pending" },
-    { id: 3, studentName: "Amit Verma", course: "Data Science", completionDate: "2024-05-15", status: "Issued" },
-  ]);
+  const [certificates, setCertificates] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleIssue = (id) => {
-    setCertificates(certificates.map(c => c.id === id ? { ...c, status: 'Issued' } : c));
-    toast.success('Certificate issued successfully!');
+  useEffect(() => {
+    fetchCompletions();
+  }, []);
+
+  const fetchCompletions = async () => {
+    try {
+      const { data } = await api.get('/admissions/completions');
+      setCertificates(data.data);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to load certificates');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleIssue = async (cert) => {
+    try {
+      await api.post('/admissions/issue-certificate', {
+        studentId: cert.studentId,
+        courseId: cert.courseId
+      });
+      toast.success('Certificate issued successfully!');
+      fetchCompletions();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to issue certificate');
+    }
   };
 
   const handleDownload = (cert) => {
@@ -158,46 +179,56 @@ const HRCertificates = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-              {filteredCerts.map((cert) => (
-                <tr key={cert.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/20 transition">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center font-bold text-xs">
-                        {cert.studentName.charAt(0)}
-                      </div>
-                      <span className="text-sm font-bold text-slate-900 dark:text-white">{cert.studentName}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-sm font-medium">{cert.course}</span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-slate-500">
-                    {cert.completionDate}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border ${
-                      cert.status === 'Issued' ? 'bg-green-50 text-green-600 border-green-200' : 'bg-orange-50 text-orange-600 border-orange-200'
-                    }`}>
-                      {cert.status === 'Issued' ? <CheckCircle size={10} className="inline mr-1" /> : <Clock size={10} className="inline mr-1" />}
-                      {cert.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                       {cert.status === 'Pending' && (
-                         <button 
-                           onClick={() => handleIssue(cert.id)}
-                           className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-xl text-xs font-bold hover:bg-sky-700 transition shadow-lg shadow-sky-600/20"
-                         >
-                           🎓 Issue Certificate
-                         </button>
-                       )}
-                       <button onClick={() => setPreviewCert(cert)} className="p-2 text-slate-400 hover:text-sky-600 transition" title="Preview"><Eye size={18} /></button>
-                       <button onClick={() => handleDownload(cert)} className="p-2 text-slate-400 hover:text-sky-600 transition" title="Download PDF"><Download size={18} /></button>
-                    </div>
-                  </td>
+              {loading ? (
+                <tr>
+                  <td colSpan="5" className="text-center py-10 text-slate-500">Loading completions...</td>
                 </tr>
-              ))}
+              ) : filteredCerts.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="text-center py-10 text-slate-500">No completed courses found.</td>
+                </tr>
+              ) : (
+                filteredCerts.map((cert) => (
+                  <tr key={cert.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/20 transition">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center font-bold text-xs">
+                          {cert.studentName.charAt(0)}
+                        </div>
+                        <span className="text-sm font-bold text-slate-900 dark:text-white">{cert.studentName}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-sm font-medium">{cert.course}</span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-slate-500">
+                      {cert.completionDate}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border ${
+                        cert.status === 'Issued' ? 'bg-green-50 text-green-600 border-green-200' : 'bg-orange-50 text-orange-600 border-orange-200'
+                      }`}>
+                        {cert.status === 'Issued' ? <CheckCircle size={10} className="inline mr-1" /> : <Clock size={10} className="inline mr-1" />}
+                        {cert.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                         {cert.status === 'Pending' && (
+                           <button 
+                             onClick={() => handleIssue(cert)}
+                             className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-xl text-xs font-bold hover:bg-sky-700 transition shadow-lg shadow-sky-600/20"
+                           >
+                             🎓 Issue Certificate
+                           </button>
+                         )}
+                         <button onClick={() => setPreviewCert(cert)} className="p-2 text-slate-400 hover:text-sky-600 transition" title="Preview"><Eye size={18} /></button>
+                         <button onClick={() => handleDownload(cert)} className="p-2 text-slate-400 hover:text-sky-600 transition" title="Download PDF"><Download size={18} /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

@@ -53,15 +53,31 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: 'Please provide email and password' });
     }
 
-    // 2) Check if user exists & password is correct
-    const user = await User.findOne({ email }).select('+password');
+    // Normalize email: trim and lowercase
+    const cleanEmail = email.trim().toLowerCase();
 
-    // EMERGENCY BYPASS: Allow default accounts to login if DB sync is failing
-    const isMasterAdmin = email === 'admin@fic.com' && password === 'admin123';
-    const isMasterHR = email === 'hr@fic.com' && password === 'hr123';
-    const isMasterTrainer = email === 'trainer@fic.com' && password === 'trainer123';
-    const isMasterStudent = email === 'student@fic.com' && password === 'student123';
+    // 2) Check if user exists & password is correct
+    const user = await User.findOne({ email: cleanEmail }).select('+password');
+
+    // EMERGENCY BYPASS: Allow default accounts to login if DB sync is failing or custom passwords used
+    const isMasterAdmin = cleanEmail === 'admin@fic.com' && (password === 'admin123' || password === '123456');
+    const isMasterHR = cleanEmail === 'hr@fic.com' && (password === 'hr123' || password === '123456');
+    const isMasterTrainer = cleanEmail === 'trainer@fic.com' && (password === 'trainer123' || password === '123456');
+    const isMasterStudent = cleanEmail === 'student@fic.com' && (password === 'student123' || password === '123456');
     const isBypass = isMasterAdmin || isMasterHR || isMasterTrainer || isMasterStudent;
+
+    console.log('[LOGIN DIAGNOSTIC] --- START ---');
+    console.log(`[LOGIN DIAGNOSTIC] Input Email: "${email}" -> Cleaned: "${cleanEmail}"`);
+    console.log(`[LOGIN DIAGNOSTIC] Input Password: "${password}" (length: ${password?.length})`);
+    console.log(`[LOGIN DIAGNOSTIC] User found in DB: ${!!user}`);
+    if (user) {
+      console.log(`[LOGIN DIAGNOSTIC] DB User Role: "${user.role}"`);
+      console.log(`[LOGIN DIAGNOSTIC] DB Password Hash: "${user.password}"`);
+      const isCorrect = await user.correctPassword(password, user.password);
+      console.log(`[LOGIN DIAGNOSTIC] correctPassword check result: ${isCorrect}`);
+    }
+    console.log(`[LOGIN DIAGNOSTIC] isBypass: ${isBypass} (isMasterAdmin: ${isMasterAdmin}, isMasterHR: ${isMasterHR}, isMasterTrainer: ${isMasterTrainer}, isMasterStudent: ${isMasterStudent})`);
+    console.log('[LOGIN DIAGNOSTIC] --- END ---');
 
     if (!isBypass && (!user || !(await user.correctPassword(password, user.password)))) {
       return res.status(401).json({ message: 'Incorrect email or password' });
@@ -78,7 +94,7 @@ exports.login = async (req, res) => {
       _id: '6641e1234567890123456789', // Mock ID
       id: '6641e1234567890123456789',
       name: bypassRole === 'admin' ? 'FIC Admin' : bypassRole === 'hr' ? 'FIC HR' : bypassRole === 'trainer' ? 'FIC Trainer' : 'FIC Student',
-      email: email,
+      email: cleanEmail,
       role: bypassRole
     };
 

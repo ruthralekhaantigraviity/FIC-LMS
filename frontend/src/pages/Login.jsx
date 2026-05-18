@@ -145,7 +145,24 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Demo credentials removed */}
+        {/* Quick Demo Access Helper */}
+        <div className="mt-6 bg-white/70 backdrop-blur-md border border-slate-200/60 rounded-[28px] p-5 shadow-xl shadow-slate-200/30 text-center">
+          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2 justify-center">
+            ⚡ Quick Demo Access
+          </h4>
+          <div className="grid grid-cols-2 gap-3 text-left">
+            <div className="p-3 bg-slate-50 border border-slate-100 rounded-2xl hover:border-primary-100 hover:bg-white transition duration-200 group">
+              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Student Dashboard</p>
+              <p className="text-xs font-bold text-slate-800 mt-1 select-all group-hover:text-primary-600 transition">student@fic.com</p>
+              <p className="text-[11px] text-slate-500 font-medium select-all mt-0.5">student123</p>
+            </div>
+            <div className="p-3 bg-slate-50 border border-slate-100 rounded-2xl hover:border-primary-100 hover:bg-white transition duration-200 group">
+              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Admin Dashboard</p>
+              <p className="text-xs font-bold text-slate-800 mt-1 select-all group-hover:text-primary-600 transition">admin@fic.com</p>
+              <p className="text-[11px] text-slate-500 font-medium select-all mt-0.5">admin123</p>
+            </div>
+          </div>
+        </div>
       </motion.div>
     </div>
   );

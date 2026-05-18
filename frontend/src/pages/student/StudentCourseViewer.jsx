@@ -45,6 +45,20 @@ export default function StudentCourseViewer() {
     fetchCourseAndSubjects();
   }, [id]);
 
+  // Automatically default active tab based on active subject's available assets
+  useEffect(() => {
+    const currentSubject = subjects.find(s => s._id === activeSubjectId);
+    if (currentSubject) {
+      if (currentSubject.videoUrl) {
+        setActiveTab("video");
+      } else if (currentSubject.pdfUrl || currentSubject.resources?.length > 0) {
+        setActiveTab("notes");
+      } else {
+        setActiveTab("content");
+      }
+    }
+  }, [activeSubjectId, subjects]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -99,6 +113,17 @@ export default function StudentCourseViewer() {
     return (match && match[2].length === 11)
       ? `https://www.youtube.com/embed/${match[2]}`
       : url;
+  };
+
+  // Function to load external PDFs beautifully without being blocked by X-Frame-Options/CORS
+  const getPdfViewerUrl = (url) => {
+    if (!url) return null;
+    // If it's a local/relative URL or hosted on our own server, load it directly
+    if (url.startsWith('/') || url.includes(window.location.hostname)) {
+      return url;
+    }
+    // Otherwise, use Google Docs Viewer to bypass X-Frame-Options/CORS blocks!
+    return `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
   };
 
   return (
@@ -215,53 +240,112 @@ export default function StudentCourseViewer() {
 
       {/* Main Content Area */}
       <div className="flex-1 bg-white overflow-hidden flex flex-col h-full relative">
-        <div className="flex-1 overflow-y-auto">
-          {activeSubject ? (
-            <>
+        {activeSubject ? (
+          <>
+            {/* Modern Premium Tabs Selector */}
+            <div className="flex border-b border-slate-200 bg-slate-50/50 px-6 py-2.5 gap-2">
               {activeSubject.videoUrl && (
-                <div className="w-full aspect-video bg-slate-900 border-b border-slate-200">
+                <button
+                  onClick={() => setActiveTab("video")}
+                  className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 ${
+                    activeTab === "video"
+                      ? "bg-blue-600 text-white shadow-md shadow-blue-500/10"
+                      : "text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
+                  <MonitorPlay size={14} /> Video Lesson
+                </button>
+              )}
+              
+              {(activeSubject.pdfUrl || activeSubject.resources?.length > 0) && (
+                <button
+                  onClick={() => setActiveTab("notes")}
+                  className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 ${
+                    activeTab === "notes"
+                      ? "bg-blue-600 text-white shadow-md shadow-blue-500/10"
+                      : "text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
+                  <FileText size={14} /> PDF Notes
+                </button>
+              )}
+
+              <button
+                onClick={() => setActiveTab("content")}
+                className={`flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 ${
+                  activeTab === "content"
+                    ? "bg-blue-600 text-white shadow-md shadow-blue-500/10"
+                    : "text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                <FileText size={14} /> Written Guide
+              </button>
+            </div>
+
+            {/* Tab Contents */}
+            <div className="flex-1 overflow-y-auto flex flex-col">
+              {activeTab === "video" && activeSubject.videoUrl && (
+                <div className="w-full flex-1 min-h-[400px] bg-slate-900 flex flex-col items-center justify-center">
                   <iframe
                     src={getEmbedUrl(activeSubject.videoUrl)}
-                    className="w-full h-full border-0"
+                    className="w-full h-full border-0 aspect-video flex-1 max-h-[85vh]"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
                     title={activeSubject.title}
                   ></iframe>
                 </div>
               )}
-              
-              <div className="p-8 lg:p-12 max-w-4xl mx-auto space-y-6 text-slate-800">
-                <div className="flex justify-between items-start border-b border-slate-200 pb-4 mb-6">
-                  <h1 className="text-2xl font-bold text-slate-900">
-                    {activeSubject.title}
-                  </h1>
-                  {activeSubject.resources?.length > 0 && (
-                    <a 
-                      href={activeSubject.resources[0].url} 
-                      target="_blank" 
+
+              {activeTab === "notes" && (
+                <div className="w-full flex-1 min-h-[500px] flex flex-col bg-slate-50">
+                  {/* Inline PDF Action Bar */}
+                  <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-slate-200">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                      <FileText className="text-slate-400" size={16} /> Lesson Study Notes (PDF)
+                    </span>
+                    <a
+                      href={activeSubject.pdfUrl || activeSubject.resources?.[0]?.url}
+                      target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition text-sm"
+                      className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition text-xs shadow-md shadow-blue-500/10 active:scale-95"
                     >
-                      Download Notes
+                      <Download size={14} /> Download PDF File
                     </a>
-                  )}
+                  </div>
+                  <div className="flex-1 p-6 flex flex-col">
+                    <iframe
+                      src={getPdfViewerUrl(activeSubject.pdfUrl || activeSubject.resources?.[0]?.url)}
+                      className="w-full flex-1 rounded-2xl border border-slate-200 shadow-sm bg-white min-h-[500px]"
+                      title="PDF Preview"
+                    ></iframe>
+                  </div>
                 </div>
-                
-                <div className="prose prose-slate max-w-none text-slate-600 text-sm leading-relaxed">
-                  {activeSubject.content?.split('\n').map((paragraph, i) => (
-                    <p key={i} className="mb-4">
-                      {paragraph}
-                    </p>
-                  ))}
+              )}
+
+              {activeTab === "content" && (
+                <div className="p-8 lg:p-12 max-w-4xl mx-auto space-y-6 text-slate-800 flex-1">
+                  <div className="flex justify-between items-start border-b border-slate-200 pb-4 mb-6">
+                    <h1 className="text-2xl font-bold text-slate-900">
+                      {activeSubject.title}
+                    </h1>
+                  </div>
+                  
+                  <div className="prose prose-slate max-w-none text-slate-600 text-sm leading-relaxed">
+                    {activeSubject.content?.split('\n').map((paragraph, i) => (
+                      <p key={i} className="mb-4">
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </>
-          ) : (
-            <div className="flex-1 flex flex-col items-center justify-center h-full p-8 text-center text-slate-500">
-               <p>Select a lesson from the sidebar to start learning.</p>
+              )}
             </div>
-          )}
-        </div>
+          </>
+        ) : (
+          <div className="flex-1 flex flex-col items-center justify-center h-full p-8 text-center text-slate-500">
+            <p>Select a lesson from the sidebar to start learning.</p>
+          </div>
+        )}
 
         {/* Navigation Footer */}
         {activeSubject && (

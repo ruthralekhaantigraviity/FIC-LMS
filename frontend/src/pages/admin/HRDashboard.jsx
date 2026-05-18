@@ -28,11 +28,15 @@ import {
 } from "recharts";
 import toast from "react-hot-toast";
 import api from "../../utils/api";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
 export default function HRDashboard() {
   const [admissions, setAdmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedAdmission, setSelectedAdmission] = useState(null);
   const [reviewNotes, setReviewNotes] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
   useEffect(() => {
     fetchAdmissions();
   }, []);
@@ -44,6 +48,119 @@ export default function HRDashboard() {
       console.error("Error fetching admissions:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGenerateReport = async () => {
+    if (admissions.length === 0) {
+      toast.error("No admissions data available to generate report!");
+      return;
+    }
+    setIsGenerating(true);
+    const toastId = toast.loading("Generating PDF Report...");
+    
+    try {
+      const doc = new jsPDF();
+      
+      // Attempt to load the logo
+      try {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.src = '/logo.jpg';
+        await new Promise((resolve) => {
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            const imgData = canvas.toDataURL('image/jpeg');
+            doc.addImage(imgData, 'JPEG', 14, 12, 12, 12);
+            resolve();
+          };
+          img.onerror = () => resolve(); // Ignore logo on error
+        });
+      } catch (e) {
+        console.warn("Could not load logo for PDF");
+      }
+
+      doc.setFontSize(20);
+      doc.setTextColor(26, 159, 212);
+      doc.text("Forge India Connect - HR Admissions Report", 30, 20);
+      
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+      doc.text("---------------------------------------------------------------------------------------------------", 14, 35);
+
+      // Summary Section
+      doc.setFontSize(14);
+      doc.setTextColor(33);
+      doc.text("Executive Summary", 14, 45);
+
+      const totalAdmissions = admissions.length;
+      const completedAdmissions = admissions.filter(a => a.status === 'completed').length;
+      const pendingAdmissions = admissions.filter(a => a.status === 'pending').length;
+      const rejectedAdmissions = admissions.filter(a => a.status === 'rejected').length;
+
+      autoTable(doc, {
+        startY: 50,
+        head: [["Metric", "Count / Value"]],
+        body: [
+          ["Total Applications Received", totalAdmissions.toString()],
+          ["Approved Admissions", completedAdmissions.toString()],
+          ["Pending Admissions", pendingAdmissions.toString()],
+          ["Rejected Admissions", rejectedAdmissions.toString()]
+        ],
+        theme: 'grid',
+        headStyles: { fillColor: [26, 159, 212] }
+      });
+
+      // Course Wise Summary
+      const courseCounts = {};
+      admissions.forEach(a => {
+        const courseTitle = a.course?.title || 'Unknown Course';
+        courseCounts[courseTitle] = (courseCounts[courseTitle] || 0) + 1;
+      });
+
+      doc.setFontSize(14);
+      doc.setTextColor(33);
+      doc.text("Course-wise Application Distribution", 14, doc.lastAutoTable.finalY + 15);
+
+      autoTable(doc, {
+        startY: doc.lastAutoTable.finalY + 20,
+        head: [["Course Title", "Total Applications"]],
+        body: Object.entries(courseCounts).map(([title, count]) => [title, count.toString()]),
+        theme: 'grid',
+        headStyles: { fillColor: [139, 92, 246] }
+      });
+
+      // List of Applicants Detail Table
+      doc.setFontSize(14);
+      doc.setTextColor(33);
+      doc.text("Detailed Applicants List", 14, doc.lastAutoTable.finalY + 15);
+
+      autoTable(doc, {
+        startY: doc.lastAutoTable.finalY + 20,
+        head: [["Applicant Name", "Email", "Course Name", "Status", "Applied Date"]],
+        body: admissions.map(a => [
+          a.fullName || 'N/A',
+          a.email || 'N/A',
+          a.course?.title || 'N/A',
+          a.status === 'completed' ? 'Approved' : a.status === 'pending' ? 'Pending' : 'Rejected',
+          new Date(a.appliedAt).toLocaleDateString()
+        ]),
+        theme: 'grid',
+        headStyles: { fillColor: [16, 185, 129] }
+      });
+
+      doc.save(`FIC_HR_Admissions_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+      toast.success("HR Report downloaded successfully!", { id: toastId });
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to generate report PDF", { id: toastId });
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -84,8 +201,12 @@ export default function HRDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-           <button className="px-5 py-2.5 bg-sky-600 text-white rounded-2xl font-bold text-sm shadow-lg shadow-sky-600/20 hover:bg-sky-700 transition">
-             Generate Report
+           <button 
+             onClick={handleGenerateReport}
+             disabled={isGenerating}
+             className="px-5 py-2.5 bg-sky-600 text-white rounded-2xl font-bold text-sm shadow-lg shadow-sky-600/20 hover:bg-sky-700 transition disabled:opacity-50"
+           >
+             {isGenerating ? "Generating..." : "Generate Report"}
            </button>
         </div>
       </div>

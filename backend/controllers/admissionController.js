@@ -40,7 +40,25 @@ exports.getAllAdmissions = async (req, res) => {
     const admissions = await Admission.find()
       .populate('student', 'name email')
       .populate('course', 'title');
-    res.status(200).json({ status: 'success', data: admissions });
+      
+    const admissionsWithProgress = await Promise.all(admissions.map(async (adm) => {
+      let progress = 0;
+      if (adm.status === 'completed' && adm.student && adm.course) {
+        const studentProfile = await Student.findOne({ user: adm.student._id });
+        if (studentProfile && studentProfile.enrolledCourses) {
+          const ec = studentProfile.enrolledCourses.find(c => c.course && c.course.toString() === adm.course._id.toString());
+          if (ec) {
+            progress = ec.progress || 0;
+          }
+        }
+      }
+      return {
+        ...adm.toObject(),
+        progress
+      };
+    }));
+
+    res.status(200).json({ status: 'success', data: admissionsWithProgress });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -269,6 +287,100 @@ exports.publicEnroll = async (req, res) => {
       admission
     });
 
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+exports.getCompletedCourses = async (req, res) => {
+  try {
+    const students = await Student.find()
+      .populate('user', 'name email')
+      .populate('enrolledCourses.course', 'title');
+    
+    const completions = [];
+    students.forEach(student => {
+      if (student.enrolledCourses) {
+        student.enrolledCourses.forEach(ec => {
+          if (ec.progress >= 100 || ec.status === 'completed') {
+            completions.push({
+              id: `${student._id}_${ec.course?._id}`,
+              studentId: student._id,
+              studentName: student.user?.name || 'Unknown Student',
+              email: student.user?.email || 'N/A',
+              courseId: ec.course?._id,
+              course: ec.course?.title || 'Unknown Course',
+              completionDate: ec.certificateDate ? new Date(ec.certificateDate).toLocaleDateString() : new Date(ec.enrollmentDate || Date.now()).toLocaleDateString(),
+              status: ec.certificateIssued ? 'Issued' : 'Pending'
+            });
+          }
+        });
+      }
+    });
+    
+    res.status(200).json({ status: 'success', data: completions });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+exports.issueCertificate = async (req, res) => {
+  try {
+    const { studentId, courseId } = req.body;
+    
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ message: 'Student profile not found.' });
+    }
+    
+    let courseFound = false;
+    if (student.enrolledCourses) {
+      student.enrolledCourses.forEach(ec => {
+        if (ec.course && ec.course.toString() === courseId) {
+          ec.certificateIssued = true;
+          ec.certificateDate = Date.now();
+          courseFound = true;
+        }
+      });
+    }
+    
+    if (!courseFound) {
+      return res.status(404).json({ message: 'Enrollment for this course not found on student profile.' });
+    }
+    
+    await student.save();
+    
+    res.status(200).json({ status: 'success', message: 'Certificate issued successfully!' });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+exports.updateAdmission = async (req, res) => {
+  try {
+    const admission = await Admission.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    
+    if (!admission) {
+      return res.status(404).json({ message: 'No enrollment found with that ID' });
+    }
+    
+    // Sync Student profile course enrollment if status is completed
+    if (admission.status === 'completed') {
+      const student = await Student.findOne({ user: admission.student });
+      if (student) {
+        const hasCourse = student.enrolledCourses.some(ec => ec.course && ec.course.toString() === admission.course.toString());
+        if (!hasCourse) {
+          student.enrolledCourses.push({ course: admission.course });
+          await student.save();
+        }
+      }
+    }
+    
+    res.status(200).json({ status: 'success', data: admission });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

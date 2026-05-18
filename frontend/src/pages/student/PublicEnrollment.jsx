@@ -134,19 +134,39 @@ export default function PublicEnrollment() {
                 <p className="text-slate-500 text-lg leading-relaxed max-w-md mx-auto">
                   Thank you for your interest in FIC Learning. Your application has been received and is currently under review by our admissions team.
                 </p>
+                
+                {/* Temporary Credentials Notice */}
+                <div className="p-6 bg-primary-50/80 border border-primary-100/50 rounded-3xl max-w-md mx-auto mt-6 text-left space-y-3 shadow-inner">
+                  <h4 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                    <ShieldCheck className="text-primary-600" size={18} /> Student Login Credentials
+                  </h4>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    A temporary student profile has been provisioned. Use these credentials to sign in and view your progress and courses:
+                  </p>
+                  <div className="space-y-1.5 font-mono text-xs mt-2 pt-2 border-t border-slate-100">
+                    <div className="flex justify-between py-1">
+                      <span className="text-slate-400">Email Address:</span>
+                      <span className="font-bold text-slate-800">{formData.email}</span>
+                    </div>
+                    <div className="flex justify-between py-1">
+                      <span className="text-slate-400">Password:</span>
+                      <span className="font-bold text-primary-600 bg-primary-100/60 px-2 py-0.5 rounded">123456</span>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="pt-6 flex flex-col gap-4">
                 <button 
-                  onClick={() => navigate('/')}
-                  className="w-full py-4 bg-primary-600 text-white font-bold rounded-2xl hover:bg-primary-700 transition shadow-lg shadow-primary-600/20"
+                  onClick={() => navigate('/login')}
+                  className="w-full py-4 bg-primary-600 text-white font-bold rounded-2xl hover:bg-primary-700 transition shadow-lg shadow-primary-600/20 flex items-center justify-center gap-2"
                 >
-                  Return to Home
+                  Go to Login Screen <ArrowRight size={18} />
                 </button>
                 <button 
-                  onClick={() => setIsSuccess(false)}
+                  onClick={() => navigate('/')}
                   className="w-full py-4 bg-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-200 transition"
                 >
-                  Submit Another Application
+                  Return to Home
                 </button>
               </div>
             </motion.div>

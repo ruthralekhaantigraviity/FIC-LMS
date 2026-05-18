@@ -11,6 +11,8 @@ const AdminStudents = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [filterCourse, setFilterCourse] = useState('all');
+  const [filterStatus, setFilterStatus] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
   const [formData, setFormData] = useState({ name: '', email: '', password: '', courseDomain: 'Other', studentStatus: 'active' });
@@ -69,10 +71,13 @@ const AdminStudents = () => {
     }
   };
 
-  const filteredStudents = students.filter(s =>
-    s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredStudents = students.filter(s => {
+    const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCourse = filterCourse === 'all' || s.courseDomain === filterCourse;
+    const matchesStatus = filterStatus === 'all' || (s.studentStatus || 'active').toLowerCase() === filterStatus.toLowerCase();
+    return matchesSearch && matchesCourse && matchesStatus;
+  });
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -103,16 +108,31 @@ const AdminStudents = () => {
               />
             </div>
             <div className="flex items-center gap-2">
-              <select className="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-medium outline-none">
-                 <option>🎯 Filter: Course</option>
-                 <option>MERN Stack</option>
-                 <option>UI/UX Design</option>
+              <select 
+                value={filterCourse}
+                onChange={(e) => setFilterCourse(e.target.value)}
+                className="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-medium outline-none text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-blue-500/50 transition-all"
+              >
+                <option value="all">🎯 Filter: Course (All)</option>
+                <option value="MERN Stack">MERN Stack</option>
+                <option value="Python & Data Science">Python &amp; Data Science</option>
+                <option value="UI/UX Design">UI/UX Design</option>
+                <option value="Digital Marketing">Digital Marketing</option>
+                <option value="Cyber Security">Cyber Security</option>
+                <option value="Cloud Computing">Cloud Computing</option>
+                <option value="Mobile App Development">Mobile App Development</option>
+                <option value="Java Full Stack">Java Full Stack</option>
+                <option value="Other">Other</option>
               </select>
-              <select className="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-medium outline-none">
-                 <option>🎯 Filter: Status</option>
-                 <option>Active</option>
-                 <option>Completed</option>
-                 <option>Dropped</option>
+              <select 
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-medium outline-none text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-blue-500/50 transition-all"
+              >
+                <option value="all">🎯 Filter: Status (All)</option>
+                <option value="active">Active</option>
+                <option value="completed">Completed</option>
+                <option value="dropped">Dropped</option>
               </select>
             </div>
           </div>

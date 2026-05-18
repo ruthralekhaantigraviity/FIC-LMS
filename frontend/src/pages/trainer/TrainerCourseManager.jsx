@@ -267,8 +267,7 @@ export default function TrainerCourseManager() {
                 </div>
               ))}
             </div>
-          )
-
+          )) : null}
       </div>
 
       {/* Add/Edit Modal */}

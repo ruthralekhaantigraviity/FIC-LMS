@@ -10,6 +10,7 @@ const AdminEnrollments = () => {
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
 
   useEffect(() => {
     fetchEnrollments();
@@ -50,9 +51,12 @@ const AdminEnrollments = () => {
   };
 
   const filteredEnrollments = enrollments.filter(
-    (enrollment) =>
-      enrollment.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (enrollment.course?.title || '').toLowerCase().includes(searchQuery.toLowerCase())
+    (enrollment) => {
+      const matchesSearch = enrollment.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (enrollment.course?.title || '').toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesStatus = filterStatus === "all" || enrollment.status === filterStatus;
+      return matchesSearch && matchesStatus;
+    }
   );
 
   const getStatusBadge = (status) => {
@@ -92,9 +96,17 @@ const AdminEnrollments = () => {
             />
           </div>
           <div className="flex items-center gap-3">
-             <button className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-sm font-semibold hover:bg-slate-700 transition-all">
-              <Filter size={16} /> All Statuses
-            </button>
+             <select
+               value={filterStatus}
+               onChange={(e) => setFilterStatus(e.target.value)}
+               className="flex items-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-semibold outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+             >
+               <option value="all">🎯 Filter: Status (All)</option>
+               <option value="completed">Enrolled</option>
+               <option value="pending">Pending</option>
+               <option value="reviewed">Under Review</option>
+               <option value="rejected">Rejected</option>
+             </select>
           </div>
         </div>
 

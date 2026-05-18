@@ -17,6 +17,13 @@ const HREnrollments = () => {
     startDate: new Date().toISOString().split('T')[0]
   });
 
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedEnroll, setSelectedEnroll] = useState(null);
+  const [editFormData, setEditFormData] = useState({
+    courseId: '',
+    startDate: ''
+  });
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -39,7 +46,7 @@ const HREnrollments = () => {
           studentName: adm.student?.name || 'Unknown',
           courseName: adm.course?.title || 'Unknown',
           startDate: new Date(adm.appliedAt).toISOString().split('T')[0],
-          progress: 0 // Progress tracking can be added later
+          progress: adm.progress || 0
         }));
       
       setEnrollments(realEnrollments);
@@ -67,6 +74,46 @@ const HREnrollments = () => {
       fetchData(); // Refresh list
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to enroll student');
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to remove this enrollment?')) {
+      try {
+        await api.delete(`/admissions/${id}`);
+        toast.success('Enrollment removed successfully');
+        fetchData();
+      } catch (err) {
+        toast.error('Failed to remove enrollment');
+      }
+    }
+  };
+
+  const handleOpenEdit = (enroll) => {
+    setSelectedEnroll(enroll);
+    const matchingCourse = courses.find(c => c.title === enroll.courseName);
+    setEditFormData({
+      courseId: matchingCourse ? matchingCourse._id : '',
+      startDate: enroll.startDate
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    if (!editFormData.courseId) {
+      return toast.error('Please select a course');
+    }
+    try {
+      await api.patch(`/admissions/${selectedEnroll.id}`, {
+        course: editFormData.courseId,
+        appliedAt: new Date(editFormData.startDate)
+      });
+      toast.success('Enrollment updated successfully!');
+      setIsEditModalOpen(false);
+      fetchData();
+    } catch (err) {
+      toast.error('Failed to update enrollment');
     }
   };
 
@@ -182,8 +229,20 @@ const HREnrollments = () => {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                       <button className="p-2 text-slate-400 hover:text-sky-600 transition"><Edit2 size={16} /></button>
-                       <button className="p-2 text-slate-400 hover:text-red-600 transition"><Trash2 size={16} /></button>
+                       <button 
+                         onClick={() => handleOpenEdit(enroll)}
+                         className="p-2 text-slate-400 hover:text-sky-600 transition"
+                         title="Edit Enrollment"
+                       >
+                         <Edit2 size={16} />
+                       </button>
+                       <button 
+                         onClick={() => handleDelete(enroll.id)}
+                         className="p-2 text-slate-400 hover:text-red-600 transition"
+                         title="Delete Enrollment"
+                       >
+                         <Trash2 size={16} />
+                       </button>
                     </div>
                   </td>
                 </tr>
@@ -192,6 +251,73 @@ const HREnrollments = () => {
           </table>
         </div>
       </div>
+
+      <AnimatePresence>
+        {isEditModalOpen && selectedEnroll && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+             <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white dark:bg-[#0f172a] rounded-[32px] w-full max-w-lg border border-slate-200 dark:border-slate-800 p-8 shadow-2xl space-y-6"
+             >
+               <div>
+                 <h3 className="text-xl font-bold text-slate-900 dark:text-white">Edit Enrollment</h3>
+                 <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Modify course assignment or starting date for {selectedEnroll.studentName}.</p>
+               </div>
+
+               <form onSubmit={handleUpdate} className="space-y-6">
+                 <div className="space-y-2">
+                   <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Student Name</label>
+                   <input 
+                     type="text"
+                     value={selectedEnroll.studentName}
+                     disabled
+                     className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-500 cursor-not-allowed outline-none"
+                   />
+                 </div>
+
+                 <div className="space-y-2">
+                   <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Select Course</label>
+                   <select 
+                     value={editFormData.courseId}
+                     onChange={(e) => setEditFormData({...editFormData, courseId: e.target.value})}
+                     className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-sky-400/50 text-sm"
+                   >
+                     {courses.map(c => <option key={c._id} value={c._id}>{c.title}</option>)}
+                   </select>
+                 </div>
+
+                 <div className="space-y-2">
+                   <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Start Date</label>
+                   <input 
+                     type="date"
+                     value={editFormData.startDate}
+                     onChange={(e) => setEditFormData({...editFormData, startDate: e.target.value})}
+                     className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-sky-400/50 text-sm"
+                   />
+                 </div>
+
+                 <div className="flex gap-4 pt-4">
+                   <button 
+                     type="button"
+                     onClick={() => setIsEditModalOpen(false)}
+                     className="flex-1 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-sm transition"
+                   >
+                     Cancel
+                   </button>
+                   <button 
+                     type="submit"
+                     className="flex-1 py-3 bg-sky-600 text-white font-bold rounded-xl text-sm shadow-lg shadow-sky-600/20 hover:bg-sky-700 transition"
+                   >
+                     Save Changes
+                   </button>
+                 </div>
+               </form>
+             </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -86,7 +86,7 @@ export default function MyApplications() {
                 <div className="w-full md:w-32 h-20 rounded-2xl overflow-hidden bg-slate-100 flex-shrink-0">
                   {" "}
                   <img
-                    src={app.course?.thumbnail}
+                    src={app.course?.thumbnail || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=300"}
                     alt=""
                     className="w-full h-full object-cover"
                   />{" "}
