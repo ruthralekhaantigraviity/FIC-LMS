@@ -11,6 +11,8 @@ const AdminEnrollments = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [selectedEnrollment, setSelectedEnrollment] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchEnrollments();
@@ -168,7 +170,10 @@ const AdminEnrollments = () => {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button 
-                          onClick={() => toast.success('Application details view coming soon!')}
+                          onClick={() => {
+                            setSelectedEnrollment(enrollment);
+                            setIsModalOpen(true);
+                          }}
                           className="p-2 text-slate-500 hover:text-blue-500 hover:bg-blue-500/10 rounded-lg transition-all" title="View Application"
                         >
                           <Eye size={18} />
@@ -204,6 +209,127 @@ const AdminEnrollments = () => {
           </table>
         </div>
       </div>
+
+      {/* Details View Modal */}
+      {isModalOpen && selectedEnrollment && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-[#0f172a] rounded-[28px] border border-slate-200 dark:border-slate-800 shadow-2xl max-w-2xl w-full overflow-hidden transform transition-all duration-300 animate-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-slate-200 dark:border-slate-800 bg-gradient-to-r from-blue-50 to-indigo-50/30 dark:from-slate-800/20 dark:to-slate-900/20 flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Application Profile</h3>
+                <p className="text-xs text-slate-500 mt-1">Detailed registration information for {selectedEnrollment.fullName}</p>
+              </div>
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all"
+              >
+                <XCircle size={20} />
+              </button>
+            </div>
+            
+            {/* Modal Body */}
+            <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+              {/* Section 1: Personal info */}
+              <div>
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Personal Details</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase">Full Name</p>
+                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-1">{selectedEnrollment.fullName}</p>
+                  </div>
+                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase">Email Address</p>
+                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-1 select-all">{selectedEnrollment.email}</p>
+                  </div>
+                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase">Phone Number</p>
+                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-1">{selectedEnrollment.phoneNumber || 'N/A'}</p>
+                  </div>
+                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase">Date of Birth</p>
+                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-1">
+                      {selectedEnrollment.dateOfBirth ? new Date(selectedEnrollment.dateOfBirth).toLocaleDateString() : 'N/A'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 2: Academic & Career */}
+              <div>
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Academic & Career</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase">Previous Education</p>
+                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-1">{selectedEnrollment.previousEducation || 'N/A'}</p>
+                  </div>
+                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase">Target Domain</p>
+                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-1">{selectedEnrollment.targetDomain || 'N/A'}</p>
+                  </div>
+                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl col-span-2">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase">Course Requested</p>
+                    <p className="text-sm font-bold text-blue-600 dark:text-blue-400 mt-1">{selectedEnrollment.course?.title || 'Unknown Course'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 3: Status & Metadata */}
+              <div>
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Application Status</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl flex items-center justify-between">
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Current Status</p>
+                      {getStatusBadge(selectedEnrollment.status)}
+                    </div>
+                  </div>
+                  <div className="p-3 bg-slate-50 dark:bg-slate-800/40 rounded-xl">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase">Applied On</p>
+                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-1">
+                      {new Date(selectedEnrollment.appliedAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Modal Footer */}
+            <div className="p-6 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/20 flex justify-between items-center">
+              <div className="flex gap-2">
+                {selectedEnrollment.status === 'pending' && (
+                  <>
+                    <button 
+                      onClick={() => {
+                        updateStatus(selectedEnrollment._id, 'completed');
+                        setIsModalOpen(false);
+                      }}
+                      className="flex items-center gap-1.5 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition active:scale-95 shadow-md shadow-emerald-500/10"
+                    >
+                      <CheckCircle size={14} /> Approve & Enroll
+                    </button>
+                    <button 
+                      onClick={() => {
+                        updateStatus(selectedEnrollment._id, 'rejected');
+                        setIsModalOpen(false);
+                      }}
+                      className="flex items-center gap-1.5 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs transition active:scale-95 shadow-md shadow-red-500/10"
+                    >
+                      <XCircle size={14} /> Reject
+                    </button>
+                  </>
+                )}
+              </div>
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="px-5 py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs transition active:scale-95"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
