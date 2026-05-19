@@ -24,7 +24,7 @@ const notificationSchema = new mongoose.Schema({
   },
   onModel: {
     type: String,
-    enum: ['Admission', 'Payment', 'Enquiry']
+    enum: ['Admission', 'Payment', 'Enquiry', 'Ticket']
   },
   readBy: [{
     type: mongoose.Schema.Types.ObjectId,

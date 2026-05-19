@@ -51,6 +51,8 @@ app.use('/api/modules', moduleRoutes);
 app.use('/api/admin-dashboard', adminDashboardRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/enquiries', enquiryRoutes);
+const ticketRoutes = require('./routes/ticketRoutes');
+app.use('/api/tickets', ticketRoutes);
 
 // Basic Route
 app.get('/', (req, res) => {

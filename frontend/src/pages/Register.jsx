@@ -8,6 +8,7 @@ import {
   loginStart,
   loginSuccess,
   loginFailure,
+  registerSuccess,
 } from "../store/slices/authSlice";
 
 export default function Register() {
@@ -34,6 +35,7 @@ export default function Register() {
       );
       // Registration successful, redirect to login
       toast.success(`Account created! Please log in to continue.`);
+      dispatch(registerSuccess());
       navigate("/login");
     } catch (err) {
       const message = err.response?.data?.message || "Registration failed";

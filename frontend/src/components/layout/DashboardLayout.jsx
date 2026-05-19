@@ -79,6 +79,12 @@ export default function DashboardLayout() {
       role: ["hr"] 
     },
     { 
+      name: "Support / Queries", 
+      path: "/dashboard/trainer/support", 
+      icon: MessageSquare, 
+      role: ["trainer"] 
+    },
+    { 
       name: "Enquiries", 
       path: "/dashboard/hr/enquiries", 
       icon: User,
