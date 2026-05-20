@@ -13,21 +13,49 @@ const signToken = (id) => {
 
 exports.submitAdmission = async (req, res) => {
   try {
+    const course = await Course.findById(req.body.course);
+    let initialStatus = 'pending';
+    
+    // Auto-approve if the course is free
+    if (course && (course.price === 0 || !course.price)) {
+      initialStatus = 'completed';
+    }
+
     const admission = await Admission.create({
       ...req.body,
-      student: req.user.id
+      student: req.user.id,
+      status: initialStatus
     });
 
-    // Notify Admin and HR
-    const course = await Course.findById(req.body.course);
-    await Notification.create({
-      title: 'New Enrollment Request',
-      message: `${req.user.name} applied for ${course?.title || 'a course'}`,
-      type: 'enrollment',
-      roles: ['admin', 'hr'],
-      targetId: admission._id,
-      onModel: 'Admission'
-    });
+    if (initialStatus === 'completed') {
+      // Enroll directly
+      let studentRec = await Student.findOne({ user: req.user.id });
+      if (!studentRec) {
+        const studentCount = await Student.countDocuments();
+        const studentIdStr = `FIC${new Date().getFullYear()}${(studentCount + 1).toString().padStart(4, '0')}`;
+        await Student.create({
+          user: req.user.id,
+          studentId: studentIdStr,
+          enrolledCourses: [{ course: req.body.course }]
+        });
+      } else {
+        const isEnrolled = studentRec.enrolledCourses.some(ec => ec.course && ec.course.toString() === req.body.course);
+        if (!isEnrolled) {
+          studentRec.enrolledCourses.push({ course: req.body.course });
+          await studentRec.save();
+        }
+      }
+    } else {
+      // Notify Admin and HR
+      await Notification.create({
+        title: 'New Enrollment Request',
+        message: `${req.user.name} applied for ${course?.title || 'a course'}`,
+        type: 'enrollment',
+        roles: ['admin', 'hr'],
+        targetId: admission._id,
+        onModel: 'Admission'
+      });
+    }
 
     res.status(201).json({ status: 'success', data: admission });
   } catch (err) {
@@ -301,6 +329,13 @@ exports.publicEnroll = async (req, res) => {
       isNewUser = true;
     }
 
+    // Check course price
+    const course = await Course.findById(courseId);
+    let initialStatus = 'pending';
+    if (course && (course.price === 0 || !course.price)) {
+      initialStatus = 'completed';
+    }
+
     // 2. Create Admission
     const admission = await Admission.create({
       student: user._id,
@@ -312,19 +347,38 @@ exports.publicEnroll = async (req, res) => {
       address,
       previousEducation,
       targetDomain,
-      status: 'pending'
+      status: initialStatus
     });
 
-    // Notify Admin and HR
-    const course = await Course.findById(courseId);
-    await Notification.create({
-      title: 'New Enrollment Request',
-      message: `${fullName} applied for ${course?.title || 'a course'}`,
-      type: 'enrollment',
-      roles: ['admin', 'hr'],
-      targetId: admission._id,
-      onModel: 'Admission'
-    });
+    if (initialStatus === 'completed') {
+      // Enroll directly
+      let studentRec = await Student.findOne({ user: user._id });
+      if (!studentRec) {
+        const studentCount = await Student.countDocuments();
+        const studentIdStr = `FIC${new Date().getFullYear()}${(studentCount + 1).toString().padStart(4, '0')}`;
+        await Student.create({
+          user: user._id,
+          studentId: studentIdStr,
+          enrolledCourses: [{ course: courseId }]
+        });
+      } else {
+        const isEnrolled = studentRec.enrolledCourses.some(ec => ec.course && ec.course.toString() === courseId);
+        if (!isEnrolled) {
+          studentRec.enrolledCourses.push({ course: courseId });
+          await studentRec.save();
+        }
+      }
+    } else {
+      // Notify Admin and HR
+      await Notification.create({
+        title: 'New Enrollment Request',
+        message: `${fullName} applied for ${course?.title || 'a course'}`,
+        type: 'enrollment',
+        roles: ['admin', 'hr'],
+        targetId: admission._id,
+        onModel: 'Admission'
+      });
+    }
 
     // 3. Generate Token
     const token = signToken(user._id);
