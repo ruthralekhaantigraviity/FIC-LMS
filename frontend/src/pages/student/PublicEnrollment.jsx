@@ -56,11 +56,22 @@ export default function PublicEnrollment() {
       // 1. Register User & Submit Admission in one go
       const response = await api.post("/admissions/public-enroll", formData);
       
+      // If the course is free, the admission is auto-completed
+      if (response.data?.admission?.status === 'completed') {
+        dispatch(loginSuccess({
+          token: response.data.token,
+          user: response.data.user
+        }));
+        toast.success("Enrollment successful! Welcome to your dashboard.");
+        navigate('/dashboard/student');
+        return;
+      }
+
       if (response.data?.isNewUser) {
         setIsNewUser(true);
       }
       
-      // Enrollment & account creation successful
+      // Enrollment & account creation successful for paid course (pending)
       setIsSuccess(true);
       toast.success("Application submitted successfully!");
     } catch (err) {

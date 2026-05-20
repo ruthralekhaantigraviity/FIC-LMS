@@ -60,12 +60,18 @@ export default function AdmissionForm() {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      await api.post(
+      const response = await api.post(
         "/admissions/apply",
         { ...formData, course: selectedCourseId }
       );
-      alert("Application submitted successfully!");
-      navigate("/dashboard/student/applications");
+      
+      if (response.data?.data?.status === 'completed') {
+        alert("Enrollment successful! You have been auto-enrolled since this is a free course.");
+        navigate("/dashboard/student");
+      } else {
+        alert("Application submitted successfully! Awaiting verification.");
+        navigate("/dashboard/student/applications");
+      }
     } catch (err) {
       alert(err.response?.data?.message || "Error submitting application");
     } finally {
