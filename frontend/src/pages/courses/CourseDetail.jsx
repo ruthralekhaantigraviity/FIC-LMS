@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   PlayCircle,
@@ -13,63 +13,19 @@ import {
   Smartphone
 } from "lucide-react";
 import api from "../../utils/api";
-import toast from "react-hot-toast";
 export default function CourseDetail() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeSubject, setActiveSubject] = useState(null);
-  const [enrolling, setEnrolling] = useState(false);
 
   const userStr = localStorage.getItem("user");
   const user = userStr ? JSON.parse(userStr) : null;
   const token = localStorage.getItem("token");
 
-  const handleEnrollClick = async (e) => {
-    e.preventDefault();
-    
-    // If not logged in or not a student, go to public enrollment
-    if (!token || user?.role !== "student") {
-      navigate(`/enroll?courseId=${id}`);
-      return;
-    }
-
-    // If logged in and course is free, enroll directly
-    if (course.price === 0 || !course.price) {
-      setEnrolling(true);
-      try {
-        const response = await api.post("/admissions/apply", {
-          course: id,
-          // Sending dummy data to pass validation since it's a free auto-enrollment
-          fullName: user.name || "Student",
-          email: user.email || "student@example.com",
-          phoneNumber: "0000000000",
-          dateOfBirth: "2000-01-01",
-          address: "Auto Enrolled",
-          previousEducation: "Auto Enrolled",
-          targetDomain: course.category || "Auto Enrolled"
-        });
-        
-        if (response.data?.data?.status === 'completed') {
-           toast.success("Enrollment successful! You have been auto-enrolled.");
-           navigate("/dashboard/student");
-        } else {
-           toast.error("Auto-enrollment failed, please apply manually.");
-           navigate(`/dashboard/student/apply/${id}`);
-        }
-      } catch (err) {
-         toast.error(err.response?.data?.message || "Failed to enroll");
-         navigate(`/dashboard/student/apply/${id}`);
-      } finally {
-         setEnrolling(false);
-      }
-      return;
-    }
-
-    // If logged in and course is paid, go to admission form
-    navigate(`/dashboard/student/apply/${id}`);
-  };
+  const enrollLink = (token && user?.role === "student")
+    ? `/dashboard/student/apply/${id}`
+    : `/enroll?courseId=${id}`;
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -233,17 +189,12 @@ export default function CourseDetail() {
                 Lifetime access to all materials
               </p>{" "}
             </div>{" "}
-            <button
-              onClick={handleEnrollClick}
-              disabled={enrolling}
-              className={`w-full py-4 font-bold rounded-2xl transition shadow-lg shadow-primary-600/30 flex items-center justify-center ${
-                enrolling 
-                  ? "bg-primary-400 text-white cursor-not-allowed"
-                  : "bg-primary-600 text-white hover:bg-primary-700 active:scale-95"
-              } mb-4`}
+            <Link
+              to={enrollLink}
+              className="w-full py-4 bg-primary-600 text-white font-bold rounded-2xl hover:bg-primary-700 transition shadow-lg shadow-primary-600/30 active:scale-95 mb-4 flex items-center justify-center"
             >
-              {enrolling ? "Enrolling..." : "Enroll Now"}
-            </button>
+              Enroll Now
+            </Link>
 
             <div className="mt-8 space-y-4">
               {" "}
