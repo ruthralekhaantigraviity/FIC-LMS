@@ -261,13 +261,6 @@ const AdminStudents = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Fees Details</label>
-                    <input type="text" value={formData.fees} onChange={e => setFormData({ ...formData, fees: e.target.value })}
-                      className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
-                      placeholder="e.g. 5000 (Paid)"
-                    />
-                  </div>
-                  <div>
                     <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Course Domain</label>
                     <select value={formData.courseDomain} onChange={e => setFormData({ ...formData, courseDomain: e.target.value })}
                       className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
