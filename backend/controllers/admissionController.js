@@ -273,6 +273,7 @@ exports.publicEnroll = async (req, res) => {
 
     // 1. Get or Create User
     let user = await User.findOne({ email });
+    let isNewUser = false;
     if (!user) {
       user = await User.create({
         name: fullName,
@@ -280,6 +281,7 @@ exports.publicEnroll = async (req, res) => {
         password: password || '123456', // Default password since it's removed from UI
         role: 'student'
       });
+      isNewUser = true;
     }
 
     // 2. Create Admission
@@ -313,6 +315,7 @@ exports.publicEnroll = async (req, res) => {
     res.status(201).json({
       status: 'success',
       token,
+      isNewUser,
       user: {
         id: user._id,
         name: user.name,
