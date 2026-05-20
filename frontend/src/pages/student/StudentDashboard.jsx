@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { 
   User, Shield, CheckCircle, MonitorPlay, 
   Clock, PlayCircle, Loader2, FileText,
-  Ticket, MessageSquare, Send, X, ChevronRight
+  Ticket, MessageSquare, Send, X, ChevronRight, Star
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import api from "../../utils/api";
@@ -25,6 +25,17 @@ export default function StudentDashboard() {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [replyText, setReplyText] = useState("");
   const [submittingTicket, setSubmittingTicket] = useState(false);
+
+  // Review States
+  const [trainers, setTrainers] = useState([]);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [reviewForm, setReviewForm] = useState({
+    trainerId: "",
+    stars: 5,
+    comment: "",
+    course: user?.courseDomain || "MERN Stack"
+  });
 
   const fetchDashboardData = async () => {
     try {
@@ -49,6 +60,42 @@ export default function StudentDashboard() {
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  const fetchTrainers = async () => {
+    try {
+      const { data } = await api.get("/reviews/trainers");
+      setTrainers(data.data);
+      if (data.data.length > 0 && !reviewForm.trainerId) {
+        setReviewForm(prev => ({ ...prev, trainerId: data.data[0]._id }));
+      }
+    } catch (err) {
+      console.error("Error fetching trainers:", err);
+    }
+  };
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!reviewForm.trainerId || !reviewForm.comment.trim()) {
+      toast.error("Please select a trainer and write a comment.");
+      return;
+    }
+    setSubmittingReview(true);
+    try {
+      await api.post("/reviews", reviewForm);
+      toast.success("Thank you for your feedback! Review submitted.");
+      setShowReviewModal(false);
+      setReviewForm({
+        trainerId: trainers[0]?._id || "",
+        stars: 5,
+        comment: "",
+        course: user?.courseDomain || "MERN Stack"
+      });
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to submit review");
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
 
   const handleRaiseTicket = async (e) => {
     e.preventDefault();
@@ -168,6 +215,22 @@ export default function StudentDashboard() {
               >
                 <Ticket size={18} />
                 Ask Queries & Doubts (Ticket)
+              </button>
+
+              {/* Rate & Review Trainer Button */}
+              <button
+                onClick={() => {
+                  setShowReviewModal(true);
+                  fetchTrainers();
+                }}
+                style={{ 
+                  background: 'linear-gradient(135deg, #10B981, #059669)',
+                  boxShadow: '0 8px 20px -4px rgba(16, 185, 129, 0.4)'
+                }}
+                className="w-full py-3.5 px-6 text-white font-bold rounded-2xl hover:brightness-110 transition active:scale-[0.98] flex items-center justify-center gap-2 mt-3"
+              >
+                <Star size={18} fill="white" />
+                Rate & Review Trainer
               </button>
 
               {/* Show Latest Reply Preview inside profile dropdown */}
@@ -472,6 +535,97 @@ export default function StudentDashboard() {
                 )}
               </div>
             </div>
+          </div>
+        </div>
+      )}
+      {/* Rate & Review Trainer Modal */}
+      {showReviewModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowReviewModal(false)} />
+          <div className="relative w-full max-w-md bg-white dark:bg-[#0f172a] rounded-[32px] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden animate-scaleIn">
+            <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <Star className="text-emerald-500" fill="currentColor" />
+                Rate & Review Your Trainer
+              </h3>
+              <button onClick={() => setShowReviewModal(false)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleReviewSubmit} className="p-6 space-y-4">
+              {/* Trainer Select Dropdown */}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wider">Select Trainer</label>
+                <select
+                  value={reviewForm.trainerId}
+                  onChange={(e) => setReviewForm(prev => ({ ...prev, trainerId: e.target.value }))}
+                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs outline-none text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-emerald-400/50"
+                >
+                  {trainers.length === 0 ? (
+                    <option value="" disabled>No active trainers found</option>
+                  ) : (
+                    trainers.map((t) => (
+                      <option key={t._id} value={t._id}>
+                        {t.name} ({t.courseDomain || "Trainer"})
+                      </option>
+                    ))
+                  )}
+                </select>
+              </div>
+
+              {/* Course Domain Selection */}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wider">Course / Domain</label>
+                <input
+                  type="text"
+                  value={reviewForm.course}
+                  onChange={(e) => setReviewForm(prev => ({ ...prev, course: e.target.value }))}
+                  placeholder="e.g. MERN Stack"
+                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs outline-none text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-emerald-400/50"
+                />
+              </div>
+
+              {/* Star Rating Selection */}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-2.5 uppercase tracking-wider">Rating (1 to 5 Stars)</label>
+                <div className="flex gap-2 justify-center py-2 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800">
+                  {[1, 2, 3, 4, 5].map((val) => (
+                    <button
+                      key={val}
+                      type="button"
+                      onClick={() => setReviewForm(prev => ({ ...prev, stars: val }))}
+                      className="transition transform hover:scale-125 hover:brightness-110"
+                    >
+                      <Star
+                        size={28}
+                        className={reviewForm.stars >= val ? "text-amber-400 fill-amber-400 animate-pulse" : "text-slate-300 dark:text-slate-600"}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Comment Textarea */}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wider">Your Review Feedback</label>
+                <textarea
+                  value={reviewForm.comment}
+                  onChange={(e) => setReviewForm(prev => ({ ...prev, comment: e.target.value }))}
+                  placeholder="Share your learning experience and feedback about this trainer..."
+                  className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs h-28 outline-none focus:ring-2 focus:ring-emerald-400/50 resize-none text-slate-800 dark:text-slate-100"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={submittingReview}
+                style={{ background: 'linear-gradient(135deg, #10B981, #059669)' }}
+                className="w-full py-3.5 text-white font-bold rounded-2xl hover:brightness-110 transition active:scale-[0.98] disabled:opacity-50 text-xs flex items-center justify-center gap-2 mt-2"
+              >
+                {submittingReview ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />} Submit Review
+              </button>
+            </form>
           </div>
         </div>
       )}

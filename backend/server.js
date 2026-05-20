@@ -53,6 +53,8 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/enquiries', enquiryRoutes);
 const ticketRoutes = require('./routes/ticketRoutes');
 app.use('/api/tickets', ticketRoutes);
+const reviewRoutes = require('./routes/reviewRoutes');
+app.use('/api/reviews', reviewRoutes);
 
 // Basic Route
 app.get('/', (req, res) => {

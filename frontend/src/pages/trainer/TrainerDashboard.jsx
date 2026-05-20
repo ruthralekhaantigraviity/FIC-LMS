@@ -247,30 +247,6 @@ export default function TrainerDashboard() {
             </div>
           </div>
         </div>
-
-        {/* Latest Achievements */}
-        <div className="bg-white dark:bg-[#1e293b] p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Latest Achievements</h2>
-            <button className="text-xs font-bold text-sky-500 hover:underline">View Badge Gallery</button>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              { label: "Top Instructor", date: "May 2024", icon: Award, color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-500/10" },
-              { label: "1000+ Students", date: "April 2024", icon: Users, color: "text-sky-500", bg: "bg-sky-50 dark:bg-sky-500/10" },
-              { label: "High Rating", date: "March 2024", icon: Star, color: "text-emerald-500", bg: "bg-emerald-50 dark:bg-emerald-500/10" },
-              { label: "Course Master", date: "Feb 2024", icon: BookOpen, color: "text-purple-500", bg: "bg-purple-50 dark:bg-purple-500/10" },
-            ].map((badge, i) => (
-              <div key={i} className="flex flex-col items-center text-center p-4 bg-slate-50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-700">
-                <div className={`${badge.bg} ${badge.color} w-12 h-12 rounded-2xl flex items-center justify-center mb-3`}>
-                  <badge.icon size={24} />
-                </div>
-                <p className="text-sm font-bold text-slate-900 dark:text-white">{badge.label}</p>
-                <p className="text-[10px] text-slate-500 font-medium mt-1">{badge.date}</p>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
 
       {/* Right Sidebar */}

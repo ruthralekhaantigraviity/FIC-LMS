@@ -103,12 +103,6 @@ export default function DashboardLayout() {
       role: ["trainer"]
     },
     {
-      name: "Latest Achievements",
-      path: "/dashboard/achievements",
-      icon: Award,
-      role: ["trainer"]
-    },
-    {
       name: "Certifications",
       path: "/dashboard/student/certificates",
       icon: Award,
