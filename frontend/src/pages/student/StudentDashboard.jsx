@@ -59,6 +59,7 @@ export default function StudentDashboard() {
 
   useEffect(() => {
     fetchDashboardData();
+    fetchTrainers();
   }, []);
 
   const fetchTrainers = async () => {
@@ -70,6 +71,7 @@ export default function StudentDashboard() {
       }
     } catch (err) {
       console.error("Error fetching trainers:", err);
+      toast.error("Failed to load trainers list: " + (err.response?.data?.message || err.message));
     }
   };
 
@@ -173,7 +175,6 @@ export default function StudentDashboard() {
           <button onClick={() => setIsProfileExpanded(!isProfileExpanded)} className="hover:underline">
             {isProfileExpanded ? "Hide Profile Options" : "View Profile Options"}
           </button>
-          <button className="hover:underline">Update Profile Image</button>
         </div>
 
         {/* Profile Dropdown / Expanded Area */}

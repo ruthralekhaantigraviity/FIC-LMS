@@ -73,7 +73,7 @@ exports.getTrainerReviews = async (req, res) => {
 // GET /api/reviews/trainers - Get list of trainers (names and ids)
 exports.getTrainersList = async (req, res) => {
   try {
-    const trainers = await User.find({ role: 'trainer', isActive: true }, 'name email courseDomain');
+    const trainers = await User.find({ role: 'trainer' }, 'name email courseDomain');
     res.status(200).json({ success: true, data: trainers });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
