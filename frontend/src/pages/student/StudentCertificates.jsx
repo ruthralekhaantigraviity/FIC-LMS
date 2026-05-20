@@ -168,53 +168,12 @@ const StudentCertificates = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h1 className="text-4xl font-black text-slate-900 dark:text-white font-display tracking-tight">My Achievements</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage your professional certifications and domain credentials.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage and view your course completion certificates.</p>
         </div>
       </div>
 
-      {/* Domain Enrollment Certification Section */}
-      <section className="space-y-6">
-        <div className="flex items-center gap-3">
-           <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-600/20">
-              <Award size={20} />
-           </div>
-           <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Domain Credentials</h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-           {courses.map((course) => (
-             <motion.div
-               key={`enroll-${course._id}`}
-               initial={{ opacity: 0, y: 20 }}
-               animate={{ opacity: 1, y: 0 }}
-               className="bg-white dark:bg-[#0f172a] rounded-[32px] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl shadow-slate-200/20 group relative"
-             >
-                <div className="absolute top-0 right-0 p-4">
-                   <div className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-widest border border-blue-100">
-                      ACTIVE
-                   </div>
-                </div>
-                <div className="p-8">
-                   <div className="w-14 h-14 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                      <BookOpen size={28} className="text-blue-600" />
-                   </div>
-                   <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{course.title}</h3>
-                   <p className="text-sm text-slate-500 mb-8">Professional training and internship domain certification.</p>
-                   
-                   <button 
-                     onClick={() => handleDownload(course)}
-                     className="w-full py-4 bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-bold rounded-2xl hover:opacity-90 transition shadow-xl flex items-center justify-center gap-2 uppercase text-xs tracking-widest"
-                   >
-                      <Download size={16} /> Domain Certificate
-                   </button>
-                </div>
-             </motion.div>
-           ))}
-        </div>
-      </section>
-
       {/* Course Completion Certificates Section */}
-      <section className="space-y-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+      <section className="space-y-6">
         <div className="flex items-center gap-3">
            <div className="w-10 h-10 rounded-xl bg-green-600 text-white flex items-center justify-center shadow-lg shadow-green-600/20">
               <CheckCircle size={20} />
