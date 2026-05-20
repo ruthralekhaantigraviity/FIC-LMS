@@ -29,6 +29,7 @@ import {
 import { logout } from "../../store/slices/authSlice";
 import { setTheme } from "../../store/slices/uiSlice";
 import api from "../../utils/api";
+import toast from "react-hot-toast";
 
 const BRAND = "#1A9FD4";
 
