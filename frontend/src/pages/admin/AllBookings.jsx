@@ -11,7 +11,8 @@ import {
   Edit2,
   BookOpen,
   CreditCard,
-  IndianRupee
+  IndianRupee,
+  User
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../utils/api';
@@ -272,7 +273,7 @@ export default function AllBookings() {
                     <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Applicant Information</h4>
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 text-slate-600">
-                        <UserIcon size={16} />
+                        <User size={16} />
                         <span className="text-sm font-medium">{selectedAdmission.fullName || selectedAdmission.student?.name}</span>
                       </div>
                       <div className="flex items-center gap-3 text-slate-600">
