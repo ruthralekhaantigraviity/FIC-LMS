@@ -12,6 +12,12 @@ export default function AdminSettings() {
   const { user } = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState('profile');
+  const [notificationPrefs, setNotificationPrefs] = useState({
+    newEnrollments: true,
+    paymentAlerts: true,
+    systemAlerts: true,
+    dailyReports: false
+  });
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -230,18 +236,25 @@ export default function AdminSettings() {
                 </div>
                 <div className="p-8 space-y-6">
                   {[
-                    { title: "New Enrollments", desc: "Get notified when a new student enrolls." },
-                    { title: "Payment Alerts", desc: "Notifications for successful or failed payments." },
-                    { title: "System Alerts", desc: "Critical system and security notifications." },
-                    { title: "Daily Reports", desc: "Receive a summary of daily activities." }
+                    { key: "newEnrollments", title: "New Enrollments", desc: "Get notified when a new student enrolls." },
+                    { key: "paymentAlerts", title: "Payment Alerts", desc: "Notifications for successful or failed payments." },
+                    { key: "systemAlerts", title: "System Alerts", desc: "Critical system and security notifications." },
+                    { key: "dailyReports", title: "Daily Reports", desc: "Receive a summary of daily activities." }
                   ].map((item, i) => (
                     <div key={i} className="flex items-center justify-between py-3 border-b border-slate-200 dark:border-slate-800/50 last:border-0">
                       <div>
                         <h4 className="font-bold text-slate-600 dark:text-slate-300">{item.title}</h4>
                         <p className="text-sm text-slate-500 mt-1">{item.desc}</p>
                       </div>
-                      <div className="w-12 h-6 bg-blue-600 rounded-full relative cursor-pointer shadow-inner shadow-black/20">
-                        <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm dark:shadow-none"></div>
+                      <div 
+                        onClick={() => setNotificationPrefs(prev => ({ ...prev, [item.key]: !prev[item.key] }))}
+                        className={`w-12 h-6 rounded-full relative cursor-pointer transition-colors duration-200 shadow-inner ${
+                          notificationPrefs[item.key] ? "bg-blue-600" : "bg-slate-300 dark:bg-slate-700"
+                        }`}
+                      >
+                        <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all duration-200 ${
+                          notificationPrefs[item.key] ? "right-1" : "left-1"
+                        }`}></div>
                       </div>
                     </div>
                   ))}
