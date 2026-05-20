@@ -17,7 +17,8 @@ export default function Reviews() {
       setReviews(data.data);
     } catch (err) {
       console.error('Error fetching reviews:', err);
-      toast.error('Failed to load reviews.');
+      const errMsg = err.response?.data?.message || err.message || 'Failed to load reviews.';
+      toast.error(`Failed to load reviews: ${errMsg}`);
     } finally {
       setLoading(false);
     }

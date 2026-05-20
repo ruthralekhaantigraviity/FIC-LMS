@@ -223,7 +223,12 @@ export default function TrainerDashboard() {
           <div className="bg-white dark:bg-[#1e293b] p-8 rounded-[32px] border border-slate-200 dark:border-slate-800 shadow-sm">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Recent Reviews</h2>
-              <button className="text-xs font-bold text-sky-500 hover:underline">View All</button>
+              <button 
+                onClick={() => navigate('/dashboard/reviews')}
+                className="text-xs font-bold text-sky-500 hover:underline"
+              >
+                View All
+              </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[

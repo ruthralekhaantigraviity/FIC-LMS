@@ -16,7 +16,7 @@ exports.createReview = async (req, res) => {
     }
 
     const review = await Review.create({
-      student: req.user._id,
+      student: req.user._id || req.user.id,
       trainer: trainerId,
       stars,
       comment,
@@ -32,7 +32,7 @@ exports.createReview = async (req, res) => {
 // GET /api/reviews/my-reviews - Student fetches reviews they gave
 exports.getStudentReviews = async (req, res) => {
   try {
-    const reviews = await Review.find({ student: req.user._id })
+    const reviews = await Review.find({ student: req.user._id || req.user.id })
       .populate('trainer', 'name email')
       .sort({ createdAt: -1 });
     res.status(200).json({ success: true, data: reviews });
@@ -44,18 +44,28 @@ exports.getStudentReviews = async (req, res) => {
 // GET /api/reviews/trainer-reviews - Trainer/Admin fetches reviews
 exports.getTrainerReviews = async (req, res) => {
   try {
+    console.log('[getTrainerReviews] User details from request:', {
+      id: req.user?._id || req.user?.id,
+      email: req.user?.email,
+      role: req.user?.role
+    });
+
     let query = {};
     if (req.user.role === 'trainer') {
-      query = { trainer: req.user._id };
+      query = { trainer: req.user._id || req.user.id };
     }
     
+    console.log('[getTrainerReviews] Built Query:', query);
+
     const reviews = await Review.find(query)
       .populate('student', 'name email courseDomain')
       .populate('trainer', 'name email')
       .sort({ createdAt: -1 });
 
+    console.log(`[getTrainerReviews] Query succeeded, found ${reviews.length} reviews`);
     res.status(200).json({ success: true, data: reviews });
   } catch (err) {
+    console.error('[getTrainerReviews] ERROR fetching reviews:', err);
     res.status(500).json({ success: false, message: err.message });
   }
 };
