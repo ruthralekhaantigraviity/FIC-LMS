@@ -66,10 +66,10 @@ exports.getAllAdmissions = async (req, res) => {
 
 exports.updateAdmissionStatus = async (req, res) => {
   try {
-    const { status, reviewNotes } = req.body;
+    const { status, reviewNotes, feesDetails } = req.body;
     const admission = await Admission.findByIdAndUpdate(
       req.params.id, 
-      { status, reviewNotes, reviewedBy: req.user.id },
+      { status, reviewNotes, feesDetails, reviewedBy: req.user.id },
       { new: true }
     );
 

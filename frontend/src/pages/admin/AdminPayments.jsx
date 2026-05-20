@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Search, CheckCircle, Clock, XCircle, FileText, 
-  Download, IndianRupee, Filter
+  Download, IndianRupee, Filter, Eye
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../utils/api';
@@ -11,29 +11,35 @@ const AdminPayments = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
   useEffect(() => {
     fetchPayments();
   }, []);
 
   const fetchPayments = async () => {
-    // For now we'll mock the data if the endpoint isn't ready
     try {
-      // Uncomment when endpoint is ready
-      // const { data } = await api.get('/payments');
-      // setPayments(data.data);
+      const { data } = await api.get('/admissions/all');
       
-      // Mock data
-      setTimeout(() => {
-        setPayments([
-          { _id: '1', student: { name: 'Rahul Sharma' }, course: { title: 'React Fullstack' }, amount: 15000, status: 'completed', paidAt: new Date(), transactionId: 'TXN123456' },
-          { _id: '2', student: { name: 'Sneha Patil' }, course: { title: 'UI/UX Design' }, amount: 12000, status: 'pending', createdAt: new Date() },
-          { _id: '3', student: { name: 'Amit Verma' }, course: { title: 'Data Science' }, amount: 25000, status: 'completed', paidAt: new Date(Date.now() - 86400000), transactionId: 'TXN789012' },
-          { _id: '4', student: { name: 'Priya Das' }, course: { title: 'Digital Marketing' }, amount: 10000, status: 'failed', createdAt: new Date(Date.now() - 172800000) },
-        ]);
-        setLoading(false);
-      }, 500);
-      
+      const formattedPayments = data.data
+        .filter(app => app.feesDetails && typeof app.feesDetails === 'object' && app.feesDetails.totalAmount)
+        .map(app => {
+          const isFullyPaid = Number(app.feesDetails.amountPaid) >= Number(app.feesDetails.totalAmount);
+          return {
+            _id: app._id,
+            student: { name: app.fullName || app.student?.name || 'Unknown' },
+            course: { title: app.course?.title || 'Unknown Course' },
+            amount: Number(app.feesDetails.amountPaid) || 0,
+            totalAmount: Number(app.feesDetails.totalAmount) || 0,
+            status: isFullyPaid ? 'completed' : 'pending',
+            paidAt: app.updatedAt,
+            transactionId: app.feesDetails.paymentMethod ? `VIA-${app.feesDetails.paymentMethod.toUpperCase()}` : 'N/A'
+          };
+        });
+        
+      setPayments(formattedPayments);
+      setLoading(false);
     } catch (err) {
       console.error("Error fetching payments:", err);
       toast.error("Failed to load payments");
@@ -241,7 +247,7 @@ const AdminPayments = () => {
                 <th className="px-6 py-4">Amount</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Date</th>
-                <th className="px-6 py-4 text-right">Receipt</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
@@ -273,9 +279,14 @@ const AdminPayments = () => {
                       <p className="text-sm font-bold text-slate-900 dark:text-white">{payment.student?.name}</p>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-1 font-bold text-slate-900 dark:text-white">
-                        <IndianRupee size={14} className="text-slate-500" />
-                        {payment.amount?.toLocaleString()}
+                      <div className="flex flex-col">
+                        <div className="flex items-center gap-1 font-bold text-emerald-600">
+                          <IndianRupee size={12} className="text-emerald-500" />
+                          {payment.amount?.toLocaleString()} <span className="text-[10px] text-emerald-500 font-normal">Paid</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-[11px] text-slate-500 font-medium mt-0.5">
+                          Total: <IndianRupee size={10} />{payment.totalAmount?.toLocaleString()}
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -285,13 +296,24 @@ const AdminPayments = () => {
                       {new Date(payment.paidAt || payment.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      {payment.status === 'completed' ? (
-                        <button 
-                          onClick={() => handleDownloadReceipt(payment)}
-                          className="p-2 text-slate-500 hover:text-blue-500 hover:bg-blue-500/10 rounded-lg transition-all" title="Download Receipt"
-                        >
-                          <Download size={18} />
-                        </button>
+                      {payment.amount > 0 ? (
+                        <div className="flex items-center justify-end gap-2">
+                          <button 
+                            onClick={() => {
+                              setSelectedPayment(payment);
+                              setIsViewModalOpen(true);
+                            }}
+                            className="p-2 text-slate-500 hover:text-blue-500 hover:bg-blue-500/10 rounded-lg transition-all" title="View Details"
+                          >
+                            <Eye size={18} />
+                          </button>
+                          <button 
+                            onClick={() => handleDownloadReceipt(payment)}
+                            className="p-2 text-slate-500 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-lg transition-all" title="Download Receipt"
+                          >
+                            <Download size={18} />
+                          </button>
+                        </div>
                       ) : (
                         <span className="text-slate-600 text-xs">-</span>
                       )}
@@ -303,6 +325,66 @@ const AdminPayments = () => {
           </table>
         </div>
       </div>
+
+      {/* View Payment Modal */}
+      {isViewModalOpen && selectedPayment && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsViewModalOpen(false)} />
+          <div className="relative w-full max-w-md bg-white dark:bg-[#1e293b] rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">Transaction Details</h3>
+              <button onClick={() => setIsViewModalOpen(false)} className="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white transition rounded-lg">
+                <XCircle size={20} />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-6">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-bold text-slate-500 uppercase">Status</span>
+                {getStatusBadge(selectedPayment.status)}
+              </div>
+              
+              <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-5 space-y-4">
+                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-700 pb-3">
+                  <span className="text-sm text-slate-500">Transaction ID</span>
+                  <span className="text-sm font-bold text-slate-900 dark:text-white">{selectedPayment.transactionId || 'N/A'}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-700 pb-3">
+                  <span className="text-sm text-slate-500">Student</span>
+                  <span className="text-sm font-bold text-slate-900 dark:text-white">{selectedPayment.student?.name}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-700 pb-3">
+                  <span className="text-sm text-slate-500">Course</span>
+                  <span className="text-sm font-bold text-slate-900 dark:text-white">{selectedPayment.course?.title}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-slate-200 dark:border-slate-700 pb-3">
+                  <span className="text-sm text-slate-500">Payment Date</span>
+                  <span className="text-sm font-bold text-slate-900 dark:text-white">{new Date(selectedPayment.paidAt || selectedPayment.createdAt).toLocaleDateString()}</span>
+                </div>
+                <div className="flex justify-between items-center pt-1">
+                  <span className="text-sm font-bold text-slate-900 dark:text-white">Amount Paid</span>
+                  <span className="text-lg font-black text-emerald-600 flex items-center"><IndianRupee size={16} />{selectedPayment.amount?.toLocaleString()}</span>
+                </div>
+                {selectedPayment.amount < selectedPayment.totalAmount && (
+                  <div className="flex justify-between items-center pt-2">
+                    <span className="text-xs font-bold text-slate-500">Remaining Balance</span>
+                    <span className="text-sm font-bold text-orange-500 flex items-center"><IndianRupee size={12} />{(selectedPayment.totalAmount - selectedPayment.amount).toLocaleString()}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/30 flex gap-4">
+              <button 
+                onClick={() => handleDownloadReceipt(selectedPayment)}
+                className="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-blue-700 transition shadow-lg shadow-blue-500/20"
+              >
+                <Download size={18} /> Download Receipt
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

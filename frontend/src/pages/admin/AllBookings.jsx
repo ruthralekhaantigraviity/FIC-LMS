@@ -8,10 +8,10 @@ import {
   XCircle, 
   Clock,
   Eye,
-  Mail,
-  User as UserIcon,
   Edit2,
-  BookOpen
+  BookOpen,
+  CreditCard,
+  IndianRupee
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../utils/api';
@@ -23,7 +23,13 @@ export default function AllBookings() {
   const [statusFilter, setStatusFilter] = useState('All');
   const [selectedAdmission, setSelectedAdmission] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFeesModalOpen, setIsFeesModalOpen] = useState(false);
   const [reviewNotes, setReviewNotes] = useState('');
+  const [feesDetails, setFeesDetails] = useState({
+    totalAmount: '',
+    amountPaid: '',
+    paymentMethod: ''
+  });
 
   useEffect(() => {
     fetchAdmissions();
@@ -50,6 +56,24 @@ export default function AllBookings() {
       toast.success(`Admission ${status === 'completed' ? 'Completed' : status} successfully!`);
     } catch (err) {
       toast.error('Error updating admission status');
+    }
+  };
+
+  const handleSaveFees = async (id) => {
+    try {
+      const remainingAmount = (Number(feesDetails.totalAmount) || 0) - (Number(feesDetails.amountPaid) || 0);
+      await api.patch(`/admissions/${id}/status`, { 
+        status: selectedAdmission.status, 
+        reviewNotes: selectedAdmission.reviewNotes, 
+        feesDetails: { ...feesDetails, remainingAmount } 
+      });
+      setIsFeesModalOpen(false);
+      setSelectedAdmission(null);
+      setFeesDetails({ totalAmount: '', amountPaid: '', paymentMethod: '' });
+      fetchAdmissions();
+      toast.success('Fees updated successfully!');
+    } catch (err) {
+      toast.error('Error updating fees');
     }
   };
 
@@ -112,6 +136,7 @@ export default function AllBookings() {
                 <th className="px-6 py-5">Student</th>
                 <th className="px-6 py-5 hidden sm:table-cell">Course</th>
                 <th className="px-6 py-5 hidden md:table-cell">Domain</th>
+                <th className="px-6 py-5 hidden md:table-cell">Fees Info</th>
                 <th className="px-6 py-5 hidden lg:table-cell">Date</th>
                 <th className="px-6 py-5">Status</th>
                 <th className="px-6 py-5 text-right">Actions</th>
@@ -155,6 +180,16 @@ export default function AllBookings() {
                         {app.targetDomain || 'General'}
                       </span>
                     </td>
+                    <td className="px-6 py-4 hidden md:table-cell">
+                      {app.feesDetails && typeof app.feesDetails === 'object' && app.feesDetails.totalAmount ? (
+                        <div>
+                          <p className="text-xs font-bold text-slate-700">Total: ₹{app.feesDetails.totalAmount}</p>
+                          <p className="text-[10px] text-emerald-600 font-bold">Paid: ₹{app.feesDetails.amountPaid || 0}</p>
+                        </div>
+                      ) : (
+                        <span className="text-[10px] text-slate-400 font-medium bg-slate-100 px-2 py-1 rounded">No Fees Set</span>
+                      )}
+                    </td>
                     <td className="px-6 py-4 text-sm text-slate-500 hidden lg:table-cell">
                       {new Date(app.createdAt).toLocaleDateString()}
                     </td>
@@ -165,6 +200,17 @@ export default function AllBookings() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
+                        <button 
+                          onClick={() => {
+                            setSelectedAdmission(app);
+                            setFeesDetails(app.feesDetails || { totalAmount: '', amountPaid: '', paymentMethod: '' });
+                            setIsFeesModalOpen(true);
+                          }}
+                          className="p-2 text-emerald-500 hover:bg-emerald-50 rounded-lg transition shadow-sm border border-emerald-100 bg-white"
+                          title="Add / View Fees"
+                        >
+                          <IndianRupee size={18} />
+                        </button>
                         <button 
                           onClick={() => {
                             setSelectedAdmission(app);
@@ -244,6 +290,21 @@ export default function AllBookings() {
                     <p className="text-sm text-slate-500 mt-1">
                       Domain: <span className="text-primary-600 font-bold uppercase">{selectedAdmission.targetDomain}</span>
                     </p>
+                    {selectedAdmission.feesDetails && typeof selectedAdmission.feesDetails === 'object' && selectedAdmission.feesDetails.totalAmount > 0 && (
+                      <div className="mt-4 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-xl">
+                        <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-2">Fees Information</p>
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          <p className="text-slate-600 dark:text-slate-400">Total Amount:</p>
+                          <p className="font-bold text-slate-900 dark:text-white">₹{selectedAdmission.feesDetails.totalAmount}</p>
+                          <p className="text-slate-600 dark:text-slate-400">Amount Paid:</p>
+                          <p className="font-bold text-slate-900 dark:text-white">₹{selectedAdmission.feesDetails.amountPaid || 0}</p>
+                          <p className="text-slate-600 dark:text-slate-400">Remaining:</p>
+                          <p className="font-bold text-emerald-600">₹{selectedAdmission.feesDetails.remainingAmount || 0}</p>
+                          <p className="text-slate-600 dark:text-slate-400">Method:</p>
+                          <p className="font-bold text-slate-900 dark:text-white">{selectedAdmission.feesDetails.paymentMethod || 'N/A'}</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -272,6 +333,94 @@ export default function AllBookings() {
                   className="flex-1 py-4 bg-red-600 text-white font-bold rounded-2xl hover:bg-red-700 transition shadow-lg shadow-red-600/20 flex items-center justify-center gap-2"
                 >
                   <XCircle size={20} /> Reject
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Fees Modal */}
+      <AnimatePresence>
+        {isFeesModalOpen && selectedAdmission && (
+          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsFeesModalOpen(false)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden"
+            >
+              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-emerald-50">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white">
+                    <IndianRupee size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-emerald-900">Add / Edit Fees Details</h3>
+                    <p className="text-xs text-emerald-600 font-medium">{selectedAdmission.fullName || selectedAdmission.student?.name}</p>
+                  </div>
+                </div>
+                <button onClick={() => setIsFeesModalOpen(false)} className="p-2 text-emerald-600 hover:bg-emerald-100 rounded-lg transition">
+                  <XCircle size={20} />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4">
+                <div className="space-y-3">
+                  <label className="text-xs font-bold text-slate-500 uppercase">Total Course Amount (INR)</label>
+                  <input
+                    type="number"
+                    value={feesDetails.totalAmount}
+                    onChange={(e) => setFeesDetails({ ...feesDetails, totalAmount: e.target.value })}
+                    placeholder="Enter total amount"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-emerald-400/50 outline-none text-sm"
+                  />
+                  
+                  <label className="text-xs font-bold text-slate-500 uppercase mt-4 block">Amount Paid (INR)</label>
+                  <input
+                    type="number"
+                    value={feesDetails.amountPaid}
+                    onChange={(e) => setFeesDetails({ ...feesDetails, amountPaid: e.target.value })}
+                    placeholder="Enter paid amount"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-emerald-400/50 outline-none text-sm"
+                  />
+                  
+                  <label className="text-xs font-bold text-slate-500 uppercase mt-4 block">Payment Method</label>
+                  <select
+                    value={feesDetails.paymentMethod}
+                    onChange={(e) => setFeesDetails({ ...feesDetails, paymentMethod: e.target.value })}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-emerald-400/50 outline-none text-sm"
+                  >
+                    <option value="">Select Payment Method</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Card">Card</option>
+                  </select>
+
+                  {feesDetails.totalAmount && feesDetails.amountPaid && (
+                    <div className="mt-4 p-3 bg-emerald-50 rounded-xl border border-emerald-100 flex justify-between">
+                      <span className="text-sm font-bold text-emerald-700">Remaining:</span>
+                      <span className="text-sm font-bold text-emerald-700">
+                        INR {((Number(feesDetails.totalAmount) || 0) - (Number(feesDetails.amountPaid) || 0)).toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="p-6 border-t border-slate-100 bg-slate-50">
+                <button
+                  onClick={() => handleSaveFees(selectedAdmission._id)}
+                  className="w-full py-4 bg-emerald-600 text-white font-bold rounded-2xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-600/20"
+                >
+                  Save Fees Details
                 </button>
               </div>
             </motion.div>

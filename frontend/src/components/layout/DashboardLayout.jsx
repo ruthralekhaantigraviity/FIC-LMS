@@ -138,6 +138,7 @@ export default function DashboardLayout() {
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
+  const [showAllNotificationsModal, setShowAllNotificationsModal] = useState(false);
 
   useEffect(() => {
     fetchNotifications();
@@ -236,6 +237,75 @@ export default function DashboardLayout() {
                     Close
                   </button>
                 </motion.div>
+              </div>
+            )}
+          </AnimatePresence>
+
+          {/* All Notifications Modal */}
+          <AnimatePresence>
+            {showAllNotificationsModal && (
+              <div className="fixed inset-0 z-[100] flex flex-col bg-white dark:bg-slate-950">
+                <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
+                  <div>
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white">All Notifications</h2>
+                    <p className="text-sm text-slate-500">View and manage all your notifications.</p>
+                  </div>
+                  <div className="flex gap-4">
+                    {notifications.length > 0 && (
+                      <button 
+                        onClick={clearNotifications}
+                        className="px-4 py-2 text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition"
+                      >
+                        Clear All
+                      </button>
+                    )}
+                    <button 
+                      onClick={() => setShowAllNotificationsModal(false)}
+                      className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition"
+                    >
+                      <X size={24} />
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="flex-1 overflow-y-auto p-6">
+                  <div className="max-w-4xl mx-auto space-y-4">
+                    {notifications.length > 0 ? (
+                      notifications.map((notif) => (
+                        <div 
+                          key={notif._id} 
+                          onClick={() => {
+                            setSelectedNotification(notif);
+                            markAsRead(notif._id);
+                          }}
+                          className="flex items-start gap-4 p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 cursor-pointer hover:border-blue-500 transition-colors"
+                        >
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-${getColor(notif.type)}-500/10 text-${getColor(notif.type)}-500`} style={{ 
+                            backgroundColor: getColor(notif.type) === 'blue' ? 'rgba(59, 130, 246, 0.1)' : getColor(notif.type) === 'green' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)', 
+                            color: getColor(notif.type) === 'blue' ? '#3b82f6' : getColor(notif.type) === 'green' ? '#10b981' : '#f59e0b' 
+                          }}>
+                            {React.createElement(getIcon(notif.type), { size: 20 })}
+                          </div>
+                          <div className="flex-1 min-w-0 pt-1">
+                            <div className="flex items-center justify-between mb-1">
+                              <h4 className="text-sm font-bold text-slate-900 dark:text-white">{notif.title}</h4>
+                              <span className="text-xs text-slate-400">{new Date(notif.createdAt).toLocaleString()}</span>
+                            </div>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">{notif.message}</p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="py-20 text-center">
+                        <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Bell size={24} className="text-slate-300" />
+                        </div>
+                        <p className="text-lg font-bold text-slate-900 dark:text-white">All caught up!</p>
+                        <p className="text-slate-500 mt-2">No new notifications at the moment.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
           </AnimatePresence>
@@ -419,7 +489,13 @@ export default function DashboardLayout() {
                       )}
                     </div>
                     {notifications.length > 0 && (
-                      <button className="w-full py-3 text-xs font-bold text-blue-500 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                      <button 
+                        onClick={() => {
+                          setShowAllNotificationsModal(true);
+                          setShowNotifications(false);
+                        }}
+                        className="w-full py-3 text-xs font-bold text-blue-500 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                      >
                         View All Notifications
                       </button>
                     )}

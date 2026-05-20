@@ -30,6 +30,7 @@ const userSchema = new mongoose.Schema({
     default: 'https://res.cloudinary.com/demo/image/upload/v1622543210/sample.jpg'
   },
   phoneNumber: String,
+  fees: String,
   isActive: {
     type: Boolean,
     default: true

@@ -74,6 +74,10 @@ exports.addReply = async (req, res) => {
       message
     });
 
+    if (req.user.role === 'trainer') {
+      ticket.status = 'Closed';
+    }
+
     // Keep ticket Open on reply, or update status if needed
     await ticket.save();
 

@@ -115,7 +115,7 @@ export default function UserManagement() {
   };
 
   const filteredUsers = (users || []).filter(user => {
-    if (!user) return false;
+    if (!user || user.role === 'student') return false;
     const name = (user.name || '').toLowerCase();
     const email = (user.email || '').toLowerCase();
     const role = (user.role || '').toLowerCase();
@@ -171,7 +171,6 @@ export default function UserManagement() {
               <option>Admin</option>
               <option>HR</option>
               <option>Trainer</option>
-              <option>Student</option>
             </select>
           </div>
         </div>
@@ -221,10 +220,8 @@ export default function UserManagement() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      {user?.role === 'admin' || user?.role === 'student' ? (
-                        <span className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase ${
-                          user?.role === 'admin' ? 'bg-red-50 dark:bg-red-500/10 text-red-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-                        }`}>
+                      {user?.role === 'admin' ? (
+                        <span className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase bg-red-50 dark:bg-red-500/10 text-red-600">
                           {user?.role}
                         </span>
                       ) : (

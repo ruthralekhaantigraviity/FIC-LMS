@@ -28,6 +28,7 @@ export default function AdminSettings() {
     try {
       const { data } = await api.patch('/auth/updateMe', {
         name: formData.name,
+        email: formData.email,
         phoneNumber: formData.phoneNumber
       });
       dispatch(updateUser(data.data));
@@ -123,9 +124,9 @@ export default function AdminSettings() {
                       <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Email Address</label>
                       <input 
                         type="email" 
-                        disabled
                         value={formData.email}
-                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-500 outline-none cursor-not-allowed" 
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all" 
                       />
                     </div>
                     <div className="md:col-span-2">
@@ -211,22 +212,6 @@ export default function AdminSettings() {
                       </button>
                     </div>
                   </form>
-                </div>
-
-                <div className="bg-gradient-to-r from-blue-900/40 to-purple-900/40 rounded-3xl p-8 border border-blue-500/20 relative overflow-hidden shadow-xl">
-                  <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                    <div>
-                      <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-                        <Shield size={24} className="text-blue-400" />
-                        Two-Factor Authentication
-                      </h3>
-                      <p className="text-slate-500 dark:text-slate-400 text-sm">Add additional security to your account using two-factor authentication.</p>
-                    </div>
-                    <button className="px-6 py-3 bg-white/10 hover:bg-white/20 transition-all rounded-xl text-sm font-bold text-slate-900 dark:text-white border border-white/10 backdrop-blur-md w-fit">
-                      Enable 2FA
-                    </button>
-                  </div>
-                  <div className="absolute -top-20 -right-20 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl"></div>
                 </div>
               </motion.div>
             )}

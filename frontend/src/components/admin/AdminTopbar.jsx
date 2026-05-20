@@ -5,6 +5,7 @@ import { setTheme } from '../../store/slices/uiSlice';
 import api from '../../utils/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
+import { useNavigate } from 'react-router-dom';
 
 const BRAND = '#1A9FD4';
 
@@ -12,6 +13,7 @@ const AdminTopbar = () => {
   const { user } = useSelector((state) => state.auth);
   const { theme } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
@@ -102,12 +104,31 @@ const AdminTopbar = () => {
                   {selectedNotification.message}
                 </p>
               </div>
-              <button
-                onClick={() => setSelectedNotification(null)}
-                className="w-full py-4 bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-bold rounded-2xl hover:opacity-90 transition shadow-lg"
-              >
-                Done
-              </button>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setSelectedNotification(null)}
+                  className="flex-1 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedNotification(null);
+                    if (selectedNotification.type === 'enrollment') {
+                      navigate('/dashboard/admin/bookings');
+                    } else if (selectedNotification.type === 'payment') {
+                      navigate('/dashboard/admin/payments');
+                    } else if (selectedNotification.type === 'enquiry') {
+                      navigate('/dashboard/admin/enquiries');
+                    } else {
+                      navigate('/dashboard/admin/reports');
+                    }
+                  }}
+                  className="flex-1 py-4 bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-bold rounded-2xl hover:opacity-90 transition shadow-lg"
+                >
+                  View Details
+                </button>
+              </div>
             </motion.div>
           </div>,
           document.body

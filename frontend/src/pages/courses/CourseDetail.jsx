@@ -187,10 +187,7 @@ export default function CourseDetail() {
               {" "}
               Enroll Now{" "}
             </Link>{" "}
-            <button className="w-full py-4 bg-slate-100 text-slate-900 font-bold rounded-2xl hover:bg-slate-200 transition">
-              {" "}
-              Add to Wishlist{" "}
-            </button>{" "}
+
             <div className="mt-8 space-y-4">
               {" "}
               <div className="flex items-center gap-3 text-sm text-slate-600">

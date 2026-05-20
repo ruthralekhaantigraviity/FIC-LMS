@@ -1,0 +1,91 @@
+[
+  {
+    "feesDetails": {
+      "totalAmount": 0,
+      "amountPaid": 0,
+      "remainingAmount": 0
+    },
+    "_id": "6a0aca20c7b1f793e70a2f8f",
+    "student": "6a0ac8b868fdc157d886a5ac",
+    "course": "6a0ac50eb2b019a94e2f164a",
+    "fullName": "abi",
+    "email": "abi@gmail.com",
+    "phoneNumber": "9876543210",
+    "dateOfBirth": "2000-01-01T00:00:00.000Z",
+    "address": "Test Address",
+    "previousEducation": "Bachelor of Engineering",
+    "targetDomain": "Frontend",
+    "status": "completed",
+    "appliedAt": "2026-05-18T08:13:20.912Z",
+    "documents": [],
+    "createdAt": "2026-05-18T08:13:20.926Z",
+    "updatedAt": "2026-05-20T08:21:25.643Z",
+    "__v": 0,
+    "reviewedBy": "6a07093e8b8121e321496f4b"
+  },
+  {
+    "feesDetails": {
+      "totalAmount": 0,
+      "amountPaid": 0,
+      "remainingAmount": 0
+    },
+    "_id": "6a0aca21c7b1f793e70a2f92",
+    "student": "6a0729f88b8121e321496f4c",
+    "course": "6a0ac50eb2b019a94e2f164a",
+    "fullName": "D",
+    "email": "d@gmail.com",
+    "phoneNumber": "9876543210",
+    "dateOfBirth": "2000-01-01T00:00:00.000Z",
+    "address": "Test Address",
+    "previousEducation": "Bachelor of Engineering",
+    "targetDomain": "Frontend",
+    "status": "completed",
+    "appliedAt": "2026-05-18T08:13:21.020Z",
+    "documents": [],
+    "createdAt": "2026-05-18T08:13:21.021Z",
+    "updatedAt": "2026-05-18T08:13:21.021Z",
+    "__v": 0
+  },
+  {
+    "feesDetails": {
+      "totalAmount": 0,
+      "amountPaid": 0,
+      "remainingAmount": 0
+    },
+    "_id": "6a0aca21c7b1f793e70a2f95",
+    "student": "6a0abfc996c76ca8b4dfd4bc",
+    "course": "6a0ac50eb2b019a94e2f164a",
+    "fullName": "FIC Student",
+    "email": "student@fic.com",
+    "phoneNumber": "9876543210",
+    "dateOfBirth": "2000-01-01T00:00:00.000Z",
+    "address": "Test Address",
+    "previousEducation": "Bachelor of Engineering",
+    "targetDomain": "Frontend",
+    "status": "completed",
+    "appliedAt": "2026-05-18T08:13:21.037Z",
+    "documents": [],
+    "createdAt": "2026-05-18T08:13:21.037Z",
+    "updatedAt": "2026-05-18T08:13:21.037Z",
+    "__v": 0
+  },
+  {
+    "feesDetails": {
+      "totalAmount": 0,
+      "amountPaid": 0,
+      "remainingAmount": 0
+    },
+    "_id": "6a0c5cba9b7362e4a92d2dbb",
+    "student": "6a0c5b5b2545583712774461",
+    "course": "6a03007ba0dfb3932e2d2e98",
+    "fullName": "Anu",
+    "email": "anu@gmail.com",
+    "status": "completed",
+    "reviewedBy": "6a07093e8b8121e321496f4b",
+    "appliedAt": "2026-05-19T12:51:06.646Z",
+    "documents": [],
+    "createdAt": "2026-05-19T12:51:06.647Z",
+    "updatedAt": "2026-05-19T12:51:06.647Z",
+    "__v": 0
+  }
+]

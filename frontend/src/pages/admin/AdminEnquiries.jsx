@@ -43,10 +43,15 @@ const AdminEnquiries = () => {
     }
   };
 
-  const updateStatus = (id, newStatus) => {
-    setEnquiries(prev => prev.map(e => e._id === id ? { ...e, status: newStatus } : e));
-    setActiveDropdown(null);
-    toast.success(`Status updated to ${newStatus}`);
+  const updateStatus = async (id, newStatus) => {
+    try {
+      await api.patch(`/enquiries/${id}/status`, { status: newStatus });
+      setEnquiries(prev => prev.map(e => e._id === id ? { ...e, status: newStatus } : e));
+      setActiveDropdown(null);
+      toast.success(`Status updated to ${newStatus}`);
+    } catch (err) {
+      toast.error('Failed to update status');
+    }
   };
 
   const deleteEnquiry = (id) => {

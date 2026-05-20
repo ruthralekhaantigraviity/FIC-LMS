@@ -15,7 +15,7 @@ const AdminStudents = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
-  const [formData, setFormData] = useState({ name: '', email: '', password: '', courseDomain: 'Other', studentStatus: 'active' });
+  const [formData, setFormData] = useState({ name: '', email: '', fees: '', courseDomain: 'Other', studentStatus: 'active' });
 
   useEffect(() => { fetchStudents(); }, []);
 
@@ -32,13 +32,13 @@ const AdminStudents = () => {
 
   const openAddModal = () => {
     setEditingStudent(null);
-    setFormData({ name: '', email: '', password: '', courseDomain: 'Other', studentStatus: 'active' });
+    setFormData({ name: '', email: '', fees: '', courseDomain: 'Other', studentStatus: 'active' });
     setIsModalOpen(true);
   };
 
   const openEditModal = (student) => {
     setEditingStudent(student);
-    setFormData({ name: student.name, email: student.email, password: '', courseDomain: student.courseDomain || 'Other', studentStatus: student.studentStatus || 'active' });
+    setFormData({ name: student.name, email: student.email, fees: student.fees || '', courseDomain: student.courseDomain || 'Other', studentStatus: student.studentStatus || 'active' });
     setIsModalOpen(true);
   };
 
@@ -46,10 +46,10 @@ const AdminStudents = () => {
     e.preventDefault();
     try {
       if (editingStudent) {
-        await api.patch(`/auth/users/${editingStudent._id}`, { name: formData.name, email: formData.email, courseDomain: formData.courseDomain, studentStatus: formData.studentStatus });
+        await api.patch(`/auth/users/${editingStudent._id}`, { name: formData.name, email: formData.email, courseDomain: formData.courseDomain, studentStatus: formData.studentStatus, fees: formData.fees });
         toast.success('Student updated successfully');
       } else {
-        await api.post('/auth/register', { ...formData, role: 'student' });
+        await api.post('/auth/register', { ...formData, role: 'student', password: 'student123' });
         toast.success('Student added successfully');
       }
       setIsModalOpen(false);
@@ -260,16 +260,13 @@ const AdminStudents = () => {
                       placeholder="student@example.com"
                     />
                   </div>
-                  {!editingStudent && (
-                    <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Password</label>
-                      <input type="password" required value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })}
-                        className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
-                        placeholder="Minimum 6 characters"
-                        minLength={6}
-                      />
-                    </div>
-                  )}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Fees Details</label>
+                    <input type="text" value={formData.fees} onChange={e => setFormData({ ...formData, fees: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
+                      placeholder="e.g. 5000 (Paid)"
+                    />
+                  </div>
                   <div>
                     <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Course Domain</label>
                     <select value={formData.courseDomain} onChange={e => setFormData({ ...formData, courseDomain: e.target.value })}

@@ -230,22 +230,6 @@ export default function Settings() {
                     </div>
                   </form>
                 </div>
-
-                <div className="bg-slate-900 dark:bg-[#0f172a] rounded-[32px] p-8 text-white relative overflow-hidden shadow-xl border border-white/5">
-                  <div className="relative z-10 flex items-center justify-between">
-                    <div>
-                      <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
-                        <ShieldCheck size={24} className="text-primary-400" />
-                        Two-Factor Authentication
-                      </h3>
-                      <p className="text-slate-400 text-sm">Add additional security to your account using two-factor authentication.</p>
-                    </div>
-                    <button className="px-6 py-2 bg-white/10 hover:bg-white/20 transition rounded-xl text-sm font-bold border border-white/20 backdrop-blur-md">
-                      Enable
-                    </button>
-                  </div>
-                  <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary-600/20 rounded-full blur-3xl"></div>
-                </div>
               </motion.div>
             )}
 

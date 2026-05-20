@@ -233,9 +233,14 @@ const AdminOverview = () => {
         </div>
         
         <div className="flex items-center gap-3">
-          <div className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2 flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300">
+          <div className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-xl px-4 flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300">
             <Clock size={16} className="text-blue-500" />
-            Last 30 Days
+            <select className="bg-transparent border-none outline-none py-2 cursor-pointer text-slate-600 dark:text-slate-300">
+              <option>Last 7 Days</option>
+              <option defaultValue>Last 30 Days</option>
+              <option>This Month</option>
+              <option>This Year</option>
+            </select>
           </div>
           <button 
             onClick={handleGenerateReport}

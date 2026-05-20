@@ -38,6 +38,12 @@ const admissionSchema = new mongoose.Schema({
     ref: 'User'
   },
   reviewNotes: String,
+  feesDetails: {
+    totalAmount: { type: Number, default: 0 },
+    amountPaid: { type: Number, default: 0 },
+    remainingAmount: { type: Number, default: 0 },
+    paymentMethod: String
+  },
   appliedAt: {
     type: Date,
     default: Date.now

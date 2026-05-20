@@ -16,6 +16,7 @@ import {
   ArrowRight,
   BookOpen,
   Users,
+  IndianRupee,
 } from "lucide-react";
 import {
   AreaChart,
@@ -36,6 +37,12 @@ export default function HRDashboard() {
   const [loading, setLoading] = useState(true);
   const [selectedAdmission, setSelectedAdmission] = useState(null);
   const [reviewNotes, setReviewNotes] = useState("");
+  const [feesDetails, setFeesDetails] = useState({
+    totalAmount: '',
+    amountPaid: '',
+    paymentMethod: ''
+  });
+  const [isFeesModalOpen, setIsFeesModalOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   useEffect(() => {
     fetchAdmissions();
@@ -168,15 +175,43 @@ export default function HRDashboard() {
 
   const handleUpdateStatus = async (id, status) => {
     try {
-      await api.patch(`/admissions/${id}/status`, { status, reviewNotes });
+      const payload = { status, reviewNotes };
+      
+      // Only include feesDetails if it was actually opened and modified
+      if (selectedAdmission && feesDetails && feesDetails.totalAmount !== '') {
+        const remainingAmount = (Number(feesDetails.totalAmount) || 0) - (Number(feesDetails.amountPaid) || 0);
+        payload.feesDetails = { ...feesDetails, remainingAmount };
+      }
+
+      await api.patch(`/admissions/${id}/status`, payload);
       setSelectedAdmission(null);
       setReviewNotes("");
+      setFeesDetails({ totalAmount: '', amountPaid: '', paymentMethod: '' });
       fetchAdmissions();
       toast.success(`Application ${status === 'completed' ? 'Completed' : status} successfully!`);
     } catch (err) {
       toast.error("Error updating status");
     }
   };
+
+  const handleSaveFees = async (id) => {
+    try {
+      const remainingAmount = (Number(feesDetails.totalAmount) || 0) - (Number(feesDetails.amountPaid) || 0);
+      await api.patch(`/admissions/${id}/status`, { 
+        status: selectedAdmission.status, 
+        reviewNotes: selectedAdmission.reviewNotes, 
+        feesDetails: { ...feesDetails, remainingAmount } 
+      });
+      setIsFeesModalOpen(false);
+      setSelectedAdmission(null);
+      setFeesDetails({ totalAmount: '', amountPaid: '', paymentMethod: '' });
+      fetchAdmissions();
+      toast.success('Fees updated successfully!');
+    } catch (err) {
+      toast.error('Error updating fees');
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case "completed":
@@ -414,6 +449,7 @@ export default function HRDashboard() {
                 {" "}
                 <th className="px-6 py-4">Applicant</th>{" "}
                 <th className="px-6 py-4">Course</th>{" "}
+                <th className="px-6 py-4 hidden md:table-cell">Fees Info</th>
                 <th className="px-6 py-4">Applied Date</th>{" "}
                 <th className="px-6 py-4">Status</th>{" "}
                 <th className="px-6 py-4 text-right">Actions</th>{" "}
@@ -445,6 +481,16 @@ export default function HRDashboard() {
                     <td className="px-6 py-4">
                       <span className="text-sm font-medium">{app.course?.title}</span>
                     </td>
+                    <td className="px-6 py-4 hidden md:table-cell">
+                      {app.feesDetails && typeof app.feesDetails === 'object' && app.feesDetails.totalAmount ? (
+                        <div>
+                          <p className="text-xs font-bold text-slate-700 dark:text-slate-300">Total: ₹{app.feesDetails.totalAmount}</p>
+                          <p className="text-[10px] text-emerald-600 font-bold">Paid: ₹{app.feesDetails.amountPaid || 0}</p>
+                        </div>
+                      ) : (
+                        <span className="text-[10px] text-slate-400 font-medium bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">No Fees Set</span>
+                      )}
+                    </td>
                     <td className="px-6 py-4 text-sm text-slate-500">
                       {new Date(app.appliedAt).toLocaleDateString()}
                     </td>
@@ -469,8 +515,23 @@ export default function HRDashboard() {
                         >
                           <XCircle size={18} />
                         </button>
+                        <button 
+                          onClick={() => {
+                            setSelectedAdmission(app);
+                            setFeesDetails(app.feesDetails || { totalAmount: '', amountPaid: '', paymentMethod: '' });
+                            setIsFeesModalOpen(true);
+                          }}
+                          className="p-2 bg-sky-50 text-sky-600 rounded-lg hover:bg-sky-600 hover:text-white transition shadow-sm"
+                          title="Add Fees"
+                        >
+                          <IndianRupee size={18} />
+                        </button>
                         <button
-                          onClick={() => setSelectedAdmission(app)}
+                          onClick={() => {
+                            setSelectedAdmission(app);
+                            setReviewNotes(app.reviewNotes || "");
+                            setFeesDetails(app.feesDetails || { totalAmount: '', amountPaid: '', paymentMethod: '' });
+                          }}
                           className="p-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-lg hover:bg-slate-900 hover:text-white transition"
                           title="View Details"
                         >
@@ -594,8 +655,49 @@ export default function HRDashboard() {
                       value={reviewNotes}
                       onChange={(e) => setReviewNotes(e.target.value)}
                       placeholder="Add notes for this application..."
-                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-400/50 outline-none text-sm h-32 resize-none"
+                      className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-400/50 outline-none text-sm h-32 resize-none mb-4"
                     ></textarea>{" "}
+                  </div>{" "}
+                  <div>
+                    {" "}
+                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
+                      Fees Details
+                    </h4>
+                    <div className="space-y-3">
+                      <input
+                        type="number"
+                        value={feesDetails.totalAmount}
+                        onChange={(e) => setFeesDetails({ ...feesDetails, totalAmount: e.target.value })}
+                        placeholder="Total Course Amount (INR)"
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-400/50 outline-none text-sm"
+                      />
+                      <input
+                        type="number"
+                        value={feesDetails.amountPaid}
+                        onChange={(e) => setFeesDetails({ ...feesDetails, amountPaid: e.target.value })}
+                        placeholder="Amount Paid (INR)"
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-400/50 outline-none text-sm"
+                      />
+                      <select
+                        value={feesDetails.paymentMethod}
+                        onChange={(e) => setFeesDetails({ ...feesDetails, paymentMethod: e.target.value })}
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-400/50 outline-none text-sm"
+                      >
+                        <option value="">Select Payment Method</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Card">Card</option>
+                      </select>
+                      {feesDetails.totalAmount && feesDetails.amountPaid && (
+                        <div className="p-3 bg-sky-50 dark:bg-sky-900/20 rounded-xl border border-sky-100 dark:border-sky-800 flex justify-between">
+                          <span className="text-sm font-bold text-sky-700 dark:text-sky-300">Remaining Amount:</span>
+                          <span className="text-sm font-bold text-sky-700 dark:text-sky-300">
+                            INR {((Number(feesDetails.totalAmount) || 0) - (Number(feesDetails.amountPaid) || 0)).toLocaleString()}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>{" "}
                 </div>{" "}
               </div>{" "}
@@ -624,6 +726,94 @@ export default function HRDashboard() {
           </div>
         )}{" "}
       </AnimatePresence>{" "}
+
+      {/* Dedicated Fees Modal */}
+      <AnimatePresence>
+        {isFeesModalOpen && selectedAdmission && (
+          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsFeesModalOpen(false)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-md bg-white dark:bg-[#0f172a] rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800"
+            >
+              <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-800/50">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-sky-500 flex items-center justify-center text-white">
+                    <IndianRupee size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">Add Fees Details</h3>
+                    <p className="text-xs text-slate-500 font-medium">{selectedAdmission.fullName}</p>
+                  </div>
+                </div>
+                <button onClick={() => setIsFeesModalOpen(false)} className="p-2 text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition">
+                  <XCircle size={20} />
+                </button>
+              </div>
+
+              <div className="p-6 space-y-4">
+                <div className="space-y-3">
+                  <label className="text-xs font-bold text-slate-500 uppercase">Total Course Amount (INR)</label>
+                  <input
+                    type="number"
+                    value={feesDetails.totalAmount}
+                    onChange={(e) => setFeesDetails({ ...feesDetails, totalAmount: e.target.value })}
+                    placeholder="Enter total amount"
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-400/50 outline-none text-sm"
+                  />
+                  
+                  <label className="text-xs font-bold text-slate-500 uppercase mt-4 block">Amount Paid (INR)</label>
+                  <input
+                    type="number"
+                    value={feesDetails.amountPaid}
+                    onChange={(e) => setFeesDetails({ ...feesDetails, amountPaid: e.target.value })}
+                    placeholder="Enter paid amount"
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-400/50 outline-none text-sm"
+                  />
+                  
+                  <label className="text-xs font-bold text-slate-500 uppercase mt-4 block">Payment Method</label>
+                  <select
+                    value={feesDetails.paymentMethod}
+                    onChange={(e) => setFeesDetails({ ...feesDetails, paymentMethod: e.target.value })}
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-400/50 outline-none text-sm"
+                  >
+                    <option value="">Select Payment Method</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Card">Card</option>
+                  </select>
+
+                  {feesDetails.totalAmount && feesDetails.amountPaid && (
+                    <div className="mt-4 p-3 bg-sky-50 dark:bg-sky-900/20 rounded-xl border border-sky-100 dark:border-sky-800 flex justify-between">
+                      <span className="text-sm font-bold text-sky-700 dark:text-sky-300">Remaining:</span>
+                      <span className="text-sm font-bold text-sky-700 dark:text-sky-300">
+                        INR {((Number(feesDetails.totalAmount) || 0) - (Number(feesDetails.amountPaid) || 0)).toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="p-6 border-t border-slate-200 dark:border-slate-800">
+                <button
+                  onClick={() => handleSaveFees(selectedAdmission._id)}
+                  className="w-full py-4 bg-sky-600 text-white font-bold rounded-2xl hover:bg-sky-700 transition shadow-lg shadow-sky-600/20"
+                >
+                  Save Fees Details
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
