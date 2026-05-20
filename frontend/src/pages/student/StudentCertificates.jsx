@@ -16,17 +16,20 @@ const StudentCertificates = () => {
     fetchCompletedCourses();
   }, []);
 
-  const fetchCompletedCourses = async () => {
+    const fetchCompletedCourses = async () => {
     try {
       const { data } = await api.get('/admissions/my-courses');
-      // For demonstration, we'll also fetch progress for each course
-      // In a real app, we might have a dedicated certificates endpoint
+      // Fetch exact progress based on actual subjects in the course
       const coursesWithProgress = await Promise.all(data.data.map(async (course) => {
         try {
-          const progRes = await api.get(`/progress/${course._id}`);
-          const totalLessons = course.totalLessons || 12;
+          const [progRes, subRes] = await Promise.all([
+            api.get(`/progress/${course._id}`),
+            api.get(`/subjects/course/${course._id}`)
+          ]);
+          
+          const actualTotalLessons = subRes.data.data.length || course.totalLessons || 1;
           const completedCount = progRes.data.data.completedSubjects?.length || 0;
-          const percentage = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+          const percentage = Math.round((completedCount / actualTotalLessons) * 100);
           
           return {
             ...course,
