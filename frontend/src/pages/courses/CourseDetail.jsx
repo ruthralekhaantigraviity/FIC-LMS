@@ -18,6 +18,15 @@ export default function CourseDetail() {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeSubject, setActiveSubject] = useState(null);
+
+  const userStr = localStorage.getItem("user");
+  const user = userStr ? JSON.parse(userStr) : null;
+  const token = localStorage.getItem("token");
+
+  const enrollLink = (token && user?.role === "student")
+    ? `/dashboard/student/apply/${id}`
+    : `/enroll?courseId=${id}`;
+
   useEffect(() => {
     const fetchCourse = async () => {
       try {
@@ -181,12 +190,11 @@ export default function CourseDetail() {
               </p>{" "}
             </div>{" "}
             <Link
-              to={`/dashboard/student/apply/${course._id}`}
+              to={enrollLink}
               className="w-full py-4 bg-primary-600 text-white font-bold rounded-2xl hover:bg-primary-700 transition shadow-lg shadow-primary-600/30 active:scale-95 mb-4 flex items-center justify-center"
             >
-              {" "}
-              Enroll Now{" "}
-            </Link>{" "}
+              Enroll Now
+            </Link>
 
             <div className="mt-8 space-y-4">
               {" "}

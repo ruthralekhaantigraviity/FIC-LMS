@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
   User, Mail, Phone, Calendar, MapPin, 
@@ -14,6 +14,8 @@ import toast from "react-hot-toast";
 export default function PublicEnrollment() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
+  const queryCourseId = searchParams.get("courseId") || "";
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetchingCourses, setFetchingCourses] = useState(true);
@@ -26,7 +28,7 @@ export default function PublicEnrollment() {
     address: "",
     previousEducation: "",
     targetDomain: "",
-    courseId: ""
+    courseId: queryCourseId
   });
 
   useEffect(() => {
@@ -35,6 +37,12 @@ export default function PublicEnrollment() {
       .catch(err => console.error(err))
       .finally(() => setFetchingCourses(false));
   }, []);
+
+  useEffect(() => {
+    if (queryCourseId) {
+      setFormData(prev => ({ ...prev, courseId: queryCourseId }));
+    }
+  }, [queryCourseId]);
 
   const [isSuccess, setIsSuccess] = useState(false);
   const handleSubmit = async (e) => {
