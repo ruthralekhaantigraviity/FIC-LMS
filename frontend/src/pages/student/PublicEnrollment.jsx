@@ -148,22 +148,9 @@ export default function PublicEnrollment() {
                 
                 {/* Temporary Credentials Notice */}
                 <div className="p-6 bg-primary-50/80 border border-primary-100/50 rounded-3xl max-w-md mx-auto mt-6 text-left space-y-3 shadow-inner">
-                  <h4 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-                    <ShieldCheck className="text-primary-600" size={18} /> Student Login Credentials
-                  </h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    A temporary student profile has been provisioned. Use these credentials to sign in and view your progress and courses:
+                  <p className="text-sm font-medium text-slate-700 leading-relaxed text-center">
+                    Your application has been received. Our team will review your application and contact you shortly with the next steps!
                   </p>
-                  <div className="space-y-1.5 font-mono text-xs mt-2 pt-2 border-t border-slate-100">
-                    <div className="flex justify-between py-1">
-                      <span className="text-slate-400">Email Address:</span>
-                      <span className="font-bold text-slate-800">{formData.email}</span>
-                    </div>
-                    <div className="flex justify-between py-1">
-                      <span className="text-slate-400">Password:</span>
-                      <span className="font-bold text-primary-600 bg-primary-100/60 px-2 py-0.5 rounded">123456</span>
-                    </div>
-                  </div>
                 </div>
               </div>
               <div className="pt-6 flex flex-col gap-4">

@@ -271,18 +271,16 @@ exports.publicEnroll = async (req, res) => {
       targetDomain, courseId 
     } = req.body;
 
-    // 1. Create User
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists with this email' });
+    // 1. Get or Create User
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({
+        name: fullName,
+        email,
+        password: password || '123456', // Default password since it's removed from UI
+        role: 'student'
+      });
     }
-
-    const user = await User.create({
-      name: fullName,
-      email,
-      password: password || '123456', // Default password since it's removed from UI
-      role: 'student'
-    });
 
     // 2. Create Admission
     const admission = await Admission.create({
