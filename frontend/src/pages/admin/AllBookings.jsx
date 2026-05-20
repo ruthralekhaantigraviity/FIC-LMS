@@ -12,7 +12,8 @@ import {
   BookOpen,
   CreditCard,
   IndianRupee,
-  User
+  User,
+  Mail
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../utils/api';
