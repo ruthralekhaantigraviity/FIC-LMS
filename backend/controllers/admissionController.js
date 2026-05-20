@@ -243,19 +243,36 @@ exports.assignCourse = async (req, res) => {
       }
     }
 
-    // 2. Create a "completed" Admission record
+    // 2. Update existing pending Admission record or create a new "completed" one
     // Fetch user details first to satisfy required fields in Admission model
     const user = await User.findById(studentId);
     
-    await Admission.create({
-      student: studentId,
-      course: courseId,
-      fullName: user?.name || 'Assigned Student',
-      email: user?.email || 'assigned@example.com',
-      status: 'completed',
-      reviewedBy: req.user.id,
-      appliedAt: new Date()
-    });
+    const existingPending = await Admission.findOne({ student: studentId, status: 'pending' });
+    
+    if (existingPending) {
+      existingPending.status = 'completed';
+      existingPending.course = courseId;
+      existingPending.reviewedBy = req.user.id;
+      existingPending.fullName = existingPending.fullName || user?.name || 'Assigned Student';
+      existingPending.email = existingPending.email || user?.email || 'assigned@example.com';
+      await existingPending.save();
+
+      // Update any other duplicate pending admissions for this student to avoid stuck UI
+      await Admission.updateMany(
+        { student: studentId, status: 'pending' },
+        { status: 'completed', course: courseId, reviewedBy: req.user.id }
+      );
+    } else {
+      await Admission.create({
+        student: studentId,
+        course: courseId,
+        fullName: user?.name || 'Assigned Student',
+        email: user?.email || 'assigned@example.com',
+        status: 'completed',
+        reviewedBy: req.user.id,
+        appliedAt: new Date()
+      });
+    }
 
     res.status(201).json({ status: 'success', data: student });
   } catch (err) {
