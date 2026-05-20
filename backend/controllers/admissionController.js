@@ -298,6 +298,17 @@ exports.publicEnroll = async (req, res) => {
       status: 'pending'
     });
 
+    // Notify Admin and HR
+    const course = await Course.findById(courseId);
+    await Notification.create({
+      title: 'New Enrollment Request',
+      message: `${fullName} applied for ${course?.title || 'a course'}`,
+      type: 'enrollment',
+      roles: ['admin', 'hr'],
+      targetId: admission._id,
+      onModel: 'Admission'
+    });
+
     // 3. Generate Token
     const token = signToken(user._id);
 
