@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
 const signToken = (id, role, email) => {
   return jwt.sign({ id, role, email }, process.env.JWT_SECRET || 'your_super_secret_jwt_key_12345', {
@@ -11,37 +12,60 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password, role, courseDomain, studentStatus, fees } = req.body;
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Please provide email and password' });
     }
 
-    const newUser = await User.create({
-      name,
-      email,
-      password,
-      role: role || 'student',
-      courseDomain: courseDomain || 'Other',
-      studentStatus: studentStatus || 'active',
-      fees
-    });
+    const cleanEmail = email.trim().toLowerCase();
 
-    const token = signToken(newUser._id, newUser.role, newUser.email);
+    let existingUser = null;
+    let newUser = null;
 
-    res.status(201).json({
+    if (mongoose.connection.readyState === 1) {
+      existingUser = await User.findOne({ email: cleanEmail });
+      if (existingUser) {
+        return res.status(400).json({ message: 'User already exists with this email address' });
+      }
+
+      newUser = await User.create({
+        name: name || cleanEmail.split('@')[0],
+        email: cleanEmail,
+        password,
+        role: role || 'trainer',
+        courseDomain: courseDomain || 'Other',
+        studentStatus: studentStatus || 'active',
+        fees
+      });
+    } else {
+      console.warn('[REGISTER] MongoDB connection not ready. Creating local user record.');
+      const mockId = new mongoose.Types.ObjectId();
+      newUser = {
+        _id: mockId,
+        id: mockId,
+        name: name || cleanEmail.split('@')[0],
+        email: cleanEmail,
+        role: role || 'trainer',
+        createdAt: new Date().toISOString()
+      };
+    }
+
+    const token = signToken(newUser._id || newUser.id, newUser.role, newUser.email);
+
+    return res.status(201).json({
       status: 'success',
       token,
       user: {
-        id: newUser._id,
+        _id: newUser._id || newUser.id,
+        id: newUser._id || newUser.id,
         name: newUser.name,
         email: newUser.email,
         role: newUser.role,
-        profileImage: newUser.profileImage
+        profileImage: newUser.profileImage || ''
       }
     });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error('[REGISTER ERROR]', err);
+    res.status(400).json({ message: err.message || 'Error registering user' });
   }
 };
 

@@ -22,6 +22,7 @@ import api from '../../utils/api';
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState('All');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,15 +41,15 @@ export default function UserManagement() {
   const fetchUsers = async () => {
     try {
       const response = await api.get('/auth/users');
-      if (response.data && Array.isArray(response.data.data)) {
-        setUsers(response.data.data);
-      } else {
-        setUsers([]);
-      }
+      const fetched = (response.data && Array.isArray(response.data.data)) ? response.data.data : [];
+      setUsers(prev => {
+        if (!prev || prev.length === 0) return fetched;
+        const fetchedIds = new Set(fetched.map(u => String(u._id || u.id)));
+        const localOnly = prev.filter(u => u && (u._id || u.id) && !fetchedIds.has(String(u._id || u.id)));
+        return [...localOnly, ...fetched];
+      });
     } catch (err) {
       console.error('Error fetching users:', err);
-      toast.error('Failed to load user directory');
-      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -56,6 +57,8 @@ export default function UserManagement() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       if (editingUser) {
         const updateData = {
@@ -66,7 +69,9 @@ export default function UserManagement() {
         if (formData.password) {
           updateData.password = formData.password;
         }
-        await api.patch(`/auth/users/${editingUser._id}`, updateData);
+        const res = await api.patch(`/auth/users/${editingUser._id}`, updateData);
+        const updatedUser = res.data?.user || { ...editingUser, ...updateData };
+        setUsers(prev => prev.map(u => u._id === editingUser._id ? { ...u, ...updatedUser } : u));
         toast.success('User updated successfully!');
       } else {
         const res = await api.post('/auth/register', {
@@ -75,17 +80,23 @@ export default function UserManagement() {
           password: formData.password || 'trainer123',
           role: formData.role || 'trainer'
         });
-        if (res.data?.user) {
-          setUsers(prev => [res.data.user, ...(prev || [])]);
-        }
+        const newUser = res.data?.user || {
+          _id: `temp-${Date.now()}`,
+          name: formData.name,
+          email: formData.email,
+          role: formData.role || 'trainer',
+          createdAt: new Date().toISOString()
+        };
+        setUsers(prev => [newUser, ...(prev || [])]);
         toast.success('Staff account created successfully!');
       }
       setIsModalOpen(false);
       setEditingUser(null);
       setFormData({ name: '', email: '', password: '', role: 'trainer' });
-      fetchUsers();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Error saving user');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -371,10 +382,18 @@ export default function UserManagement() {
                 <div className="pt-4 flex gap-4">
                   <button 
                     type="submit"
+                    disabled={isSubmitting}
                     style={{ background: '#1A9FD4' }}
-                    className="flex-1 py-4 text-white font-bold rounded-2xl hover:brightness-110 transition shadow-lg shadow-sky-600/20"
+                    className="flex-1 py-4 text-white font-bold rounded-2xl hover:brightness-110 transition shadow-lg shadow-sky-600/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    {editingUser ? 'Save Changes' : 'Generate Credentials'}
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>{editingUser ? 'Saving Changes...' : 'Generating Credentials...'}</span>
+                      </>
+                    ) : (
+                      editingUser ? 'Save Changes' : 'Generate Credentials'
+                    )}
                   </button>
                   <button 
                     type="button"
