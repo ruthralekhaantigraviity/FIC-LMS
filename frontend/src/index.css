@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+@theme {
+  /* Primary: Vibrant Sky Blue matching the UI reference */
+  --color-primary-50:  #e8f6fd;
+  --color-primary-100: #c5e8f9;
+  --color-primary-200: #8dd2f5;
+  --color-primary-300: #4db8ef;
+  --color-primary-400: #1fa3e3;
+  --color-primary-500: #1190d0;
+  --color-primary-600: #0e7ab8;
+  --color-primary-700: #0b6298;
+  --color-primary-800: #094f7c;
+  --color-primary-900: #063d60;
+  --color-primary-950: #032840;
+
+  /* Override Tailwind blue to match our sky-blue brand */
+  --color-blue-400: #29b0e8;
+  --color-blue-500: #1A9FD4;
+  --color-blue-600: #1190d0;
+  --color-blue-700: #0e7ab8;
+
+  --color-accent-purple: #8b5cf6;
+  --color-accent-pink:   #ec4899;
+  --color-accent-cyan:   #22d3ee;
+
+  --font-sans:    "Inter", "system-ui", "sans-serif";
+  --font-display: "Outfit", "sans-serif";
+
+  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+  }
+
+  .dark body {
+    @apply bg-slate-950 text-slate-50;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-glass rounded-2xl;
+  }
+
+  .dark .glass-card {
+    @apply bg-slate-900/70 border-white/10;
+  }
+
+  /* Brand button — matches the sky-blue from the UI reference */
+  .btn-primary {
+    background: #1A9FD4;
+    @apply px-6 py-2.5 text-white rounded-xl font-semibold transition-all duration-300 hover:brightness-110 hover:shadow-lg active:scale-95;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-slate-600 hover:bg-slate-100 font-medium;
+  }
+
+  .dark .sidebar-link {
+    @apply text-slate-400 hover:bg-slate-800;
+  }
+
+  .sidebar-link-active {
+    background: rgba(26, 159, 212, 0.12);
+    color: #1A9FD4;
+    @apply font-bold shadow-sm rounded-xl;
+  }
+
+  .dark .sidebar-link-active {
+    background: rgba(26, 159, 212, 0.15);
+    color: #29b0e8;
+    @apply shadow-none;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
