@@ -154,7 +154,7 @@ exports.login = async (req, res) => {
     console.error('[LOGIN FATAL ERROR]', err);
     return res.status(500).json({ message: err.message || 'Server error during login' });
   }
-};const mongoose = require('mongoose');
+};
 
 exports.getAllUsers = async (req, res) => {
   try {
