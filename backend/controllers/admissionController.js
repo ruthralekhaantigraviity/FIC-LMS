@@ -293,38 +293,6 @@ exports.getMyEnrolledCourses = async (req, res) => {
       }
     }
 
-    res.status(200).json({ status: 'success', data: courses });
-  } catch (err) {
-    console.error('[GET MY ENROLLED COURSES ERROR]', err.message);
-    res.status(200).json({ status: 'success', data: [] });
-  }
-};
-            title: { $regex: new RegExp(`^${ec.course.title.trim()}$`, 'i') }
-          });
-          const courseIds = matchingCourses.map(c => c._id);
-          const courseSubjects = await Subject.find({ course: { $in: courseIds } });
-          
-          courses.push({
-            _id: ec.course._id,
-            title: ec.course.title,
-            description: ec.course.description,
-            category: ec.course.category,
-            thumbnail: ec.course.thumbnail,
-            instructor: ec.course.instructor,
-            level: ec.course.level,
-            duration: ec.course.duration,
-            totalLessons: ec.course.totalLessons,
-            enrolledAt: ec.enrollmentDate,
-            hasVideos: courseSubjects.some(s => s.videoUrl && s.videoUrl.trim() !== ""),
-            hasPdfs: courseSubjects.some(s => (s.pdfUrl && s.pdfUrl.trim() !== "") || (s.resources && s.resources.length > 0)),
-          });
-        }
-      }
-    }
-
-    res.status(200).json({ status: 'success', data: courses });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
   }
 };
 

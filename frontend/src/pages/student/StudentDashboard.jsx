@@ -40,16 +40,22 @@ export default function StudentDashboard() {
   const fetchDashboardData = async () => {
     try {
       const [coursesRes, appsRes, ticketsRes] = await Promise.all([
-        api.get("/admissions/my-courses"),
-        api.get("/admissions/my-applications"),
+        api.get("/admissions/my-courses").catch(err => {
+          console.error("Error fetching my-courses:", err);
+          return { data: { data: [] } };
+        }),
+        api.get("/admissions/my-applications").catch(err => {
+          console.error("Error fetching my-applications:", err);
+          return { data: { data: [] } };
+        }),
         api.get("/tickets/my-tickets").catch(err => {
           console.error("Error fetching tickets:", err);
           return { data: { data: [] } };
         })
       ]);
-      setCourses(coursesRes.data.data);
-      setApplications(appsRes.data.data);
-      setTickets(ticketsRes.data.data);
+      setCourses(coursesRes.data?.data || []);
+      setApplications(appsRes.data?.data || []);
+      setTickets(ticketsRes.data?.data || []);
     } catch (err) {
       console.error("Error fetching dashboard data:", err);
     } finally {
@@ -65,13 +71,14 @@ export default function StudentDashboard() {
   const fetchTrainers = async () => {
     try {
       const { data } = await api.get("/reviews/trainers");
-      setTrainers(data.data);
-      if (data.data.length > 0 && !reviewForm.trainerId) {
-        setReviewForm(prev => ({ ...prev, trainerId: data.data[0]._id }));
+      const list = data?.data || [];
+      setTrainers(list);
+      if (list.length > 0 && !reviewForm.trainerId) {
+        setReviewForm(prev => ({ ...prev, trainerId: list[0]._id }));
       }
     } catch (err) {
       console.error("Error fetching trainers:", err);
-      toast.error("Failed to load trainers list: " + (err.response?.data?.message || err.message));
+      setTrainers([]);
     }
   };
 
