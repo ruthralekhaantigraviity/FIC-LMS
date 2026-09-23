@@ -293,6 +293,10 @@ exports.getMyEnrolledCourses = async (req, res) => {
       }
     }
 
+    res.status(200).json({ status: 'success', data: courses });
+  } catch (err) {
+    console.error('[GET MY ENROLLED COURSES ERROR]', err.message);
+    res.status(200).json({ status: 'success', data: [] });
   }
 };
 
