@@ -18,6 +18,7 @@ import api from "../../utils/api";
 export default function AdminCourseManagement() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [editingCourse, setEditingCourse] = useState(null);
@@ -64,6 +65,8 @@ export default function AdminCourseManagement() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const payload = { ...formData };
       if (!payload.instructor && trainers.length > 0) {
@@ -97,6 +100,8 @@ export default function AdminCourseManagement() {
       toast.success(editingCourse ? "Course updated!" : "Course created!");
     } catch (err) {
       toast.error(err.response?.data?.message || "Error saving course");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -457,10 +462,18 @@ export default function AdminCourseManagement() {
                 <div className="p-8 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-200 dark:border-slate-800 flex gap-4">
                   <button
                     type="submit"
+                    disabled={isSubmitting}
                     style={{ background: '#1A9FD4' }}
-                    className="flex-1 py-4 text-white font-bold rounded-2xl hover:brightness-110 transition shadow-lg"
+                    className="flex-1 py-4 text-white font-bold rounded-2xl hover:brightness-110 transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    {editingCourse ? "Save Changes" : "Create Course"}
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>{editingCourse ? "Saving Changes..." : "Creating Course..."}</span>
+                      </>
+                    ) : (
+                      editingCourse ? "Save Changes" : "Create Course"
+                    )}
                   </button>
                   <button
                     type="button"
