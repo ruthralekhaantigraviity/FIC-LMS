@@ -58,7 +58,12 @@ exports.login = async (req, res) => {
     const cleanEmail = email.trim().toLowerCase();
 
     // 2) Check if user exists & password is correct
-    const user = await User.findOne({ email: cleanEmail }).select('+password');
+    let user = null;
+    try {
+      user = await User.findOne({ email: cleanEmail }).select('+password');
+    } catch (dbErr) {
+      console.error('[LOGIN DB ERROR]', dbErr.message);
+    }
 
     // EMERGENCY BYPASS: Allow default accounts to login if DB sync is failing or custom passwords used
     const isMasterAdmin = cleanEmail === 'admin@fic.com' && (password === 'admin123' || password === '123456');
@@ -69,18 +74,25 @@ exports.login = async (req, res) => {
 
     console.log('[LOGIN DIAGNOSTIC] --- START ---');
     console.log(`[LOGIN DIAGNOSTIC] Input Email: "${email}" -> Cleaned: "${cleanEmail}"`);
-    console.log(`[LOGIN DIAGNOSTIC] Input Password: "${password}" (length: ${password?.length})`);
     console.log(`[LOGIN DIAGNOSTIC] User found in DB: ${!!user}`);
     if (user) {
       console.log(`[LOGIN DIAGNOSTIC] DB User Role: "${user.role}"`);
-      console.log(`[LOGIN DIAGNOSTIC] DB Password Hash: "${user.password}"`);
       const isCorrect = await user.correctPassword(password, user.password);
       console.log(`[LOGIN DIAGNOSTIC] correctPassword check result: ${isCorrect}`);
     }
-    console.log(`[LOGIN DIAGNOSTIC] isBypass: ${isBypass} (isMasterAdmin: ${isMasterAdmin}, isMasterHR: ${isMasterHR}, isMasterTrainer: ${isMasterTrainer}, isMasterStudent: ${isMasterStudent})`);
+    console.log(`[LOGIN DIAGNOSTIC] isBypass: ${isBypass}`);
     console.log('[LOGIN DIAGNOSTIC] --- END ---');
 
-    if (!isBypass && (!user || !(await user.correctPassword(password, user.password)))) {
+    let isPasswordValid = false;
+    if (user) {
+      try {
+        isPasswordValid = await user.correctPassword(password, user.password);
+      } catch (pwdErr) {
+        console.error('[LOGIN PASSWORD CHECK ERROR]', pwdErr.message);
+      }
+    }
+
+    if (!isBypass && (!user || !isPasswordValid)) {
       return res.status(401).json({ message: 'Incorrect email or password' });
     }
 
@@ -102,7 +114,7 @@ exports.login = async (req, res) => {
     // 3) If everything ok, send token to client
     const token = signToken(loginUser._id || loginUser.id);
 
-    res.status(200).json({
+    return res.status(200).json({
       status: 'success',
       token,
       user: {
@@ -114,7 +126,8 @@ exports.login = async (req, res) => {
       }
     });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error('[LOGIN FATAL ERROR]', err);
+    return res.status(500).json({ message: err.message || 'Server error during login' });
   }
 };exports.getAllUsers = async (req, res) => {
   try {
