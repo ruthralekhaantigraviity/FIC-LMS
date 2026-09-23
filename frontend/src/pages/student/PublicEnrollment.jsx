@@ -32,16 +32,23 @@ export default function PublicEnrollment() {
   });
 
   useEffect(() => {
-    api.get("/courses")
-      .then(res => setCourses(res.data.data))
+    api.get("/courses?all=true")
+      .then(res => {
+        const fetched = Array.isArray(res.data?.data) ? res.data.data : [];
+        setCourses(fetched);
+        if (queryCourseId) {
+          const found = fetched.find(c => c._id === queryCourseId);
+          if (found) {
+            setFormData(prev => ({
+              ...prev,
+              courseId: queryCourseId,
+              targetDomain: prev.targetDomain || found.title
+            }));
+          }
+        }
+      })
       .catch(err => console.error(err))
       .finally(() => setFetchingCourses(false));
-  }, []);
-
-  useEffect(() => {
-    if (queryCourseId) {
-      setFormData(prev => ({ ...prev, courseId: queryCourseId }));
-    }
   }, [queryCourseId]);
 
   const [isSuccess, setIsSuccess] = useState(false);
@@ -223,7 +230,15 @@ export default function PublicEnrollment() {
                       <select
                         required
                         value={formData.courseId}
-                        onChange={(e) => setFormData({ ...formData, courseId: e.target.value })}
+                        onChange={(e) => {
+                          const chosenId = e.target.value;
+                          const found = courses.find(c => c._id === chosenId);
+                          setFormData(prev => ({
+                            ...prev,
+                            courseId: chosenId,
+                            targetDomain: found ? found.title : prev.targetDomain
+                          }));
+                        }}
                         className="w-full px-5 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-primary-500 focus:bg-white outline-none transition font-medium text-slate-700"
                       >
                         <option value="">Select a course to enroll...</option>
@@ -328,11 +343,19 @@ export default function PublicEnrollment() {
                     <input
                       type="text"
                       required
-                      placeholder="Target Specialization (e.g. AI, Web)"
+                      list="public-created-domains"
+                      placeholder="Target Specialization / Domain (Select created course)"
                       value={formData.targetDomain}
                       onChange={(e) => setFormData({ ...formData, targetDomain: e.target.value })}
-                      className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none"
+                      className="w-full pl-12 pr-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-500 outline-none font-medium"
                     />
+                    <datalist id="public-created-domains">
+                      {courses.map((c) => (
+                        <option key={c._id} value={c.title}>
+                          {c.title} ({c.category})
+                        </option>
+                      ))}
+                    </datalist>
                   </div>
                 </div>
               </div>

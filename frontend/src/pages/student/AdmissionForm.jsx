@@ -29,27 +29,42 @@ export default function AdmissionForm() {
     targetDomain: "",
   });
   useEffect(() => {
-    if (courseId) {
-      api
-        .get(`/courses/${courseId}`)
-        .then((res) => {
-          setCourse(res.data.data);
-          setSelectedCourseId(courseId);
-        })
-        .catch((err) => console.error(err));
-    } else {
-      // Fetch all courses for the dropdown
-      api
-        .get("/courses")
-        .then((res) => setAllCourses(res.data.data))
-        .catch((err) => console.error(err));
-    }
+    api
+      .get("/courses?all=true")
+      .then((res) => {
+        const fetched = Array.isArray(res.data?.data) ? res.data.data : [];
+        setAllCourses(fetched);
+        
+        if (courseId) {
+          const found = fetched.find(c => c._id === courseId);
+          if (found) {
+            setCourse(found);
+            setSelectedCourseId(courseId);
+            setFormData(prev => ({
+              ...prev,
+              targetDomain: prev.targetDomain || found.title
+            }));
+          } else {
+            api.get(`/courses/${courseId}`).then(r => {
+              if (r.data?.data) {
+                setCourse(r.data.data);
+                setSelectedCourseId(courseId);
+                setFormData(prev => ({ ...prev, targetDomain: prev.targetDomain || r.data.data.title }));
+              }
+            }).catch(e => console.error(e));
+          }
+        }
+      })
+      .catch((err) => console.error(err));
   }, [courseId]);
 
   useEffect(() => {
-    if (selectedCourseId && !courseId) {
+    if (selectedCourseId) {
       const found = allCourses.find(c => c._id === selectedCourseId);
-      if (found) setCourse(found);
+      if (found) {
+        setCourse(found);
+        setFormData(prev => ({ ...prev, targetDomain: found.title }));
+      }
     }
   }, [selectedCourseId, allCourses]);
   const handleSubmit = async (e) => {
@@ -277,11 +292,12 @@ export default function AdmissionForm() {
               <div>
                 {" "}
                 <label className="block text-sm font-bold text-slate-700 mb-2">
-                  Target Domain / Specialization
+                  Target Domain / Course Specialization
                 </label>{" "}
                 <input
                   type="text"
                   required
+                  list="admin-created-courses-list"
                   value={formData.targetDomain}
                   onChange={(e) =>
                     setFormData({
@@ -290,8 +306,15 @@ export default function AdmissionForm() {
                     })
                   }
                   className="w-full px-4 py-2.5 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
-                  placeholder="e.g. Frontend, Data Science, AI"
+                  placeholder="Select or enter created course (e.g. React js, Full Stack)"
                 />{" "}
+                <datalist id="admin-created-courses-list">
+                  {allCourses.map((c) => (
+                    <option key={c._id} value={c.title}>
+                      {c.title} ({c.category})
+                    </option>
+                  ))}
+                </datalist>
               </div>{" "}
               <div className="col-span-2">
                 {" "}
