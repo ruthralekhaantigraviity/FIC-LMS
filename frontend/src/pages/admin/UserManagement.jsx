@@ -69,8 +69,13 @@ export default function UserManagement() {
         await api.patch(`/auth/users/${editingUser._id}`, updateData);
         toast.success('User updated successfully!');
       } else {
-        await api.post('/auth/register', formData);
-        toast.success('User created successfully!');
+        await api.post('/auth/register', {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password || 'trainer123',
+          role: formData.role || 'trainer'
+        });
+        toast.success('Staff account created successfully!');
       }
       setIsModalOpen(false);
       setEditingUser(null);
