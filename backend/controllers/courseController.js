@@ -45,26 +45,50 @@ exports.getCourse = async (req, res) => {
   }
 };
 
+const User = require('../models/User');
+
 exports.createCourse = async (req, res) => {
   try {
+    const { instructor, ...rest } = req.body;
+    let validInstructor = instructor;
+
+    if (!validInstructor || !mongoose.Types.ObjectId.isValid(validInstructor)) {
+      if (req.user && req.user._id && mongoose.Types.ObjectId.isValid(req.user._id)) {
+        validInstructor = req.user._id;
+      } else if (req.user && req.user.id && mongoose.Types.ObjectId.isValid(req.user.id)) {
+        validInstructor = req.user.id;
+      } else {
+        const dbUser = await User.findOne({ role: { $in: ['trainer', 'admin'] } });
+        validInstructor = dbUser ? dbUser._id : new mongoose.Types.ObjectId();
+      }
+    }
+
     const newCourse = await Course.create({
-      ...req.body,
-      instructor: req.body.instructor || req.user.id
+      ...rest,
+      instructor: validInstructor
     });
+
     res.status(201).json({ status: 'success', data: newCourse });
   } catch (err) {
+    console.error('[CREATE COURSE ERROR]', err.message);
     res.status(400).json({ message: err.message });
   }
 };
 
 exports.updateCourse = async (req, res) => {
   try {
-    const course = await Course.findByIdAndUpdate(req.params.id, req.body, {
+    const updateData = { ...req.body };
+    if (updateData.instructor && !mongoose.Types.ObjectId.isValid(updateData.instructor)) {
+      delete updateData.instructor;
+    }
+
+    const course = await Course.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
       runValidators: true
     });
     res.status(200).json({ status: 'success', data: course });
   } catch (err) {
+    console.error('[UPDATE COURSE ERROR]', err.message);
     res.status(400).json({ message: err.message });
   }
 };

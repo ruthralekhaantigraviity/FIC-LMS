@@ -41,8 +41,10 @@ export default function AdminCourseManagement() {
   const fetchTrainers = async () => {
     try {
       const { data } = await api.get("/auth/users");
-      const trainersList = data.data.filter(u => u.role === 'trainer');
-      setTrainers(trainersList);
+      if (data && Array.isArray(data.data)) {
+        const trainersList = data.data.filter(u => u && (u.role === 'trainer' || u.role === 'admin' || u.role === 'hr'));
+        setTrainers(trainersList);
+      }
     } catch (err) {
       console.error("Error fetching trainers:", err);
     }
@@ -51,7 +53,7 @@ export default function AdminCourseManagement() {
   const fetchCourses = async () => {
     try {
       const { data } = await api.get("/courses?all=true");
-      setCourses(data.data);
+      setCourses(data.data || []);
     } catch (err) {
       console.error("Error fetching courses:", err);
     } finally {
@@ -62,10 +64,15 @@ export default function AdminCourseManagement() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const payload = { ...formData };
+      if (!payload.instructor) {
+        delete payload.instructor;
+      }
+
       if (editingCourse) {
-        await api.patch(`/courses/${editingCourse._id}`, formData);
+        await api.patch(`/courses/${editingCourse._id}`, payload);
       } else {
-        await api.post("/courses", formData);
+        await api.post("/courses", payload);
       }
       setIsModalOpen(false);
       setEditingCourse(null);
