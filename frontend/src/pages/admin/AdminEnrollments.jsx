@@ -54,8 +54,13 @@ const AdminEnrollments = () => {
 
   const filteredEnrollments = enrollments.filter(
     (enrollment) => {
-      const matchesSearch = enrollment.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (enrollment.course?.title || '').toLowerCase().includes(searchQuery.toLowerCase());
+      const q = searchQuery.toLowerCase();
+      const nameMatch = (enrollment.fullName || '').toLowerCase().includes(q);
+      const emailMatch = (enrollment.email || '').toLowerCase().includes(q);
+      const courseMatch = (enrollment.course?.title || '').toLowerCase().includes(q);
+      const domainMatch = (enrollment.targetDomain || '').toLowerCase().includes(q);
+      
+      const matchesSearch = nameMatch || emailMatch || courseMatch || domainMatch;
       const matchesStatus = filterStatus === "all" || enrollment.status === filterStatus;
       return matchesSearch && matchesStatus;
     }
@@ -154,7 +159,7 @@ const AdminEnrollments = () => {
                            <GraduationCap size={16} className="text-blue-500" />
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-slate-600 dark:text-slate-300">{enrollment.course?.title || 'Unknown Course'}</p>
+                          <p className="text-sm font-bold text-slate-600 dark:text-slate-300">{enrollment.course?.title || enrollment.targetDomain || 'Unknown Course'}</p>
                         </div>
                       </div>
                     </td>
