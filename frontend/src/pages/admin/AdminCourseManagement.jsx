@@ -71,9 +71,15 @@ export default function AdminCourseManagement() {
       }
 
       if (editingCourse) {
-        await api.patch(`/courses/${editingCourse._id}`, payload);
+        const { data } = await api.patch(`/courses/${editingCourse._id}`, payload);
+        if (data?.data) {
+          setCourses(prev => prev.map(c => c._id === editingCourse._id ? { ...c, ...data.data } : c));
+        }
       } else {
-        await api.post("/courses", payload);
+        const { data } = await api.post("/courses", payload);
+        if (data?.data) {
+          setCourses(prev => [data.data, ...prev]);
+        }
       }
       setIsModalOpen(false);
       setEditingCourse(null);
