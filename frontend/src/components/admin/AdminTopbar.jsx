@@ -19,19 +19,22 @@ const AdminTopbar = () => {
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const prevCountRef = React.useRef(0);
+  const isFetchingRef = React.useRef(false);
 
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 5000); // Poll every 5 seconds
+    const interval = setInterval(fetchNotifications, 30000); // Poll every 30 seconds
     return () => clearInterval(interval);
   }, []);
 
   const fetchNotifications = async () => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
       const { data } = await api.get('/notifications');
-      const newNotifications = data.data;
+      const newNotifications = data?.data;
       if (Array.isArray(newNotifications)) {
         if (newNotifications.length > prevCountRef.current && prevCountRef.current !== 0) {
           const addedCount = newNotifications.length - prevCountRef.current;
@@ -55,6 +58,8 @@ const AdminTopbar = () => {
       if (err.response?.status !== 401) {
         console.error('Error fetching notifications:', err.message);
       }
+    } finally {
+      isFetchingRef.current = false;
     }
   };
 

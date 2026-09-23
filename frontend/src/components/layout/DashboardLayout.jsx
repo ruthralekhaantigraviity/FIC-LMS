@@ -141,6 +141,8 @@ export default function DashboardLayout() {
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [showAllNotificationsModal, setShowAllNotificationsModal] = useState(false);
 
+  const isFetchingRef = React.useRef(false);
+
   useEffect(() => {
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 60000); // Poll every minute
@@ -148,6 +150,8 @@ export default function DashboardLayout() {
   }, []);
 
   const fetchNotifications = async () => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
@@ -159,6 +163,8 @@ export default function DashboardLayout() {
       if (err.response?.status !== 401) {
         console.error('Error fetching notifications:', err.message);
       }
+    } finally {
+      isFetchingRef.current = false;
     }
   };
 

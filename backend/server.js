@@ -92,20 +92,22 @@ app.listen(PORT, () => {
 const User = require('./models/User');
 
 const connectDB = async () => {
+  const isProduction = process.env.NODE_ENV === 'production' || Boolean(process.env.RENDER);
   const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/fic_lms';
+
   try {
     await mongoose.connect(uri, {
       serverSelectionTimeoutMS: 5000,
-      connectTimeoutMS: 10000
+      connectTimeoutMS: 5000
     });
     console.log('MongoDB Connected successfully');
   } catch (err) {
     console.error('Primary MongoDB connection error:', err.message);
-    if (process.env.MONGODB_URI && uri !== 'mongodb://localhost:27017/fic_lms') {
-      console.log('Attempting fallback to local MongoDB (mongodb://localhost:27017/fic_lms)...');
+    if (!isProduction && process.env.MONGODB_URI && uri !== 'mongodb://localhost:27017/fic_lms') {
+      console.log('Attempting fallback to local MongoDB (development only)...');
       try {
         await mongoose.connect('mongodb://localhost:27017/fic_lms', {
-          serverSelectionTimeoutMS: 3000
+          serverSelectionTimeoutMS: 2000
         });
         console.log('Fallback MongoDB Connected successfully');
       } catch (fallbackErr) {
