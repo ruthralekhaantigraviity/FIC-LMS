@@ -1,8 +1,8 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || 'your_super_secret_jwt_key_12345', {
+const signToken = (id, role, email) => {
+  return jwt.sign({ id, role, email }, process.env.JWT_SECRET || 'your_super_secret_jwt_key_12345', {
     expiresIn: '30d'
   });
 };
@@ -27,7 +27,7 @@ exports.register = async (req, res) => {
       fees
     });
 
-    const token = signToken(newUser._id);
+    const token = signToken(newUser._id, newUser.role, newUser.email);
 
     res.status(201).json({
       status: 'success',
@@ -112,7 +112,8 @@ exports.login = async (req, res) => {
     };
 
     // 3) If everything ok, send token to client
-    const token = signToken(loginUser._id || loginUser.id);
+    const userRole = bypassRole || loginUser.role;
+    const token = signToken(loginUser._id || loginUser.id, userRole, cleanEmail);
 
     return res.status(200).json({
       status: 'success',
