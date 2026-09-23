@@ -4,6 +4,7 @@ const User = require('../models/User');
 const Notification = require('../models/Notification');
 const Course = require('../models/Course');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || 'your_super_secret_jwt_key_12345', {
