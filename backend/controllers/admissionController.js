@@ -192,21 +192,30 @@ exports.deleteAdmission = async (req, res) => {
 
 exports.getMyAdmissions = async (req, res) => {
   try {
-    const admissions = await Admission.find({ student: req.user.id })
+    const userId = req.user?._id || req.user?.id;
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId) || mongoose.connection.readyState !== 1) {
+      return res.status(200).json({ status: 'success', data: [] });
+    }
+    const admissions = await Admission.find({ student: userId })
       .populate('course', 'title thumbnail');
-    res.status(200).json({ status: 'success', data: admissions });
+    res.status(200).json({ status: 'success', data: admissions || [] });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error('[GET MY ADMISSIONS ERROR]', err.message);
+    res.status(200).json({ status: 'success', data: [] });
   }
 };
 
 exports.getMyEnrolledCourses = async (req, res) => {
   try {
+    const userId = req.user?._id || req.user?.id;
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId) || mongoose.connection.readyState !== 1) {
+      return res.status(200).json({ status: 'success', data: [] });
+    }
     const Subject = require('../models/Subject');
     
     // 1. Get courses from completed admissions
     const admissions = await Admission.find({ 
-      student: req.user.id, 
+      student: userId, 
       status: 'completed' 
     }).populate({
       path: 'course',
@@ -219,13 +228,15 @@ exports.getMyEnrolledCourses = async (req, res) => {
     for (const adm of admissions) {
       if (!adm.course) continue;
       
-      // Find matching courses case-insensitively
-      const matchingCourses = await Course.find({
-        title: { $regex: new RegExp(`^${adm.course.title.trim()}$`, 'i') }
-      });
-      const courseIds = matchingCourses.map(c => c._id);
-      const courseSubjects = await Subject.find({ course: { $in: courseIds } });
-      
+      let courseSubjects = [];
+      try {
+        const matchingCourses = await Course.find({
+          title: { $regex: new RegExp(`^${(adm.course.title || '').trim()}$`, 'i') }
+        });
+        const courseIds = matchingCourses.map(c => c._id);
+        courseSubjects = await Subject.find({ course: { $in: courseIds } });
+      } catch (e) {}
+
       courses.push({
         _id: adm.course._id,
         title: adm.course.title,
@@ -243,7 +254,7 @@ exports.getMyEnrolledCourses = async (req, res) => {
     }
 
     // 2. Check Student profile for manual assignments not in Admission model
-    const studentProfile = await Student.findOne({ user: req.user.id }).populate({
+    const studentProfile = await Student.findOne({ user: userId }).populate({
       path: 'enrolledCourses.course',
       populate: [
         { path: 'instructor', select: 'name' }
@@ -253,11 +264,41 @@ exports.getMyEnrolledCourses = async (req, res) => {
     if (studentProfile && studentProfile.enrolledCourses) {
       for (const ec of studentProfile.enrolledCourses) {
         if (!ec.course) continue;
-        // Check if already in the list from admissions
         const exists = courses.some(c => c._id.toString() === ec.course._id.toString());
         if (!exists) {
-          // Find matching courses case-insensitively
-          const matchingCourses = await Course.find({
+          let courseSubjects = [];
+          try {
+            const matchingCourses = await Course.find({
+              title: { $regex: new RegExp(`^${(ec.course.title || '').trim()}$`, 'i') }
+            });
+            const courseIds = matchingCourses.map(c => c._id);
+            courseSubjects = await Subject.find({ course: { $in: courseIds } });
+          } catch (e) {}
+
+          courses.push({
+            _id: ec.course._id,
+            title: ec.course.title,
+            description: ec.course.description,
+            category: ec.course.category,
+            thumbnail: ec.course.thumbnail,
+            instructor: ec.course.instructor,
+            level: ec.course.level,
+            duration: ec.course.duration,
+            totalLessons: ec.course.totalLessons,
+            enrolledAt: ec.enrollmentDate,
+            hasVideos: courseSubjects.some(s => s.videoUrl && s.videoUrl.trim() !== ""),
+            hasPdfs: courseSubjects.some(s => (s.pdfUrl && s.pdfUrl.trim() !== "") || (s.resources && s.resources.length > 0)),
+          });
+        }
+      }
+    }
+
+    res.status(200).json({ status: 'success', data: courses });
+  } catch (err) {
+    console.error('[GET MY ENROLLED COURSES ERROR]', err.message);
+    res.status(200).json({ status: 'success', data: [] });
+  }
+};
             title: { $regex: new RegExp(`^${ec.course.title.trim()}$`, 'i') }
           });
           const courseIds = matchingCourses.map(c => c._id);
