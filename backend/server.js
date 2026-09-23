@@ -12,15 +12,15 @@ dotenv.config();
 const app = express();
 
 // Enable CORS with full preflight support and dynamic origin reflection for all origins
-app.use(cors({
-  origin: function (origin, callback) {
-    // Dynamically allow any origin (e.g. localhost:5173, localhost:5175, vercel.app)
-    callback(null, true);
-  },
+const corsOptions = {
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
-}));
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Middleware
 app.use(express.json());
@@ -49,6 +49,8 @@ const adminDashboardRoutes = require('./routes/adminDashboardRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const enquiryRoutes = require('./routes/enquiryRoutes');
 const progressRoutes = require('./routes/progressRoutes');
+const ticketRoutes = require('./routes/ticketRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/progress', progressRoutes);
@@ -61,20 +63,33 @@ app.use('/api/modules', moduleRoutes);
 app.use('/api/admin-dashboard', adminDashboardRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/enquiries', enquiryRoutes);
-const ticketRoutes = require('./routes/ticketRoutes');
 app.use('/api/tickets', ticketRoutes);
-const reviewRoutes = require('./routes/reviewRoutes');
 app.use('/api/reviews', reviewRoutes);
 
-// Basic Route
+// Health check / Basic Route
 app.get('/', (req, res) => {
   res.send('FIC Learning Management System API is running...');
 });
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', time: new Date() });
+});
 
-// Port
+// Global Error Handler to guarantee JSON & CORS headers on any error
+app.use((err, req, res, next) => {
+  console.error('[SERVER GLOBAL ERROR]', err);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || 'Internal Server Error'
+  });
+});
+
+// Port & Server Start (Listen immediately to pass Render health checks)
 const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
 
-// Database Connection
+// Database Connection in Background
 const User = require('./models/User');
 
 const connectDB = async () => {
@@ -160,10 +175,6 @@ const connectDB = async () => {
   } catch (err) {
     console.error('Error ensuring default accounts:', err);
   }
-
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
 };
 
 connectDB();
