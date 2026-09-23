@@ -55,7 +55,13 @@ export default function AdminCourseManagement() {
   const fetchCourses = async () => {
     try {
       const { data } = await api.get("/courses?all=true");
-      setCourses(data.data || []);
+      const fetched = Array.isArray(data?.data) ? data.data : [];
+      setCourses(prev => {
+        if (!prev || prev.length === 0) return fetched;
+        const fetchedIds = new Set(fetched.map(c => String(c._id)));
+        const newLocal = prev.filter(c => c && c._id && !fetchedIds.has(String(c._id)));
+        return [...newLocal, ...fetched];
+      });
     } catch (err) {
       console.error("Error fetching courses:", err);
     } finally {
@@ -75,14 +81,17 @@ export default function AdminCourseManagement() {
 
       if (editingCourse) {
         const { data } = await api.patch(`/courses/${editingCourse._id}`, payload);
-        if (data?.data) {
-          setCourses(prev => prev.map(c => c._id === editingCourse._id ? { ...c, ...data.data } : c));
-        }
+        const updatedCourse = data?.data || { ...editingCourse, ...payload };
+        setCourses(prev => prev.map(c => c._id === editingCourse._id ? { ...c, ...updatedCourse } : c));
       } else {
         const { data } = await api.post("/courses", payload);
-        if (data?.data) {
-          setCourses(prev => [data.data, ...prev]);
-        }
+        const newCourse = data?.data || {
+          _id: `temp-${Date.now()}`,
+          ...payload,
+          createdAt: new Date().toISOString(),
+          thumbnail: payload.thumbnail || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1472&q=80'
+        };
+        setCourses(prev => [newCourse, ...prev]);
       }
       setIsModalOpen(false);
       setEditingCourse(null);
@@ -96,7 +105,6 @@ export default function AdminCourseManagement() {
         instructor: trainers.length > 0 ? trainers[0]._id : "",
         isPublished: false,
       });
-      fetchCourses();
       toast.success(editingCourse ? "Course updated!" : "Course created!");
     } catch (err) {
       toast.error(err.response?.data?.message || "Error saving course");
@@ -124,7 +132,7 @@ export default function AdminCourseManagement() {
     if (window.confirm("Are you sure you want to delete this course?")) {
       try {
         await api.delete(`/courses/${id}`);
-        fetchCourses();
+        setCourses(prev => prev.filter(c => c._id !== id));
         toast.success("Course deleted successfully");
       } catch (err) {
         toast.error("Error deleting course");
@@ -132,10 +140,11 @@ export default function AdminCourseManagement() {
     }
   };
 
-  const filteredCourses = courses.filter(
+  const filteredCourses = (courses || []).filter(
     (course) =>
-      course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.category.toLowerCase().includes(searchQuery.toLowerCase()),
+      course &&
+      ((course.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+       (course.category || "").toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   return (
@@ -223,7 +232,7 @@ export default function AdminCourseManagement() {
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-slate-300 dark:border-slate-700">
                           <img
-                            src={course.thumbnail}
+                            src={course.thumbnail || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1472&q=80'}
                             alt=""
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           />
