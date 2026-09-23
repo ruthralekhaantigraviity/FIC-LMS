@@ -11,6 +11,7 @@ import {
   XCircle,
   Video,
   FileText,
+  BookOpen,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../../utils/api";
@@ -31,6 +32,7 @@ export default function AdminCourseManagement() {
     price: 0,
     duration: "8 Weeks",
     instructor: "",
+    thumbnail: "",
     isPublished: false,
   });
 
@@ -89,7 +91,7 @@ export default function AdminCourseManagement() {
           _id: `temp-${Date.now()}`,
           ...payload,
           createdAt: new Date().toISOString(),
-          thumbnail: payload.thumbnail || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1472&q=80'
+          thumbnail: payload.thumbnail || ''
         };
         setCourses(prev => [newCourse, ...prev]);
       }
@@ -103,6 +105,7 @@ export default function AdminCourseManagement() {
         price: 0,
         duration: "8 Weeks",
         instructor: trainers.length > 0 ? trainers[0]._id : "",
+        thumbnail: "",
         isPublished: false,
       });
       toast.success(editingCourse ? "Course updated!" : "Course created!");
@@ -123,6 +126,7 @@ export default function AdminCourseManagement() {
       price: course.price,
       duration: course.duration || "8 Weeks",
       instructor: course.instructor?._id || course.instructor || (trainers.length > 0 ? trainers[0]._id : ""),
+      thumbnail: course.thumbnail || "",
       isPublished: course.isPublished,
     });
     setIsModalOpen(true);
@@ -169,6 +173,7 @@ export default function AdminCourseManagement() {
               price: 0,
               duration: "8 Weeks",
               instructor: trainers.length > 0 ? trainers[0]._id : "",
+              thumbnail: "",
               isPublished: false,
             });
             setIsModalOpen(true);
@@ -230,12 +235,18 @@ export default function AdminCourseManagement() {
                   <tr key={course._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-slate-300 dark:border-slate-700">
-                          <img
-                            src={course.thumbnail || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1472&q=80'}
-                            alt=""
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          />
+                        <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center">
+                          {course.thumbnail && course.thumbnail.trim() !== '' && !course.thumbnail.includes('unsplash.com') ? (
+                            <img
+                              src={course.thumbnail}
+                              alt={course.title}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-sky-500/10 via-blue-500/10 to-indigo-500/10 flex items-center justify-center text-sky-500 dark:text-sky-400 font-bold">
+                              <BookOpen size={20} />
+                            </div>
+                          )}
                         </div>
                         <div className="min-w-0">
                           <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
@@ -422,6 +433,20 @@ export default function AdminCourseManagement() {
                         value={formData.duration}
                         onChange={(e) =>
                           setFormData({ ...formData, duration: e.target.value })
+                        }
+                        className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                        Thumbnail Image URL (Optional)
+                      </label>
+                      <input
+                        type="url"
+                        placeholder="https://example.com/course-banner.jpg (Leave empty for default icon)"
+                        value={formData.thumbnail}
+                        onChange={(e) =>
+                          setFormData({ ...formData, thumbnail: e.target.value })
                         }
                         className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
                       />

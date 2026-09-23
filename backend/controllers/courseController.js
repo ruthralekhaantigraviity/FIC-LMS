@@ -81,7 +81,7 @@ exports.createCourse = async (req, res) => {
       duration: duration || '8 Weeks',
       price: typeof price === 'number' ? price : Number(price) || 0,
       isPublished: Boolean(isPublished),
-      thumbnail: thumbnail || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1472&q=80',
+      thumbnail: thumbnail || '',
       instructor: validInstructor
     };
 
