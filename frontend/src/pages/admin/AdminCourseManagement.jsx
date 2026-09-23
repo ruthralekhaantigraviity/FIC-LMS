@@ -42,7 +42,8 @@ export default function AdminCourseManagement() {
     try {
       const { data } = await api.get("/auth/users");
       if (data && Array.isArray(data.data)) {
-        const trainersList = data.data.filter(u => u && (u.role === 'trainer' || u.role === 'admin' || u.role === 'hr'));
+        // Only include actual trainers (remove admin and hr)
+        const trainersList = data.data.filter(u => u && u.role === 'trainer');
         setTrainers(trainersList);
       }
     } catch (err) {
@@ -65,8 +66,8 @@ export default function AdminCourseManagement() {
     e.preventDefault();
     try {
       const payload = { ...formData };
-      if (!payload.instructor) {
-        delete payload.instructor;
+      if (!payload.instructor && trainers.length > 0) {
+        payload.instructor = trainers[0]._id;
       }
 
       if (editingCourse) {
@@ -83,7 +84,7 @@ export default function AdminCourseManagement() {
         level: "Beginner",
         price: 0,
         duration: "8 Weeks",
-        instructor: "",
+        instructor: trainers.length > 0 ? trainers[0]._id : "",
         isPublished: false,
       });
       fetchCourses();
@@ -102,7 +103,7 @@ export default function AdminCourseManagement() {
       level: course.level,
       price: course.price,
       duration: course.duration || "8 Weeks",
-      instructor: course.instructor?._id || course.instructor || "",
+      instructor: course.instructor?._id || course.instructor || (trainers.length > 0 ? trainers[0]._id : ""),
       isPublished: course.isPublished,
     });
     setIsModalOpen(true);
@@ -147,7 +148,7 @@ export default function AdminCourseManagement() {
               level: "Beginner",
               price: 0,
               duration: "8 Weeks",
-              instructor: "",
+              instructor: trainers.length > 0 ? trainers[0]._id : "",
               isPublished: false,
             });
             setIsModalOpen(true);
