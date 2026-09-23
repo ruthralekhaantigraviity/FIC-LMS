@@ -28,27 +28,33 @@ const AdminTopbar = () => {
 
   const fetchNotifications = async () => {
     try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
       const { data } = await api.get('/notifications');
       const newNotifications = data.data;
-      if (newNotifications.length > prevCountRef.current && prevCountRef.current !== 0) {
-        const addedCount = newNotifications.length - prevCountRef.current;
-        for (let i = 0; i < addedCount; i++) {
-          const notif = newNotifications[i];
-          if (notif) {
-            toast.success(
-              <div>
-                <p className="font-bold text-xs">{notif.title}</p>
-                <p className="text-[10px] opacity-90">{notif.message}</p>
-              </div>,
-              { icon: '🔔', duration: 5000 }
-            );
+      if (Array.isArray(newNotifications)) {
+        if (newNotifications.length > prevCountRef.current && prevCountRef.current !== 0) {
+          const addedCount = newNotifications.length - prevCountRef.current;
+          for (let i = 0; i < addedCount; i++) {
+            const notif = newNotifications[i];
+            if (notif) {
+              toast.success(
+                <div>
+                  <p className="font-bold text-xs">{notif.title}</p>
+                  <p className="text-[10px] opacity-90">{notif.message}</p>
+                </div>,
+                { icon: '🔔', duration: 5000 }
+              );
+            }
           }
         }
+        prevCountRef.current = newNotifications.length;
+        setNotifications(newNotifications);
       }
-      prevCountRef.current = newNotifications.length;
-      setNotifications(newNotifications);
     } catch (err) {
-      console.error('Error fetching notifications:', err);
+      if (err.response?.status !== 401) {
+        console.error('Error fetching notifications:', err.message);
+      }
     }
   };
 

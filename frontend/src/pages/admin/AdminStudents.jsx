@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Plus, Search, Edit2, Trash2, Eye, 
-  Mail, Phone, Calendar, UserCheck, UserX, Filter, X
+  Mail, Phone, Calendar, UserCheck, UserX, Filter, X, Lock, DollarSign
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,16 +15,21 @@ const AdminStudents = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
-  const [formData, setFormData] = useState({ name: '', email: '', fees: '', courseDomain: 'Other', studentStatus: 'active' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', fees: '', courseDomain: 'Other', studentStatus: 'active' });
 
   useEffect(() => { fetchStudents(); }, []);
 
   const fetchStudents = async () => {
     try {
       const { data } = await api.get('/auth/users');
-      setStudents(data.data.filter(u => u.role === 'student'));
+      if (data && Array.isArray(data.data)) {
+        setStudents(data.data.filter(u => u && u.role === 'student'));
+      } else {
+        setStudents([]);
+      }
     } catch (err) {
-      toast.error('Failed to load students');
+      toast.error(err.response?.data?.message || 'Failed to load students');
+      setStudents([]);
     } finally {
       setLoading(false);
     }
@@ -32,13 +37,20 @@ const AdminStudents = () => {
 
   const openAddModal = () => {
     setEditingStudent(null);
-    setFormData({ name: '', email: '', fees: '', courseDomain: 'Other', studentStatus: 'active' });
+    setFormData({ name: '', email: '', password: '', fees: '', courseDomain: 'Other', studentStatus: 'active' });
     setIsModalOpen(true);
   };
 
   const openEditModal = (student) => {
     setEditingStudent(student);
-    setFormData({ name: student.name, email: student.email, fees: student.fees || '', courseDomain: student.courseDomain || 'Other', studentStatus: student.studentStatus || 'active' });
+    setFormData({ 
+      name: student.name || '', 
+      email: student.email || '', 
+      password: '', 
+      fees: student.fees || '', 
+      courseDomain: student.courseDomain || 'Other', 
+      studentStatus: student.studentStatus || 'active' 
+    });
     setIsModalOpen(true);
   };
 
@@ -46,10 +58,28 @@ const AdminStudents = () => {
     e.preventDefault();
     try {
       if (editingStudent) {
-        await api.patch(`/auth/users/${editingStudent._id}`, { name: formData.name, email: formData.email, courseDomain: formData.courseDomain, studentStatus: formData.studentStatus, fees: formData.fees });
+        const updatePayload = { 
+          name: formData.name, 
+          email: formData.email, 
+          courseDomain: formData.courseDomain, 
+          studentStatus: formData.studentStatus, 
+          fees: formData.fees 
+        };
+        if (formData.password) {
+          updatePayload.password = formData.password;
+        }
+        await api.patch(`/auth/users/${editingStudent._id}`, updatePayload);
         toast.success('Student updated successfully');
       } else {
-        await api.post('/auth/register', { ...formData, role: 'student', password: 'student123' });
+        await api.post('/auth/register', { 
+          name: formData.name,
+          email: formData.email,
+          password: formData.password || 'student123',
+          role: 'student',
+          courseDomain: formData.courseDomain,
+          studentStatus: formData.studentStatus,
+          fees: formData.fees
+        });
         toast.success('Student added successfully');
       }
       setIsModalOpen(false);
@@ -72,8 +102,9 @@ const AdminStudents = () => {
   };
 
   const filteredStudents = students.filter(s => {
-    const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.email.toLowerCase().includes(searchQuery.toLowerCase());
+    if (!s) return false;
+    const matchesSearch = (s.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (s.email || '').toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCourse = filterCourse === 'all' || s.courseDomain === filterCourse;
     const matchesStatus = filterStatus === 'all' || (s.studentStatus || 'active').toLowerCase() === filterStatus.toLowerCase();
     return matchesSearch && matchesCourse && matchesStatus;
@@ -153,7 +184,7 @@ const AdminStudents = () => {
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
               {loading ? (
                 <tr>
-                  <td colSpan="5" className="text-center py-20">
+                  <td colSpan="6" className="text-center py-20">
                     <div className="flex flex-col items-center gap-3">
                       <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                       <span className="text-slate-500 font-medium">Loading students...</span>
@@ -162,7 +193,7 @@ const AdminStudents = () => {
                 </tr>
               ) : filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="text-center py-20 text-slate-500">No students found.</td>
+                  <td colSpan="6" className="text-center py-20 text-slate-500">No students found.</td>
                 </tr>
               ) : (
                 filteredStudents.map((student) => (
@@ -170,11 +201,11 @@ const AdminStudents = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-600/20 flex items-center justify-center border border-slate-300 dark:border-slate-700">
-                          <span className="text-blue-500 font-bold text-xs">{student.name.charAt(0).toUpperCase()}</span>
+                          <span className="text-blue-500 font-bold text-xs">{student.name ? student.name.charAt(0).toUpperCase() : 'S'}</span>
                         </div>
                         <div>
                           <p className="text-sm font-bold text-slate-900 dark:text-white">{student.name}</p>
-                          <p className="text-[11px] text-slate-500 uppercase tracking-tighter">ID: {student._id.slice(-6)}</p>
+                          <p className="text-[11px] text-slate-500 uppercase tracking-tighter">ID: {student._id ? student._id.slice(-6) : 'N/A'}</p>
                         </div>
                       </div>
                     </td>
@@ -190,7 +221,7 @@ const AdminStudents = () => {
                     </td>
                     <td className="px-6 py-4 text-sm text-slate-500">
                       <div className="flex items-center gap-2">
-                        <Calendar size={14} />{new Date(student.createdAt).toLocaleDateString()}
+                        <Calendar size={14} />{student.createdAt ? new Date(student.createdAt).toLocaleDateString() : 'N/A'}
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -202,7 +233,7 @@ const AdminStudents = () => {
                           dropped: 'text-red-500 bg-red-500/10 border-red-500/20',
                         };
                         return (
-                          <span className={`flex items-center gap-1.5 text-[10px] font-bold uppercase px-2 py-1 rounded-lg w-fit border ${styles[status]}`}>
+                          <span className={`flex items-center gap-1.5 text-[10px] font-bold uppercase px-2 py-1 rounded-lg w-fit border ${styles[status] || styles.active}`}>
                             {status === 'active' ? <UserCheck size={12} /> : status === 'completed' ? <UserCheck size={12} /> : <UserX size={12} />}
                             {status}
                           </span>
@@ -245,7 +276,7 @@ const AdminStudents = () => {
                 </button>
               </div>
               <form onSubmit={handleSubmit}>
-                <div className="p-6 space-y-4">
+                <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
                   <div>
                     <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Full Name</label>
                     <input type="text" required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })}
@@ -258,6 +289,22 @@ const AdminStudents = () => {
                     <input type="email" required value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })}
                       className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
                       placeholder="student@example.com"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                      {editingStudent ? 'Password (Leave blank to keep current)' : 'Password (Default: student123)'}
+                    </label>
+                    <input type="password" value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
+                      placeholder={editingStudent ? '••••••••' : 'student123'}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Fees Amount</label>
+                    <input type="text" value={formData.fees} onChange={e => setFormData({ ...formData, fees: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/50 outline-none transition-all"
+                      placeholder="e.g. ₹25,000"
                     />
                   </div>
                   <div>
@@ -287,7 +334,7 @@ const AdminStudents = () => {
                     </select>
                   </div>
                 </div>
-                <div className="p-6 pt-0 flex gap-3">
+                <div className="p-6 pt-2 flex gap-3">
                   <button type="submit" className="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-600/20">
                     {editingStudent ? 'Save Changes' : 'Add Student'}
                   </button>
@@ -305,3 +352,4 @@ const AdminStudents = () => {
 };
 
 export default AdminStudents;
+

@@ -139,7 +139,7 @@ export default function AdminDashboard() {
         <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm dark:shadow-none">
           <h3 className="text-lg font-bold mb-6">Student Enrollment</h3>
           <div className="h-80 w-full">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
               <BarChart data={data}>
                 <CartesianGrid
                   strokeDasharray="3 3"

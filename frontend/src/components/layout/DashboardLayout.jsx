@@ -149,10 +149,16 @@ export default function DashboardLayout() {
 
   const fetchNotifications = async () => {
     try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
       const { data } = await api.get('/notifications');
-      setNotifications(data.data);
+      if (data && Array.isArray(data.data)) {
+        setNotifications(data.data);
+      }
     } catch (err) {
-      console.error('Error fetching notifications:', err);
+      if (err.response?.status !== 401) {
+        console.error('Error fetching notifications:', err.message);
+      }
     }
   };
 
