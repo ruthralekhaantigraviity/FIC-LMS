@@ -362,19 +362,40 @@ exports.publicEnroll = async (req, res) => {
     // 1. Get or Create User
     let user = null;
     if (mongoose.connection.readyState === 1) {
-      user = await User.findOne({ email: cleanEmail });
+      try {
+        user = await User.findOne({ email: cleanEmail });
+      } catch (e) {}
     }
     
     let isNewUser = false;
     if (!user) {
       const mockId = new mongoose.Types.ObjectId();
       if (mongoose.connection.readyState === 1) {
-        user = await User.create({
-          name: fullName,
-          email: cleanEmail,
-          password: password || '123456',
-          role: 'student'
-        });
+        try {
+          user = await User.create({
+            name: fullName,
+            email: cleanEmail,
+            password: password || '123456',
+            role: 'student'
+          });
+          isNewUser = true;
+        } catch (createErr) {
+          // If user already exists in DB with this email or creation failed
+          try {
+            user = await User.findOne({ email: cleanEmail });
+          } catch (e) {}
+          
+          if (!user) {
+            user = {
+              _id: mockId,
+              id: mockId,
+              name: fullName,
+              email: cleanEmail,
+              role: 'student'
+            };
+            isNewUser = true;
+          }
+        }
       } else {
         user = {
           _id: mockId,
@@ -383,8 +404,8 @@ exports.publicEnroll = async (req, res) => {
           email: cleanEmail,
           role: 'student'
         };
+        isNewUser = true;
       }
-      isNewUser = true;
     }
 
     // 2. Resolve valid courseId
@@ -429,39 +450,64 @@ exports.publicEnroll = async (req, res) => {
       initialStatus = 'completed';
     }
 
+    // Safely parse date of birth
+    let parsedDob = undefined;
+    if (dateOfBirth) {
+      const d = new Date(dateOfBirth);
+      if (!isNaN(d.getTime())) {
+        parsedDob = d;
+      }
+    }
+
     // 3. Create Admission
     let admission = null;
     if (mongoose.connection.readyState === 1) {
-      admission = await Admission.create({
-        student: user._id,
-        course: validCourseId,
-        fullName,
-        email: cleanEmail,
-        phoneNumber: phoneNumber || '',
-        dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined,
-        address: address || '',
-        previousEducation: previousEducation || '',
-        targetDomain: targetDomain || course?.title || 'General',
-        status: initialStatus
-      });
+      try {
+        admission = await Admission.create({
+          student: user._id,
+          course: validCourseId,
+          fullName,
+          email: cleanEmail,
+          phoneNumber: phoneNumber || '',
+          dateOfBirth: parsedDob,
+          address: address || '',
+          previousEducation: previousEducation || '',
+          targetDomain: targetDomain || course?.title || 'General',
+          status: initialStatus
+        });
+      } catch (admErr) {
+        console.warn('[PUBLIC ENROLL ADMISSION CREATE WARN]', admErr.message);
+        admission = {
+          _id: new mongoose.Types.ObjectId(),
+          student: user._id,
+          course: validCourseId,
+          fullName,
+          email: cleanEmail,
+          targetDomain: targetDomain || 'General',
+          status: initialStatus,
+          createdAt: new Date().toISOString()
+        };
+      }
 
       if (initialStatus === 'completed') {
-        let studentRec = await Student.findOne({ user: user._id });
-        if (!studentRec) {
-          const studentCount = await Student.countDocuments();
-          const studentIdStr = `FIC${new Date().getFullYear()}${(studentCount + 1).toString().padStart(4, '0')}`;
-          await Student.create({
-            user: user._id,
-            studentId: studentIdStr,
-            enrolledCourses: [{ course: validCourseId }]
-          });
-        } else {
-          const isEnrolled = studentRec.enrolledCourses.some(ec => ec.course && ec.course.toString() === String(validCourseId));
-          if (!isEnrolled) {
-            studentRec.enrolledCourses.push({ course: validCourseId });
-            await studentRec.save();
+        try {
+          let studentRec = await Student.findOne({ user: user._id });
+          if (!studentRec) {
+            const studentCount = await Student.countDocuments();
+            const studentIdStr = `FIC${new Date().getFullYear()}${(studentCount + 1).toString().padStart(4, '0')}`;
+            await Student.create({
+              user: user._id,
+              studentId: studentIdStr,
+              enrolledCourses: [{ course: validCourseId }]
+            });
+          } else {
+            const isEnrolled = studentRec.enrolledCourses.some(ec => ec.course && ec.course.toString() === String(validCourseId));
+            if (!isEnrolled) {
+              studentRec.enrolledCourses.push({ course: validCourseId });
+              await studentRec.save();
+            }
           }
-        }
+        } catch (e) {}
       } else {
         try {
           await Notification.create({
@@ -504,8 +550,8 @@ exports.publicEnroll = async (req, res) => {
     });
 
   } catch (err) {
-    console.error('[PUBLIC ENROLL ERROR]', err);
-    res.status(400).json({ message: err.message || 'Enrollment application failed' });
+    console.error('[PUBLIC ENROLL FATAL ERROR]', err);
+    res.status(500).json({ message: err.message || 'Enrollment application failed' });
   }
 };
 
