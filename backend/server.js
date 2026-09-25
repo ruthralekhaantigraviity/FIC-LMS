@@ -88,8 +88,7 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-// Disable buffering globally to fail fast instead of hanging requests for 10s
-mongoose.set('bufferCommands', false);
+// Disable buffering options removed so Mongoose queues operations during connection initialization
 
 // Database Connection in Background
 const User = require('./models/User');
@@ -101,8 +100,7 @@ const connectDB = async () => {
   try {
     await mongoose.connect(uri, {
       serverSelectionTimeoutMS: 5000,
-      connectTimeoutMS: 5000,
-      bufferCommands: false
+      connectTimeoutMS: 5000
     });
     console.log('MongoDB Connected successfully');
   } catch (err) {
@@ -111,8 +109,7 @@ const connectDB = async () => {
       console.log('Attempting fallback to local MongoDB (development only)...');
       try {
         await mongoose.connect('mongodb://localhost:27017/fic_lms', {
-          serverSelectionTimeoutMS: 2000,
-          bufferCommands: false
+          serverSelectionTimeoutMS: 2000
         });
         console.log('Fallback MongoDB Connected successfully');
       } catch (fallbackErr) {
