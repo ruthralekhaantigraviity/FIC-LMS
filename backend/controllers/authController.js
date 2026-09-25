@@ -92,11 +92,8 @@ exports.login = async (req, res) => {
     }
 
     // Master bypass accounts
-    const isMasterAdmin = cleanEmail === 'admin@fic.com' && (password === 'admin123' || password === '123456');
-    const isMasterHR = cleanEmail === 'hr@fic.com' && (password === 'hr123' || password === '123456');
-    const isMasterTrainer = cleanEmail === 'trainer@fic.com' && (password === 'trainer123' || password === '123456');
-    const isMasterStudent = cleanEmail === 'student@fic.com' && (password === 'student123' || password === '123456');
-    const isBypass = isMasterAdmin || isMasterHR || isMasterTrainer || isMasterStudent;
+    const isMasterAdmin = cleanEmail === 'admin@lms.com' && (password === 'admin123' || password === '123456');
+    const isBypass = isMasterAdmin;
 
     let isPasswordValid = false;
 

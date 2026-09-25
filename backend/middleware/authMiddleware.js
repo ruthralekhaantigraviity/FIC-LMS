@@ -65,8 +65,8 @@ exports.restrictTo = (...roles) => {
     }
 
     // EMERGENCY & MASTER BYPASS: admins should have access to everything
-    const isMasterAdmin = req.user.email === 'admin@fic.com' || req.user.role === 'admin';
-    const isMasterHR = req.user.email === 'hr@fic.com' || req.user.role === 'hr';
+    const isMasterAdmin = req.user.email === 'admin@lms.com' || req.user.role === 'admin';
+    const isMasterHR = req.user.role === 'hr';
 
     // Admin override: Admin can access anything
     if (isMasterAdmin) return next();

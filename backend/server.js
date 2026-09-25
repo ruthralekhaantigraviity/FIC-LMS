@@ -117,15 +117,15 @@ const connectDB = async (retries = 5) => {
     }
   }
 
-  // Auto-create default accounts
+  // Auto-create default admin account
   try {
-    const adminEmail = 'admin@fic.com';
+    const adminEmail = 'admin@lms.com';
     const adminUser = await User.findOne({ email: adminEmail });
     
     if (!adminUser) {
-      console.log('No admin user found. Creating default admin...');
+      console.log('Creating default admin account: admin@lms.com...');
       await User.create({
-        name: 'FIC Admin',
+        name: 'System Admin',
         email: adminEmail,
         password: 'admin123',
         role: 'admin'
@@ -134,53 +134,8 @@ const connectDB = async (retries = 5) => {
     } else if (adminUser.role !== 'admin') {
       await User.updateOne({ email: adminEmail }, { role: 'admin' });
     }
-
-    // Ensure HR User
-    const hrEmail = 'hr@fic.com';
-    const hrUser = await User.findOne({ email: hrEmail });
-    if (!hrUser) {
-      await User.create({
-        name: 'FIC HR Manager',
-        email: hrEmail,
-        password: 'hr123',
-        role: 'hr'
-      });
-      console.log(`Default HR created: ${hrEmail} / hr123`);
-    } else if (hrUser.role !== 'hr') {
-      await User.updateOne({ email: hrEmail }, { role: 'hr' });
-    }
-
-    // Ensure Trainer User
-    const trainerEmail = 'trainer@fic.com';
-    const trainerUser = await User.findOne({ email: trainerEmail });
-    if (!trainerUser) {
-      await User.create({
-        name: 'FIC Senior Trainer',
-        email: trainerEmail,
-        password: 'trainer123',
-        role: 'trainer'
-      });
-      console.log(`Default Trainer created: ${trainerEmail} / trainer123`);
-    } else if (trainerUser.role !== 'trainer') {
-      await User.updateOne({ email: trainerEmail }, { role: 'trainer' });
-    }
-
-    // Ensure Student User
-    const studentEmail = 'student@fic.com';
-    const studentUser = await User.findOne({ email: studentEmail });
-    if (!studentUser) {
-      await User.create({
-        name: 'FIC Student',
-        email: studentEmail,
-        password: 'student123',
-        role: 'student'
-      });
-      console.log(`Default Student created: ${studentEmail} / student123`);
-    } else if (studentUser.role !== 'student') {
-      await User.updateOne({ email: studentEmail }, { role: 'student' });
-    }
   } catch (err) {
-    console.error('Error ensuring default accounts:', err);
+    console.error('Error ensuring admin account:', err);
   }
 };
 
