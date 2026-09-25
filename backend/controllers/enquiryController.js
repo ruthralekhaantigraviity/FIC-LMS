@@ -6,6 +6,14 @@ const Notification = require('../models/Notification');
 // POST /api/enquiries - Public: Submit a new enquiry
 exports.createEnquiry = async (req, res) => {
   try {
+    // Check if DB is connected (readyState 1 = connected, 2 = connecting)
+    if (mongoose.connection.readyState !== 1 && mongoose.connection.readyState !== 2) {
+      return res.status(503).json({ 
+        success: false, 
+        message: 'Database connection is initializing or currently unavailable. Please try again in a few seconds.' 
+      });
+    }
+
     const { fullName, email, phoneNumber, courseId, courseInterest, message } = req.body;
 
     if (!fullName || !email || !phoneNumber) {

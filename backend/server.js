@@ -99,17 +99,18 @@ const connectDB = async () => {
 
   try {
     await mongoose.connect(uri, {
-      serverSelectionTimeoutMS: 5000,
-      connectTimeoutMS: 5000
+      dbName: 'fic_lms',
+      serverSelectionTimeoutMS: 10000,
+      connectTimeoutMS: 10000
     });
-    console.log('MongoDB Connected successfully');
+    console.log('MongoDB Connected successfully to database: fic_lms');
   } catch (err) {
     console.error('Primary MongoDB connection error:', err.message);
     if (!isProduction && process.env.MONGODB_URI && uri !== 'mongodb://localhost:27017/fic_lms') {
       console.log('Attempting fallback to local MongoDB (development only)...');
       try {
         await mongoose.connect('mongodb://localhost:27017/fic_lms', {
-          serverSelectionTimeoutMS: 2000
+          serverSelectionTimeoutMS: 5000
         });
         console.log('Fallback MongoDB Connected successfully');
       } catch (fallbackErr) {
