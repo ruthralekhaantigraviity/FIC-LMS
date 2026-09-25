@@ -87,7 +87,7 @@ const User = require('./models/User');
 
 const connectDB = async (retries = 5) => {
   const isProduction = process.env.NODE_ENV === 'production' || Boolean(process.env.RENDER);
-  const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/fic_lms';
+  const uri = process.env.MONGODB_URI || 'mongodb+srv://forgeindiaconnectfic_db_user:8dCpS8k8bCBDQIWk@cluster0.yed2vca.mongodb.net/?appName=Cluster0';
 
   while (retries > 0) {
     try {
