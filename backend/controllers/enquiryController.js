@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Enquiry = require('../models/Enquiry');
 const Course = require('../models/Course');
 const Notification = require('../models/Notification');
@@ -5,32 +6,46 @@ const Notification = require('../models/Notification');
 // POST /api/enquiries - Public: Submit a new enquiry
 exports.createEnquiry = async (req, res) => {
   try {
-    const { fullName, email, phoneNumber, courseId, message } = req.body;
+    const { fullName, email, phoneNumber, courseId, courseInterest, message } = req.body;
 
     if (!fullName || !email || !phoneNumber) {
       return res.status(400).json({ success: false, message: 'Full name, email, and phone number are required.' });
+    }
+
+    // Determine course ObjectId vs text note
+    let validCourseId = undefined;
+    let finalMessage = message || '';
+    if (courseId && mongoose.Types.ObjectId.isValid(courseId)) {
+      validCourseId = courseId;
+    } else if (courseInterest) {
+      finalMessage = finalMessage ? `[Interest: ${courseInterest}] ${finalMessage}` : `[Interest: ${courseInterest}]`;
     }
 
     const enquiry = await Enquiry.create({
       fullName,
       email,
       phoneNumber,
-      course: courseId || undefined,
-      message,
+      course: validCourseId,
+      message: finalMessage,
     });
 
-    // Create Notification for admin and hr
-    await Notification.create({
-      title: 'New Enquiry Received',
-      message: `A new enquiry has been submitted by ${fullName}.`,
-      type: 'enquiry',
-      roles: ['admin', 'hr'],
-      targetId: enquiry._id,
-      onModel: 'Enquiry'
-    });
+    // Create Notification for admin and hr safely
+    try {
+      await Notification.create({
+        title: 'New Enquiry Received',
+        message: `A new enquiry has been submitted by ${fullName}.`,
+        type: 'enquiry',
+        roles: ['admin', 'hr'],
+        targetId: enquiry._id,
+        onModel: 'Enquiry'
+      });
+    } catch (notifErr) {
+      console.warn('[ENQUIRY NOTIFICATION WARNING]', notifErr.message);
+    }
 
     res.status(201).json({ success: true, message: 'Enquiry submitted successfully!', data: enquiry });
   } catch (err) {
+    console.error('[ENQUIRY CREATE ERROR]', err);
     res.status(500).json({ success: false, message: err.message });
   }
 };
