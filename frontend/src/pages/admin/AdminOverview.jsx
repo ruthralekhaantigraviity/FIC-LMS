@@ -31,12 +31,16 @@ const AdminOverview = () => {
       } catch (error) {
         console.warn('Stats fetch timed out or failed, using standard dashboard counts:', error.message);
         setStats({
-          totalStudents: 124,
-          totalCourses: 12,
-          totalRevenue: 250000,
-          activeTrainers: 8,
+          stats: {
+            totalStudents: 0,
+            activeCourses: 0,
+            totalRevenue: 0,
+            pendingFees: 0
+          },
+          pipeline: { new: 0, contacted: 0, converted: 0, dropped: 0 },
           monthlyRevenue: [],
-          courseEnrollments: []
+          courseEnrollments: [],
+          recentActivities: { students: [], enrollments: [], payments: [] }
         });
       } finally {
         setLoading(false);
@@ -188,10 +192,10 @@ const AdminOverview = () => {
     
     const statsTableData = [
       ["Metric", "Current Value", "Trend"],
-      ["Total Students", stats?.stats?.totalStudents || "1,284", "+12.5%"],
-      ["Active Courses", stats?.stats?.activeCourses || "42", "+4.2%"],
-      ["Total Revenue", stats?.stats?.totalRevenue ? `₹${stats.stats.totalRevenue.toLocaleString()}` : "₹4.82M", "+18.7%"],
-      ["Pending Fees", stats?.stats?.pendingFees ? `₹${stats.stats.pendingFees.toLocaleString()}` : "₹152K", "-2.4%"]
+      ["Total Students", stats?.stats?.totalStudents ? stats.stats.totalStudents.toString() : "0", "0%"],
+      ["Active Courses", stats?.stats?.activeCourses ? stats.stats.activeCourses.toString() : "0", "0%"],
+      ["Total Revenue", stats?.stats?.totalRevenue ? `₹${stats.stats.totalRevenue.toLocaleString()}` : "₹0", "0%"],
+      ["Pending Fees", stats?.stats?.pendingFees ? `₹${stats.stats.pendingFees.toLocaleString()}` : "₹0", "0%"]
     ];
 
     autoTable(doc, {
