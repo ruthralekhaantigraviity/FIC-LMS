@@ -82,15 +82,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Port & Server Start (Listen immediately to pass Render health checks)
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-
-// Disable buffering options removed so Mongoose queues operations during connection initialization
-
-// Database Connection in Background
+// Database Connection & Account Seeding
 const User = require('./models/User');
 
 const connectDB = async (retries = 5) => {
@@ -193,4 +185,14 @@ const connectDB = async (retries = 5) => {
   }
 };
 
-connectDB();
+// Port & Server Start (Connect DB first)
+const PORT = process.env.PORT || 5000;
+
+const startServer = async () => {
+  await connectDB();
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+};
+
+startServer();
