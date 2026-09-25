@@ -92,11 +92,10 @@ const connectDB = async (retries = 5) => {
   while (retries > 0) {
     try {
       await mongoose.connect(uri, {
-        dbName: 'fic_lms',
-        serverSelectionTimeoutMS: 15000,
-        connectTimeoutMS: 15000
+        serverSelectionTimeoutMS: 10000,
+        connectTimeoutMS: 10000,
       });
-      console.log('MongoDB Connected successfully to database: fic_lms');
+      console.log('MongoDB Connected successfully');
       break;
     } catch (err) {
       console.error(`Primary MongoDB connection error (${retries} retries left):`, err.message);
@@ -112,8 +111,8 @@ const connectDB = async (retries = 5) => {
           console.error('Fallback database connection error:', fallbackErr.message);
         }
       } else if (retries > 0) {
-        console.log('Retrying MongoDB connection in 3 seconds...');
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        console.log('Retrying MongoDB connection in 2 seconds...');
+        await new Promise(resolve => setTimeout(resolve, 2000));
       }
     }
   }
