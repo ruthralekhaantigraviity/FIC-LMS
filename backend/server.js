@@ -93,28 +93,35 @@ app.listen(PORT, () => {
 // Database Connection in Background
 const User = require('./models/User');
 
-const connectDB = async () => {
+const connectDB = async (retries = 5) => {
   const isProduction = process.env.NODE_ENV === 'production' || Boolean(process.env.RENDER);
   const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/fic_lms';
 
-  try {
-    await mongoose.connect(uri, {
-      dbName: 'fic_lms',
-      serverSelectionTimeoutMS: 10000,
-      connectTimeoutMS: 10000
-    });
-    console.log('MongoDB Connected successfully to database: fic_lms');
-  } catch (err) {
-    console.error('Primary MongoDB connection error:', err.message);
-    if (!isProduction && process.env.MONGODB_URI && uri !== 'mongodb://localhost:27017/fic_lms') {
-      console.log('Attempting fallback to local MongoDB (development only)...');
-      try {
-        await mongoose.connect('mongodb://localhost:27017/fic_lms', {
-          serverSelectionTimeoutMS: 5000
-        });
-        console.log('Fallback MongoDB Connected successfully');
-      } catch (fallbackErr) {
-        console.error('Fallback database connection error:', fallbackErr.message);
+  while (retries > 0) {
+    try {
+      await mongoose.connect(uri, {
+        dbName: 'fic_lms',
+        serverSelectionTimeoutMS: 15000,
+        connectTimeoutMS: 15000
+      });
+      console.log('MongoDB Connected successfully to database: fic_lms');
+      break;
+    } catch (err) {
+      console.error(`Primary MongoDB connection error (${retries} retries left):`, err.message);
+      retries -= 1;
+      if (retries === 0 && !isProduction && uri !== 'mongodb://localhost:27017/fic_lms') {
+        console.log('Attempting fallback to local MongoDB (development only)...');
+        try {
+          await mongoose.connect('mongodb://localhost:27017/fic_lms', {
+            serverSelectionTimeoutMS: 5000
+          });
+          console.log('Fallback MongoDB Connected successfully');
+        } catch (fallbackErr) {
+          console.error('Fallback database connection error:', fallbackErr.message);
+        }
+      } else if (retries > 0) {
+        console.log('Retrying MongoDB connection in 3 seconds...');
+        await new Promise(resolve => setTimeout(resolve, 3000));
       }
     }
   }
