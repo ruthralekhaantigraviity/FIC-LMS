@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+@theme {
+  --color-aubergine: #321E38;
+  --color-peach: #F3A68C;
+  --color-champagne: #E8D8A8;
+  --color-warmwhite: #FAF8F3;
+  --color-coolgray: #667078;
+  --color-plum: #654568;
+
+  --color-primary-50:  #FAF8F3;
+  --color-primary-100: #E8D8A8;
+  --color-primary-200: #F3A68C;
+  --color-primary-300: #9b719e;
+  --color-primary-400: #654568;
+  --color-primary-500: #4d3053;
+  --color-primary-600: #321E38;
+  --color-primary-700: #25152a;
+  --color-primary-800: #1b0e1e;
+  --color-primary-900: #120814;
+  --color-primary-950: #09030a;
+
+  --color-blue-400: #F3A68C;
+  --color-blue-500: #654568;
+  --color-blue-600: #321E38;
+  --color-blue-700: #25152a;
+
+  --color-accent-purple: #8b5cf6;
+  --color-accent-pink:   #ec4899;
+  --color-accent-cyan:   #22d3ee;
+
+  --font-sans:    "Inter", "system-ui", "sans-serif";
+  --font-display: "Outfit", "sans-serif";
+
+  --shadow-glass: 0 8px 32px 0 rgba(50, 30, 56, 0.18);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: #FAF8F3;
+    color: #321E38;
+    @apply font-sans antialiased;
+  }
+
+  .dark body {
+    background-color: #321E38;
+    color: #FAF8F3;
+  }
+}
+
+@layer components {
+  .glass-card {
+    background-color: rgba(250, 248, 243, 0.9);
+    border: 1px solid rgba(232, 216, 168, 0.4);
+    @apply backdrop-blur-md shadow-glass rounded-2xl;
+  }
+
+  .dark .glass-card {
+    background-color: rgba(50, 30, 56, 0.85);
+    border: 1px solid rgba(243, 166, 140, 0.15);
+  }
+
+  /* Soft Peach CTA Button for important actions */
+  .btn-lime, .btn-peach {
+    background-color: #F3A68C;
+    color: #321E38;
+    box-shadow: 0 4px 14px 0 rgba(243, 166, 140, 0.35);
+    @apply px-5 py-2.5 rounded-xl font-extrabold transition-all duration-300 hover:bg-[#e89578] active:scale-95 flex items-center justify-center gap-2;
+  }
+
+  .badge-lime, .badge-peach {
+    background-color: #F3A68C;
+    color: #321E38;
+    @apply px-3 py-1 rounded-full font-extrabold text-xs tracking-wider inline-flex items-center gap-1 shadow-sm;
+  }
+
+  /* Champagne Badge */
+  .badge-champagne {
+    background-color: #E8D8A8;
+    color: #321E38;
+    @apply px-3 py-1 rounded-full font-extrabold text-xs tracking-wider inline-flex items-center gap-1 shadow-sm;
+  }
+
+  /* Brand primary button using Plum / Aubergine */
+  .btn-primary {
+    background-color: #654568;
+    color: #FAF8F3;
+    @apply px-6 py-2.5 rounded-xl font-semibold transition-all duration-300 hover:bg-[#321E38] hover:shadow-lg active:scale-95 flex items-center justify-center gap-2;
+  }
+
+  .sidebar-link {
+    color: #321E38;
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 hover:bg-[#E8D8A8]/30 font-medium;
+  }
+
+  .dark .sidebar-link {
+    color: #E8D8A8;
+    @apply hover:bg-[#4d3053] hover:text-[#FAF8F3];
+  }
+
+  .sidebar-link-active {
+    background: #321E38;
+    color: #F3A68C;
+    @apply font-bold shadow-sm rounded-xl;
+  }
+
+  .dark .sidebar-link-active {
+    background: #654568;
+    color: #FAF8F3;
+    @apply shadow-none;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
